@@ -1,9 +1,10 @@
 {
-  "name": "nativescript",
+  "name": "nativescript-schematics",
   "version": "0.0.0",
   "description": "A schematics",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "watch": "tsc -w -p tsconfig.json",
     "test": "npm run build && jasmine **/*_spec.js"
   },
   "keywords": [
@@ -14,8 +15,7 @@
   "schematics": "./src/collection.json",
   "dependencies": {
     "@angular-devkit/core": "^0.0.21",
-    "@angular-devkit/schematics": "0.0.37",
-    "@schematics/angular": "^0.1.7",
+    "@angular-devkit/schematics": "^0.0.37",
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "jasmine": "^2.8.0",

@@ -15,22 +15,52 @@
   // The factory is required, except when using the extends field. The the factory can
   // overwrite the extended schematic factory.
   "schematics": {
-    "my-schematic": {
-      "description": "An example schematic",
-      "factory": "./my-schematic/index#mySchematic"
+    "component": {
+      "aliases": [ "c" ],
+      "factory": "./component",
+      "description": "Create an Angular component.",
+      "schema": "./component/schema.json"
     },
-    "my-other-schematic": {
-      "description": "A schematic that uses another schematics.",
-      "factory": "./my-other-schematic"
+
+
+    "class": {
+      "aliases": [ "cl" ],
+      "extends": "@schematics/angular:class"
     },
-    "my-full-schematic": {
-      "description": "A schematic using a source and a schema to validate options.",
-      "factory": "./my-full-schematic",
-      "schema": "./my-full-schematic/schema.json"
+
+    "directive": {
+      "aliases": [ "d" ],
+      "extends": "@schematics/angular:directive"
     },
-    "my-extend-schematic": {
-      "description": "A schematic that extends another schematic.",
-      "extends": "my-full-schematic"
+
+    "enum": {
+      "aliases": [ "e" ],
+      "extends": "@schematics/angular:enum"
+    },
+
+    "guard": {
+      "aliases": [ "g" ],
+      "extends": "@schematics/angular:guard"
+    },
+
+    "interface": {
+      "aliases": [ "i" ],
+      "extends": "@schematics/angular:interface"
+    },
+
+    "module": {
+      "aliases": [ "m" ],
+      "extends": "@schematics/angular:module"
+    },
+
+    "pipe": {
+      "aliases": [ "p" ],
+      "extends": "@schematics/angular:pipe"
+    },
+
+    "service": {
+      "aliases": [ "s" ],
+      "extends": "@schematics/angular:service"
     }
   }
 }
