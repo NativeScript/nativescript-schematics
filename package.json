@@ -21,5 +21,8 @@
     "@types/node": "^8.0.31",
     "jasmine": "^2.8.0",
     "typescript": "^2.5.2"
+  },
+  "devDependencies": {
+    "@schematics/angular": "^0.1.7"
   }
 }
