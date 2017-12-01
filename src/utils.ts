@@ -1,21 +1,10 @@
 import {
   SchematicsException,
   Tree,
-  VirtualTree,
 } from '@angular-devkit/schematics';
 import { getDecoratorMetadata } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
-
-export const removeSpecFiles = (prefix: string) =>
-  (tree: VirtualTree) => deleteFiles(tree, `${prefix}.spec.ts`);
-
-export function deleteFiles(tree: VirtualTree, name: string) {
-  const files = tree.files.filter(file => file.endsWith(name));
-  files.forEach(file => tree.delete(file));
-
-  return tree;
-};
 
 // Copied from @schematics/angular/app-shell because it's not exported
 export function getSourceFile(host: Tree, path: string): ts.SourceFile {

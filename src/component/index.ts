@@ -1,7 +1,7 @@
 import {
   Rule,
   SchematicsException,
-  VirtualTree,
+  Tree,
   apply,
   chain,
   externalSchematic,
@@ -11,38 +11,38 @@ import {
   branchAndMerge,
   mergeWith,
   TemplateOptions,
+  filter,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { dasherize } from '@schematics/angular/strings';
 
 import {
   addSymbolToComponentMetadata,
-  deleteFiles,
   getSourceFile,
-  removeSpecFiles,
 } from "../utils";
 import { Schema as ComponentOptions } from './schema';
+import { Path, normalize } from '@angular-devkit/core';
 
 export default function (options: ComponentOptions): Rule {
-  const { name } = options;
-  const prefix = `/${name}.component`;
+  let { name, sourceDir, path, flat } = options;
+  name = dasherize(name);
+  const componentPath = normalize(
+    `/${sourceDir}/${path}/`
+    + (flat ? '' : name + '/')
+    + name + '.component.ts'
+  );
 
   return chain([
     externalSchematic('@schematics/angular', 'component', options),
-    removeSpecFiles(prefix),
-    removeHtmlFiles(prefix),
-    insertModuleId(prefix),
+    filter((path: Path) => !path.match(/\.spec\.ts$/)),
+    filter((path: Path) => !path.match(/\.html$/)),
+    insertModuleId(componentPath),
     addFiles(options),
   ]);
 }
 
-const removeHtmlFiles = (prefix: string) =>
-  (tree: VirtualTree) => deleteFiles(tree, `${prefix}.html`);
-
-const insertModuleId = (name: string) =>
-  (tree: VirtualTree) => {
-    const component = tree.files
-      .find(f => f.endsWith(`${name}.ts`)) as string;
+const insertModuleId = (component: string) =>
+  (tree: Tree) => {
     const componentSource = getSourceFile(tree, component);
     const recorder = tree.beginUpdate(component);
 
@@ -58,21 +58,21 @@ const insertModuleId = (name: string) =>
   };
 
 const addFiles = (options: ComponentOptions) => {
-    const sourceDir = options.sourceDir;
-    if (!sourceDir) {
-      throw new SchematicsException(`sourceDir option is required.`);
-    }
+  const sourceDir = options.sourceDir;
+  if (!sourceDir) {
+    throw new SchematicsException(`sourceDir option is required.`);
+  }
 
-    const templateSource = apply(url('./files'), [
-      template(<TemplateOptions>{
-        dasherize,
-        'if-flat': (s: string) => options.flat ? '' : s,
-        ...options as object,
-      }),
-      move(sourceDir),
-    ]);
+  const templateSource = apply(url('./files'), [
+    template(<TemplateOptions>{
+      dasherize,
+      'if-flat': (s: string) => options.flat ? '' : s,
+      ...options as object,
+    }),
+    move(sourceDir),
+  ]);
 
-    return branchAndMerge(chain([
-      mergeWith(templateSource),
-    ]));
-  };
+  return branchAndMerge(chain([
+    mergeWith(templateSource),
+  ]));
+};

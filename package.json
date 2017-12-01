@@ -17,12 +17,13 @@
   "dependencies": {
     "@angular-devkit/core": "^0.0.21",
     "@angular-devkit/schematics": "^0.0.37",
+    "@schematics/angular": "^0.1.7",
+    "rxjs": "^5.5.2"
+  },
+	"devDependencies": {
+    "typescript": "^2.5.2",
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
-    "jasmine": "^2.8.0",
-    "typescript": "^2.5.2"
-  },
-  "devDependencies": {
-    "@schematics/angular": "^0.1.7"
-  }
+    "jasmine": "^2.8.0"
+	}
 }
