@@ -1,31 +1,38 @@
-import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
-import * as path from 'path';
+import { join } from 'path';
+
+import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
+
 import { Schema as ComponentOptions } from './schema';
 import { Tree, VirtualTree } from '@angular-devkit/schematics';
 
 describe('Interface Schematic', () => {
+  const path = 'app';
+  const sourceDir = 'app';
+  const name = 'foo';
+  const options: ComponentOptions = { name, path, sourceDir };
   const schematicRunner = new SchematicTestRunner(
-    '@schematics/angular',
-    path.join(__dirname, '../collection.json'),
+    'nativescript-schematics',
+    join(__dirname, '../collection.json'),
   );
-  const defaultOptions: ComponentOptions = {
-    name: 'foo',
-    path: 'app',
-    sourceDir: 'app',
-  };
+  let tree: UnitTestTree;
   
-  
-  let appTree: Tree;
-  
-  beforeEach(() => {
-    appTree = new VirtualTree();
-    appTree = createAppModule(appTree, '/app/app/app.module.ts');
+  beforeAll(() => {
+    const appTree = createAppModule(new VirtualTree(), `/${sourceDir}/${path}/app.module.ts`);
+    tree = schematicRunner.runSchematic('component', options, appTree);
   });
   
-  it('should create one file', () => {
-    const tree = schematicRunner.runSchematic('component', defaultOptions);
-    expect(tree.files.length).toEqual(1);
-    expect(tree.files[0]).toEqual('/app/app/foo.ts');
+  it('should create four files', () => {
+    expect(tree.files.length).toEqual(4);
+  });
+
+  it('should add {N}-specific markup file', () => {
+    const content = getFileContent(tree, `${sourceDir}/${path}/${name}/${name}.component.html`);
+    expect(content).toMatch(/Button/);
+  });
+
+  it('should add module id', () => {
+    const content = getFileContent(tree, `${sourceDir}/${path}/${name}/${name}.component.ts`);
+    expect(content).toMatch(/moduleId: module\.id/);
   });
 });
