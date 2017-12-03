@@ -49,7 +49,7 @@ describe('Module Schematic', () => {
 
     expect(content).not.toMatch(new RegExp(
       "@NgModule\\(\\{\\s*" +
-        "imports: \\[(\\s|.)*" +
+        "imports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
           "CommonModule"
     ));
   });

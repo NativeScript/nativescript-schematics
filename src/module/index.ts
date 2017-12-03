@@ -15,8 +15,12 @@ import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-uti
 import * as ts from 'typescript';
 
 import { Schema as ModuleOptions } from './schema';
-import { getSourceFile, collectDeepNodes } from '../utils';
-import { ImportDeclaration } from 'typescript';
+import {
+  getSourceFile,
+  findFullImports,
+  findMetadataImportedModules,
+  removeNode
+} from '../utils';
 
 export default function (options: ModuleOptions): Rule {
   let { name, sourceDir, path, flat } = options;
@@ -54,42 +58,31 @@ const addNSCommonModule = (modulePath: string) =>
   };
 
 const removeNGCommonModule = (modulePath: string) =>
-  (tree: Tree) => {
-    removeFullImport(tree, modulePath, "CommonModule");
-  };
+  (tree: Tree) => removeImportedModule(tree, modulePath, "CommonModule");
+
+const removeImportedModule = (tree: Tree, modulePath: string, importName: string) => {
+    removeFullImport(tree, modulePath, importName);
+    removeMetadataImport(tree, modulePath, importName);
+
+    return tree;
+}
+
+const removeMetadataImport = (tree: Tree, filePath: string, importName: string) => {
+  const source = getSourceFile(tree, filePath);
+  const importsToRemove = findMetadataImportedModules(source, importName);
+
+  importsToRemove.forEach(declaration =>
+    removeNode(declaration, filePath, tree)
+  );
+}
 
 // meant to remove only imports of type
-// import { CommonModule } from "@angular/common"
+// import { SomeModule } from "some-package"
 const removeFullImport = (tree: Tree, filePath: string, importName: string) => {
   const source = getSourceFile(tree, filePath);
-  const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
+  const importsToRemove = findFullImports(importName, source);
 
-  const toRemove: ts.ImportDeclaration[] = allImports
-    // Filter out import statements that are either `import 'XYZ'` or `import * as X from 'XYZ'`.
-    .filter(({ importClause: clause }) =>
-      clause && !clause.name && clause.namedBindings &&
-      clause.namedBindings.kind === ts.SyntaxKind.NamedImports
-    )
-    .reduce((importsToRemove: any, importDecl: ts.ImportDeclaration) => {
-      const importClause = importDecl.importClause as ts.ImportClause;
-      const namedImports = importClause.namedBindings as ts.NamedImports;
-
-      namedImports.elements.forEach((importSpec: ts.ImportSpecifier) => {
-        const importId = importSpec.name;
-
-        if (importId.text === importName) {
-          importsToRemove.push(importDecl);
-        }
-      });
-
-      return importsToRemove;
-    }, []);
-
-  toRemove.forEach((declaration: ts.ImportDeclaration) => {
-    const source = getSourceFile(tree, filePath);
-    const recorder = tree.beginUpdate(filePath);
-
-    recorder.remove(declaration.pos, declaration.end - declaration.pos);
-    tree.commitUpdate(recorder);
-  });
+  importsToRemove.forEach(declaration =>
+    removeNode(declaration, filePath, tree)
+  );
 };

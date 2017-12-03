@@ -149,7 +149,89 @@ export function addSymbolToComponentMetadata(
   return [new InsertChange(componentPath, position, toInsert)];
 }
 
-export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
+export function findFullImports(importName: string, source: ts.SourceFile):
+  ts.ImportDeclaration[] {
+
+  const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
+
+  return allImports
+    // Filter out import statements that are either `import 'XYZ'` or `import * as X from 'XYZ'`.
+    .filter(({ importClause: clause }) =>
+      clause && !clause.name && clause.namedBindings &&
+      clause.namedBindings.kind === ts.SyntaxKind.NamedImports
+    )
+    .reduce((imports: ts.ImportDeclaration[], importDecl: ts.ImportDeclaration) => {
+      const importClause = importDecl.importClause as ts.ImportClause;
+      const namedImports = importClause.namedBindings as ts.NamedImports;
+
+      namedImports.elements.forEach((importSpec: ts.ImportSpecifier) => {
+        const importId = importSpec.name;
+
+        if (importId.text === importName) {
+          imports.push(importDecl);
+        }
+      });
+
+      return imports;
+    }, []);
+}
+
+export function findMetadataImportedModules(source: ts.SourceFile, importName: string):
+  ts.Identifier[] {
+
+  const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator)
+
+  const importsArray = decorators
+    .reduce(
+      (nodes, decorator) => [
+        ...nodes,
+        ...collectDeepNodes<ts.PropertyAssignment>(decorators[0], ts.SyntaxKind.PropertyAssignment)
+      ], [])
+    .find(assignment => {
+      let isImportArray = false;
+      ts.forEachChild(assignment, (child: ts.Node) => {
+        if (child.kind === ts.SyntaxKind.Identifier && child.getText() === "imports") {
+          isImportArray = true;
+        }
+      });
+
+      return isImportArray;
+    });
+
+    if (!importsArray) {
+      return [];
+    }
+
+    let arrayLiteral;
+    ts.forEachChild(importsArray, (child: ts.Node) => {
+      if (child.kind === ts.SyntaxKind.ArrayLiteralExpression) {
+        arrayLiteral = child;
+      }
+    });
+
+    if (!arrayLiteral) {
+      return [];
+    }
+
+    const imports: ts.Identifier[] = [];
+    ts.forEachChild(arrayLiteral, (child: ts.Node) => {
+      if (child.kind === ts.SyntaxKind.Identifier && child.getText() === importName) {
+        imports.push(child as ts.Identifier);
+      }
+    });
+
+    return imports;
+}
+
+export function removeNode(node: ts.Node, filePath: string, tree: Tree) {
+  const source = getSourceFile(tree, filePath);
+  const recorder = tree.beginUpdate(filePath);
+
+  recorder.remove(node.pos, node.end - node.pos);
+  tree.commitUpdate(recorder);
+}
+
+function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
   const nodes: T[] = [];
   const helper = (child: ts.Node) => {
     if (child.kind === kind) {
@@ -161,4 +243,3 @@ export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.Synt
 
   return nodes;
 }
-
