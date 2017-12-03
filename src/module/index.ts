@@ -42,7 +42,10 @@ export default function (options: ModuleOptions): Rule {
 const ensureRouting = (routingModulePath: string) =>
   (tree: Tree) => {
     removeNGRouterModule(tree, routingModulePath);
-  }
+    addNSRouterModule(tree, routingModulePath);
+
+    return tree;
+  };
 
 const removeNGRouterModule = (tree: Tree, routingModulePath: string) => {
     const moduleToRemove = 'RouterModule';
@@ -50,8 +53,48 @@ const removeNGRouterModule = (tree: Tree, routingModulePath: string) => {
     removeImport(tree, routingModulePath, moduleToRemove);
     removeMetadataArrayValue(tree, routingModulePath, 'imports', `${moduleToRemove}.forChild(routes)`);
     removeMetadataArrayValue(tree, routingModulePath, 'exports', moduleToRemove);
-}
+};
 
+const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
+  let moduleSource = getSourceFile(tree, routingModulePath);
+  const moduleName = 'NativeScriptRouterModule';
+
+  const addedImport = addSymbolToNgModuleMetadata(
+    moduleSource, routingModulePath,
+    'imports', `${moduleName}.forChild(routes)`,
+    'nativescript-angular/router'
+  );
+  const importRecorder = tree.beginUpdate(routingModulePath);
+
+  addedImport.forEach((change: InsertChange) =>
+    importRecorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(importRecorder);
+
+  // refetch new content after the update
+  moduleSource = getSourceFile(tree, routingModulePath);
+  const addedExport = addSymbolToNgModuleMetadata(
+    moduleSource, routingModulePath,
+    'exports', moduleName
+  );
+  const exportRecorder = tree.beginUpdate(routingModulePath);
+  addedExport.forEach((change: InsertChange) =>
+    exportRecorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(exportRecorder);
+
+  return tree;
+};
+
+const removeNGCommonModule = (modulePath: string) =>
+  (tree: Tree) => {
+    const moduleName = "CommonModule";
+    removeImport(tree, modulePath, moduleName);
+    removeMetadataArrayValue(tree, modulePath, 'imports', moduleName);
+
+    return tree;
+  }
+  
 const addNSCommonModule = (modulePath: string) =>
   (tree: Tree) => {
     const moduleSource = getSourceFile(tree, modulePath);
@@ -69,15 +112,6 @@ const addNSCommonModule = (modulePath: string) =>
 
     return tree;
   };
-
-const removeNGCommonModule = (modulePath: string) =>
-  (tree: Tree) => {
-    const moduleName = "CommonModule";
-    removeImport(tree, modulePath, moduleName);
-    removeMetadataArrayValue(tree, modulePath, 'imports', moduleName);
-
-    return tree;
-  }
 
 const removeMetadataArrayValue = (tree: Tree, filePath: string, property: string, value: string) => {
   const source = getSourceFile(tree, filePath);

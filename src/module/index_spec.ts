@@ -81,5 +81,13 @@ describe('Module Schematic', () => {
         "exports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
           "RouterModule"
     ));
-  })
+  });
+
+  it('should have NativeScriptCommonModule imported', () => {
+    const options = { ...defaultOptions, routing: true };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const content = getFileContent(tree, routingModulePath);
+    expect(content).toMatch("import { NativeScriptRouterModule } from 'nativescript-angular/router'");
+  });
 });
