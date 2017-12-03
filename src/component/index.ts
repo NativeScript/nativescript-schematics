@@ -34,7 +34,6 @@ export default function (options: ComponentOptions): Rule {
 
   return chain([
     externalSchematic('@schematics/angular', 'component', options),
-    filter((path: Path) => !path.match(/\.spec\.ts$/)),
     filter((path: Path) => !path.match(/\.html$/)),
     insertModuleId(componentPath),
     addFiles(options),

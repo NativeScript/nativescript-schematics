@@ -15,7 +15,6 @@ describe('Module Schematic', () => {
     name,
     path,
     sourceDir,
-    spec: false,
   };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
@@ -30,28 +29,12 @@ describe('Module Schematic', () => {
     appTree = createAppModule(new VirtualTree());
   });
   
-  it('should create two files', () => {
+  it('should create three files', () => {
     const options = { ...defaultOptions };
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);
-    expect(tree.files.length).toEqual(2);
-  });
-
-  it('should filter out the spec files', () => {
-    const options = { ...defaultOptions };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
-
-    const containsSpecFile = tree.files.some(f => !!f.match(/\.spec\.ts$/));
-    expect(containsSpecFile).toBeFalsy();
-  });
-
-  it('should keep spec files when that is specified explicitly', () => {
-    const options = { ...defaultOptions, spec: true };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
-
-    const containsSpecFile = tree.files.some(f => !!f.match(/\.spec\.ts$/));
-    expect(containsSpecFile).toBeTruthy();
+    expect(tree.files.length).toEqual(3);
   });
 
   it('should not have CommonModule imported', () => {

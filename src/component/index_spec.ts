@@ -22,8 +22,8 @@ describe('Component Schematic', () => {
     tree = schematicRunner.runSchematic('component', options, appTree);
   });
   
-  it('should create four files', () => {
-    expect(tree.files.length).toEqual(4);
+  it('should create five files', () => {
+    expect(tree.files.length).toEqual(5);
   });
 
   it('should add {N}-specific markup file', () => {
