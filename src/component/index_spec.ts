@@ -6,7 +6,7 @@ import { getFileContent, createAppModule } from '@schematics/angular/utility/tes
 import { Schema as ComponentOptions } from './schema';
 import { Tree, VirtualTree } from '@angular-devkit/schematics';
 
-describe('Interface Schematic', () => {
+describe('Component Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';

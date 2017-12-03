@@ -7,7 +7,7 @@ import { Schema as ModuleOptions } from './schema';
 import { Tree, VirtualTree } from '@angular-devkit/schematics';
 import { capitalize } from '@angular-devkit/core';
 
-describe('Interface Schematic', () => {
+describe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
@@ -16,6 +16,7 @@ describe('Interface Schematic', () => {
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
   );
+  const moduleClassName = `${capitalize(name)}Module`;
   const modulePath = `/${sourceDir}/${path}/${name}/${name}.module.ts`;
   let appTree: Tree;
   
@@ -28,7 +29,6 @@ describe('Interface Schematic', () => {
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);
-    tree.files.forEach(f => console.log(getFileContent(tree, f)));
     expect(tree.files.length).toEqual(2);
   });
 
@@ -38,5 +38,27 @@ describe('Interface Schematic', () => {
 
     const containsSpecFile = tree.files.some(f => !!f.match(/\.spec\.ts$/));
     expect(containsSpecFile).toBeFalsy();
-  })
+  });
+
+  it('should not have CommonModule imported', () => {
+    const options = { ...defaultOptions };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const content = getFileContent(tree, modulePath);
+    expect(content).not.toMatch("import { CommonModule } from '@angular/common'");
+
+    expect(content).not.toMatch(new RegExp(
+      "@NgModule\\(\\{\\s*" +
+        "imports: \\[(\\s|.)*" +
+          "CommonModule"
+    ));
+  });
+
+  it('should have NativeScriptCommonModule imported', () => {
+    const options = { ...defaultOptions };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const content = getFileContent(tree, modulePath);
+    expect(content).toMatch("import { NativeScriptCommonModule } from 'nativescript-angular/common'");
+  });
 });

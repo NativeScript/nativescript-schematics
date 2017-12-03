@@ -148,3 +148,17 @@ export function addSymbolToComponentMetadata(
 
   return [new InsertChange(componentPath, position, toInsert)];
 }
+
+export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
+  const nodes: T[] = [];
+  const helper = (child: ts.Node) => {
+    if (child.kind === kind) {
+      nodes.push(child as T);
+    }
+    ts.forEachChild(child, helper);
+  };
+  ts.forEachChild(node, helper);
+
+  return nodes;
+}
+
