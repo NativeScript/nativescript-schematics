@@ -11,7 +11,12 @@ describe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
-  const defaultOptions: ModuleOptions = { name, path, sourceDir };
+  const defaultOptions: ModuleOptions = {
+    name,
+    path,
+    sourceDir,
+    spec: false,
+  };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
@@ -41,17 +46,25 @@ describe('Module Schematic', () => {
     expect(containsSpecFile).toBeFalsy();
   });
 
+  it('should keep spec files when that is specified explicitly', () => {
+    const options = { ...defaultOptions, spec: true };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const containsSpecFile = tree.files.some(f => !!f.match(/\.spec\.ts$/));
+    expect(containsSpecFile).toBeTruthy();
+  });
+
   it('should not have CommonModule imported', () => {
     const options = { ...defaultOptions };
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     const content = getFileContent(tree, modulePath);
-    expect(content).not.toMatch("import { CommonModule } from '@angular/common'");
+    expect(content).not.toMatch(`import { CommonModule } from '@angular/common'`);
 
     expect(content).not.toMatch(new RegExp(
-      "@NgModule\\(\\{\\s*" +
-        "imports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
-          "CommonModule"
+      '@NgModule\\(\\{\\s*' +
+        'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
+          'CommonModule'
     ));
   });
 
@@ -60,7 +73,15 @@ describe('Module Schematic', () => {
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     const content = getFileContent(tree, modulePath);
-    expect(content).toMatch("import { NativeScriptCommonModule } from 'nativescript-angular/common'");
+    expect(content).toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+  });
+
+  it('should not have NativeScriptCommonModule imported if that is specified explicitly', () => {
+    const options = { ...defaultOptions, commonModule: false };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const content = getFileContent(tree, modulePath);
+    expect(content).not.toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
   });
 
   it('should not have RouterModule imported in the routing module', () => {
@@ -68,26 +89,26 @@ describe('Module Schematic', () => {
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     const content = getFileContent(tree, routingModulePath);
-    expect(content).not.toMatch("import { RouterModule } from '@angular/router'");
+    expect(content).not.toMatch(`import { RouterModule } from '@angular/router'`);
 
     expect(content).not.toMatch(new RegExp(
-      "@NgModule\\(\\{\\s*" +
-        "imports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
-          "RouterModule.forChild\\("
+      '@NgModule\\(\\{\\s*' +
+        'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
+          'RouterModule.forChild\\('
     ));
 
     expect(content).not.toMatch(new RegExp(
-      "@NgModule\\(\\{\\s*" +
-        "exports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
-          "RouterModule"
+      '@NgModule\\(\\{\\s*' +
+        'exports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
+          'RouterModule'
     ));
   });
 
-  it('should have NativeScriptCommonModule imported', () => {
+  it('should have NativeScriptRouterModule imported', () => {
     const options = { ...defaultOptions, routing: true };
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     const content = getFileContent(tree, routingModulePath);
-    expect(content).toMatch("import { NativeScriptRouterModule } from 'nativescript-angular/router'");
+    expect(content).toMatch(`import { NativeScriptRouterModule } from 'nativescript-angular/router'`);
   });
 });

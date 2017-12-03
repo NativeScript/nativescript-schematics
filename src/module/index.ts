@@ -32,12 +32,18 @@ export default function (options: ModuleOptions): Rule {
 
   return chain([
     externalSchematic('@schematics/angular', 'module', options),
-    filter((path: Path) => !path.match(/\.spec\.ts$/)),
-    addNSCommonModule(modulePath),
-    removeNGCommonModule(modulePath),
+    options.commonModule ? ensureCommonModule(modulePath) : noop(),
     options.routing ? ensureRouting(routingModulePath): noop(),
   ]);
 }
+
+const ensureCommonModule = (modulePath: string) =>
+  (tree: Tree) => {
+      addNSCommonModule(tree, modulePath);
+      removeNGCommonModule(tree, modulePath);
+
+      return tree;
+  };
 
 const ensureRouting = (routingModulePath: string) =>
   (tree: Tree) => {
@@ -86,32 +92,30 @@ const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
   return tree;
 };
 
-const removeNGCommonModule = (modulePath: string) =>
-  (tree: Tree) => {
-    const moduleName = "CommonModule";
-    removeImport(tree, modulePath, moduleName);
-    removeMetadataArrayValue(tree, modulePath, 'imports', moduleName);
+const removeNGCommonModule = (tree: Tree, modulePath: string) => {
+  const moduleName = 'CommonModule';
+  removeImport(tree, modulePath, moduleName);
+  removeMetadataArrayValue(tree, modulePath, 'imports', moduleName);
 
-    return tree;
-  }
+  return tree;
+};
   
-const addNSCommonModule = (modulePath: string) =>
-  (tree: Tree) => {
-    const moduleSource = getSourceFile(tree, modulePath);
-    const recorder = tree.beginUpdate(modulePath);
+const addNSCommonModule = (tree: Tree, modulePath: string) => {
+  const moduleSource = getSourceFile(tree, modulePath);
+  const recorder = tree.beginUpdate(modulePath);
 
-    const metadataChange = addSymbolToNgModuleMetadata(
-      moduleSource, modulePath,
-      'imports', 'NativeScriptCommonModule',
-      'nativescript-angular/common');
+  const metadataChange = addSymbolToNgModuleMetadata(
+    moduleSource, modulePath,
+    'imports', 'NativeScriptCommonModule',
+    'nativescript-angular/common');
 
-    metadataChange.forEach((change: InsertChange) =>
-      recorder.insertRight(change.pos, change.toAdd)
-    );
-    tree.commitUpdate(recorder);
+  metadataChange.forEach((change: InsertChange) =>
+    recorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(recorder);
 
-    return tree;
-  };
+  return tree;
+};
 
 const removeMetadataArrayValue = (tree: Tree, filePath: string, property: string, value: string) => {
   const source = getSourceFile(tree, filePath);

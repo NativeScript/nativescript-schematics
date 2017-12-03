@@ -29,7 +29,7 @@
     },
     "spec": {
       "type": "boolean",
-      "default": true
+      "default": false
     },
     "flat": {
       "type": "boolean",
