@@ -38,7 +38,7 @@ export function addSymbolToComponentMetadata(
   const matchingProperties: ts.ObjectLiteralElement[] =
     (node as ts.ObjectLiteralExpression).properties
     .filter(prop => prop.kind == ts.SyntaxKind.PropertyAssignment)
-    // Filter out every fields that's not "metadataField". Also handles string literals
+    // Filter out every fields that's not 'metadataField'. Also handles string literals
     // (but not expressions).
     .filter((prop: ts.PropertyAssignment) => {
       const name = prop.name;
@@ -150,7 +150,7 @@ export function addSymbolToComponentMetadata(
 }
 
 export function findFullImports(importName: string, source: ts.SourceFile):
-  ts.ImportDeclaration[] {
+  (ts.ImportDeclaration | ts.ImportSpecifier)[] {
 
   const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
 
@@ -160,50 +160,67 @@ export function findFullImports(importName: string, source: ts.SourceFile):
       clause && !clause.name && clause.namedBindings &&
       clause.namedBindings.kind === ts.SyntaxKind.NamedImports
     )
-    .reduce((imports: ts.ImportDeclaration[], importDecl: ts.ImportDeclaration) => {
+    .reduce((
+      imports: (ts.ImportDeclaration | ts.ImportSpecifier)[],
+      importDecl: ts.ImportDeclaration
+    ) => {
       const importClause = importDecl.importClause as ts.ImportClause;
       const namedImports = importClause.namedBindings as ts.NamedImports;
 
       namedImports.elements.forEach((importSpec: ts.ImportSpecifier) => {
         const importId = importSpec.name;
 
-        if (importId.text === importName) {
-          imports.push(importDecl);
+        if (!(importId.text === importName)) {
+          return;
         }
+
+        let nodeToRemove;
+        if (namedImports.elements.length === 1) {
+          nodeToRemove = importDecl;
+        } else {
+          const content = source.getText();
+          if (content.substring(importSpec.pos - 1, importSpec.pos + 1) === ', ') {
+             importSpec.pos = importSpec.pos - 1;
+          }
+          nodeToRemove = importSpec;
+        }
+
+        imports.push(nodeToRemove);
       });
 
       return imports;
     }, []);
+
 }
 
-export function findMetadataImportedModules(source: ts.SourceFile, importName: string):
-  ts.Identifier[] {
+export function findMetadataValueInArray(source: ts.SourceFile, property: string, value: string):
+  ts.Node[] {
 
   const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator)
 
-  const importsArray = decorators
+  const valuesNode = decorators 
     .reduce(
       (nodes, decorator) => [
         ...nodes,
         ...collectDeepNodes<ts.PropertyAssignment>(decorators[0], ts.SyntaxKind.PropertyAssignment)
       ], [])
     .find(assignment => {
-      let isImportArray = false;
+      let isValueForProperty = false;
       ts.forEachChild(assignment, (child: ts.Node) => {
-        if (child.kind === ts.SyntaxKind.Identifier && child.getText() === "imports") {
-          isImportArray = true;
+        if (child.kind === ts.SyntaxKind.Identifier && child.getText() === property) {
+          isValueForProperty = true;
         }
       });
 
-      return isImportArray;
+      return isValueForProperty;
     });
 
-    if (!importsArray) {
+    if (!valuesNode) {
       return [];
     }
 
     let arrayLiteral;
-    ts.forEachChild(importsArray, (child: ts.Node) => {
+    ts.forEachChild(valuesNode, (child: ts.Node) => {
       if (child.kind === ts.SyntaxKind.ArrayLiteralExpression) {
         arrayLiteral = child;
       }
@@ -213,14 +230,14 @@ export function findMetadataImportedModules(source: ts.SourceFile, importName: s
       return [];
     }
 
-    const imports: ts.Identifier[] = [];
+    const values: ts.Node[] = [];
     ts.forEachChild(arrayLiteral, (child: ts.Node) => {
-      if (child.kind === ts.SyntaxKind.Identifier && child.getText() === importName) {
-        imports.push(child as ts.Identifier);
+      if (child.getText() === value) {
+        values.push(child);
       }
     });
 
-    return imports;
+    return values;
 }
 
 export function removeNode(node: ts.Node, filePath: string, tree: Tree) {

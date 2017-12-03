@@ -7,6 +7,7 @@ import {
   template,
   TemplateOptions,
   filter,
+  noop,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { Path, dasherize, normalize } from '@angular-devkit/core';
@@ -18,25 +19,37 @@ import { Schema as ModuleOptions } from './schema';
 import {
   getSourceFile,
   findFullImports,
-  findMetadataImportedModules,
-  removeNode
+  findMetadataValueInArray,
+  removeNode,
 } from '../utils';
 
 export default function (options: ModuleOptions): Rule {
   let { name, sourceDir, path, flat } = options;
   name = dasherize(name);
-  const modulePath = normalize(
-    `/${sourceDir}/${path}/`
-    + (flat ? '' : name + '/')
-    + name + '.module.ts'
-  );
+  const dest = `/${sourceDir}/${path}/${flat ? '' : name}`;
+  const modulePath = normalize(`${dest}/${name}.module.ts`);
+  const routingModulePath = normalize(`${dest}/${name}-routing.module.ts`);
 
   return chain([
     externalSchematic('@schematics/angular', 'module', options),
     filter((path: Path) => !path.match(/\.spec\.ts$/)),
     addNSCommonModule(modulePath),
     removeNGCommonModule(modulePath),
+    options.routing ? ensureRouting(routingModulePath): noop(),
   ]);
+}
+
+const ensureRouting = (routingModulePath: string) =>
+  (tree: Tree) => {
+    removeNGRouterModule(tree, routingModulePath);
+  }
+
+const removeNGRouterModule = (tree: Tree, routingModulePath: string) => {
+    const moduleToRemove = 'RouterModule';
+
+    removeImport(tree, routingModulePath, moduleToRemove);
+    removeMetadataArrayValue(tree, routingModulePath, 'imports', `${moduleToRemove}.forChild(routes)`);
+    removeMetadataArrayValue(tree, routingModulePath, 'exports', moduleToRemove);
 }
 
 const addNSCommonModule = (modulePath: string) =>
@@ -58,27 +71,24 @@ const addNSCommonModule = (modulePath: string) =>
   };
 
 const removeNGCommonModule = (modulePath: string) =>
-  (tree: Tree) => removeImportedModule(tree, modulePath, "CommonModule");
-
-const removeImportedModule = (tree: Tree, modulePath: string, importName: string) => {
-    removeFullImport(tree, modulePath, importName);
-    removeMetadataImport(tree, modulePath, importName);
+  (tree: Tree) => {
+    const moduleName = "CommonModule";
+    removeImport(tree, modulePath, moduleName);
+    removeMetadataArrayValue(tree, modulePath, 'imports', moduleName);
 
     return tree;
-}
+  }
 
-const removeMetadataImport = (tree: Tree, filePath: string, importName: string) => {
+const removeMetadataArrayValue = (tree: Tree, filePath: string, property: string, value: string) => {
   const source = getSourceFile(tree, filePath);
-  const importsToRemove = findMetadataImportedModules(source, importName);
+  const nodesToRemove = findMetadataValueInArray(source, property, value);
 
-  importsToRemove.forEach(declaration =>
+  nodesToRemove.forEach(declaration =>
     removeNode(declaration, filePath, tree)
   );
 }
 
-// meant to remove only imports of type
-// import { SomeModule } from "some-package"
-const removeFullImport = (tree: Tree, filePath: string, importName: string) => {
+const removeImport = (tree: Tree, filePath: string, importName: string) => {
   const source = getSourceFile(tree, filePath);
   const importsToRemove = findFullImports(importName, source);
 

@@ -18,6 +18,7 @@ describe('Module Schematic', () => {
   );
   const moduleClassName = `${capitalize(name)}Module`;
   const modulePath = `/${sourceDir}/${path}/${name}/${name}.module.ts`;
+  const routingModulePath = `/${sourceDir}/${path}/${name}/${name}-routing.module.ts`;
   let appTree: Tree;
   
   beforeAll(() => {
@@ -61,4 +62,24 @@ describe('Module Schematic', () => {
     const content = getFileContent(tree, modulePath);
     expect(content).toMatch("import { NativeScriptCommonModule } from 'nativescript-angular/common'");
   });
+
+  it('should not have RouterModule imported in the routing module', () => {
+    const options = { ...defaultOptions, routing: true };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    const content = getFileContent(tree, routingModulePath);
+    expect(content).not.toMatch("import { RouterModule } from '@angular/router'");
+
+    expect(content).not.toMatch(new RegExp(
+      "@NgModule\\(\\{\\s*" +
+        "imports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
+          "RouterModule.forChild\\("
+    ));
+
+    expect(content).not.toMatch(new RegExp(
+      "@NgModule\\(\\{\\s*" +
+        "exports: \\[(\\s*|(\\s*\\.*),(\\s*))" +
+          "RouterModule"
+    ));
+  })
 });
