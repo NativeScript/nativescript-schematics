@@ -72,7 +72,7 @@ const addFiles = (options: ComponentOptions) => {
     move(sourceDir),
   ]);
 
-  return branchAndMerge(chain([
+  return branchAndMerge(
     mergeWith(templateSource),
-  ]));
+  );
 };
