@@ -22,6 +22,12 @@
       "schema": "./component/schema.json"
     },
 
+    "module": {
+        "aliases": ["m"],
+        "factory": "./module",
+        "description": "Create an Angular module",
+        "schema": "./module/schema.json"
+    },
 
     "class": {
       "aliases": [ "cl" ],
@@ -46,11 +52,6 @@
     "interface": {
       "aliases": [ "i" ],
       "extends": "@schematics/angular:interface"
-    },
-
-    "module": {
-      "aliases": [ "m" ],
-      "extends": "@schematics/angular:module"
     },
 
     "pipe": {
