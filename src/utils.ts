@@ -3,8 +3,25 @@ import {
   Tree,
 } from '@angular-devkit/schematics';
 import { getDecoratorMetadata } from '@schematics/angular/utility/ast-utils';
-import { InsertChange, Change } from '@schematics/angular/utility/change';
+import { InsertChange, Change, RemoveChange } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
+
+class RemoveContent {
+  constructor(private pos: number, private end: number) {
+  }
+
+  public getStart() {
+    return this.pos;
+  }
+
+  public getFullStart() {
+    return this.pos;
+  }
+
+  public getEnd() {
+    return this.end;
+  }
+};
 
 // Copied from @schematics/angular/app-shell because it's not exported
 export function getSourceFile(host: Tree, path: string): ts.SourceFile {
@@ -150,7 +167,7 @@ export function addSymbolToComponentMetadata(
 }
 
 export function findFullImports(importName: string, source: ts.SourceFile):
-  (ts.ImportDeclaration | ts.ImportSpecifier)[] {
+  (ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent)[] {
 
   const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
 
@@ -161,7 +178,7 @@ export function findFullImports(importName: string, source: ts.SourceFile):
       clause.namedBindings.kind === ts.SyntaxKind.NamedImports
     )
     .reduce((
-      imports: (ts.ImportDeclaration | ts.ImportSpecifier)[],
+      imports: (ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent)[],
       importDecl: ts.ImportDeclaration
     ) => {
       const importClause = importDecl.importClause as ts.ImportClause;
@@ -174,18 +191,23 @@ export function findFullImports(importName: string, source: ts.SourceFile):
           return;
         }
 
-        let nodeToRemove;
         if (namedImports.elements.length === 1) {
-          nodeToRemove = importDecl;
+          imports.push(importDecl);
         } else {
           const content = source.getText();
-          if (content.substring(importSpec.pos - 1, importSpec.pos + 1) === ', ') {
-             importSpec.pos = importSpec.pos - 1;
-          }
-          nodeToRemove = importSpec;
-        }
+          const start = importSpec.getFullStart();
+          const end = importSpec.getEnd();
+          const symbolBefore = content.substring(start - 1, start);
+          const symbolAfter = content.substring(end, end + 1);
 
-        imports.push(nodeToRemove);
+          if (symbolBefore === ",") {
+            imports.push(new RemoveContent(start - 1, end));
+          } else if (symbolAfter === ",") {
+            imports.push(new RemoveContent(start, end + 1));
+          } else {
+            imports.push(importSpec);
+          }
+        }
       });
 
       return imports;
@@ -240,11 +262,14 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
     return values;
 }
 
-export function removeNode(node: ts.Node, filePath: string, tree: Tree) {
+export function removeNode(node: ts.Node | RemoveContent, filePath: string, tree: Tree) {
   const source = getSourceFile(tree, filePath);
   const recorder = tree.beginUpdate(filePath);
 
-  recorder.remove(node.pos, node.end - node.pos);
+
+  const start = node.getFullStart();
+  const end = node.getEnd();
+  recorder.remove(start, end - start);
   tree.commitUpdate(recorder);
 }
 
