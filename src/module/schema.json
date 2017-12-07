@@ -4,6 +4,14 @@
   "title": "Angular Module Options Schema",
   "type": "object",
   "properties": {
+    "web": {
+      "type": "boolean",
+      "alias": "w"
+    },
+    "nativescript": {
+      "type": "boolean",
+      "alias": "n"
+    },
     "name": {
       "type": "string"
     },

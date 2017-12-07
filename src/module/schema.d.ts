@@ -8,6 +8,8 @@
 
 export interface Schema {
     name: string;
+    web?: boolean;
+    nativescript?: boolean;
     path?: string;
     appRoot?: string;
     sourceDir?: string;

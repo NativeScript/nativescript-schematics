@@ -1,10 +1,15 @@
+import { basename, dirname } from 'path';
+
+
 import {
   SchematicsException,
   Tree,
+  FileSystemCreateTree,
 } from '@angular-devkit/schematics';
 import { getDecoratorMetadata } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change, RemoveChange } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
+import { FileSystemHost } from '@angular-devkit/schematics/tools/file-system-host';
 
 class RemoveContent {
   constructor(private pos: number, private end: number) {
@@ -284,4 +289,30 @@ function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind)
   ts.forEachChild(node, helper);
 
   return nodes;
+}
+
+export const copy = (tree: Tree, from: string, to: string) => {
+  const file = tree.get(from);
+  if (!file) {
+    throw new Error(`File ${from} does not exist!`);
+  }
+
+  tree.create(to, file.content);
+}
+
+export const readFile = <T>(fullPath: string) => {
+  const dir = dirname(fullPath);
+  const host = new FileSystemHost(dir);
+  const tree = new FileSystemCreateTree(host);
+
+  const fileBuffer = tree.read(fullPath);
+  if (fileBuffer === null) {
+    throw new SchematicsException(`Could not find ${fullPath}`);
+  }
+
+  try {
+    return JSON.parse(fileBuffer.toString()) as T;
+  } catch(e) {
+    throw new SchematicsException(`Couldn't parse ${fullPath}. Original error: ${e}`);
+  }
 }
