@@ -1,11 +1,10 @@
 import { join } from 'path';
 
-import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
+import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
 import { Tree, VirtualTree } from '@angular-devkit/schematics';
-import { capitalize } from '@angular-devkit/core';
 
 describe('Module Schematic', () => {
   const path = 'app';
@@ -15,12 +14,13 @@ describe('Module Schematic', () => {
     name,
     path,
     sourceDir,
+    web: false,
+    nativescript: true,
   };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
   );
-  const moduleClassName = `${capitalize(name)}Module`;
   const modulePath = `/${sourceDir}/${path}/${name}/${name}.module.ts`;
   const routingModulePath = `/${sourceDir}/${path}/${name}/${name}-routing.module.ts`;
   let appTree: Tree;

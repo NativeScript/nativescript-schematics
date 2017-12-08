@@ -1,15 +1,14 @@
-import { basename, dirname } from 'path';
-
+import { join } from 'path';
 
 import {
   SchematicsException,
   Tree,
-  FileSystemCreateTree,
 } from '@angular-devkit/schematics';
 import { getDecoratorMetadata } from '@schematics/angular/utility/ast-utils';
-import { InsertChange, Change, RemoveChange } from '@schematics/angular/utility/change';
+import { InsertChange, Change } from '@schematics/angular/utility/change';
+import { configPath, CliConfig } from '@schematics/angular/utility/config';
+
 import * as ts from 'typescript';
-import { FileSystemHost } from '@angular-devkit/schematics/tools/file-system-host';
 
 class RemoveContent {
   constructor(private pos: number, private end: number) {
@@ -229,7 +228,7 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
     .reduce(
       (nodes, decorator) => [
         ...nodes,
-        ...collectDeepNodes<ts.PropertyAssignment>(decorators[0], ts.SyntaxKind.PropertyAssignment)
+        ...collectDeepNodes<ts.PropertyAssignment>(decorator, ts.SyntaxKind.PropertyAssignment)
       ], [])
     .find(assignment => {
       let isValueForProperty = false;
@@ -268,9 +267,7 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
 }
 
 export function removeNode(node: ts.Node | RemoveContent, filePath: string, tree: Tree) {
-  const source = getSourceFile(tree, filePath);
   const recorder = tree.beginUpdate(filePath);
-
 
   const start = node.getFullStart();
   const end = node.getEnd();
@@ -300,19 +297,29 @@ export const copy = (tree: Tree, from: string, to: string) => {
   tree.create(to, file.content);
 }
 
-export const readFile = <T>(fullPath: string) => {
-  const dir = dirname(fullPath);
-  const host = new FileSystemHost(dir);
-  const tree = new FileSystemCreateTree(host);
-
-  const fileBuffer = tree.read(fullPath);
-  if (fileBuffer === null) {
-    throw new SchematicsException(`Could not find ${fullPath}`);
+export const ns = (tree: Tree, options: any) => {
+  if (options.nativescript !== undefined) {
+    return options.nativescript;
   }
 
   try {
-    return JSON.parse(fileBuffer.toString()) as T;
+    const config = <any>tree.get('package.json');
+    return config.nativescript.id;
   } catch(e) {
-    throw new SchematicsException(`Couldn't parse ${fullPath}. Original error: ${e}`);
+    return false;
   }
-}
+};
+
+export const web = (tree: Tree, options: any) => {
+  if (options.web !== undefined) {
+    return options.web;
+  }
+
+  const configRelativePath = join('.', configPath);
+  try {
+    const config = tree.get(configRelativePath) as CliConfig;
+    return Object.values(config.apps).some(app => app.index);
+  } catch(e) {
+    return false;
+  }
+};

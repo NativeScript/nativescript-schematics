@@ -1,25 +1,12 @@
 import {
   Rule,
-  SchematicsException,
   Tree,
   chain,
   externalSchematic,
-  template,
-  TemplateOptions,
-  filter,
-  noop,
-  url,
-  branchAndMerge,
-  FileSystemCreateTree,
-  InMemoryFileSystemTreeHost,
 } from '@angular-devkit/schematics';
-import { FileSystemHost } from '@angular-devkit/schematics/tools/file-system-host';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { getConfig, CliConfig, configPath } from '@schematics/angular/utility/config';
-import { Path, dasherize, normalize } from '@angular-devkit/core';
+import { dasherize, normalize } from '@angular-devkit/core';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
-
-import * as ts from 'typescript';
 
 import { Schema as ModuleOptions } from './schema';
 import {
@@ -28,32 +15,49 @@ import {
   findMetadataValueInArray,
   removeNode,
   copy,
-  readFile,
+  ns,
+  web,
 } from '../utils';
-import { join } from 'path';
+import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 
 export default function (options: ModuleOptions): Rule {
-  let { name, sourceDir, path, flat } = options;
-  name = dasherize(name);
-  const dest = `/${sourceDir}/${path}/${flat ? '' : name}`;
-
-  const web = shouldGenerateWebFiles(options);
   const dualFilesMap = getDualFilesMap(options);
-  console.log(dualFilesMap)
 
   return chain([
+    validateProject(options),
     externalSchematic('@schematics/angular', 'module', options),
-    web ?
-      copyModules(Object.values(dualFilesMap)):
-      renameModules(Object.values(dualFilesMap)),
-    options.commonModule ?
-      ensureCommonModule(dualFilesMap[getModuleBasename(options)].mobile) :
-      noop(),
-    options.routing ?
-      ensureRouting(dualFilesMap[getRoutingBasename(options)].mobile):
-      noop(),
+
+    (tree: Tree) =>
+      web(tree, options) ?
+        copyModules(Object.values(dualFilesMap))(tree):
+        renameModules(Object.values(dualFilesMap))(tree),
+
+    (tree: Tree) =>
+      ns(tree, options) ? modifyFilesForNs(dualFilesMap, options)(tree) : tree
   ]);
-}
+};
+
+const validateProject = (options) =>
+  (tree: Tree) => {
+    if (!web(tree, options) && !ns(tree, options)) {
+      throw new SchematicsException('You need to specify project type!');
+    }
+
+    return tree;
+  };
+
+const modifyFilesForNs = (dualFilesMap, options) =>
+  (tree: Tree) => {
+    if (options.commonModule) {
+      ensureCommonModule(getModuleFilename(dualFilesMap, options).mobile)(tree);
+    }
+
+    if (options.routing) {
+      ensureRouting(getRoutingFilename(dualFilesMap, options).mobile)(tree);
+    }
+
+    return tree;
+  };
 
 const dest = ({ name, sourceDir, path, flat }: ModuleOptions) =>
   `${sourceDir}/${path}/${flat ? '' : dasherize(name)}`;
@@ -61,6 +65,11 @@ const getModuleBasename = (options: ModuleOptions) =>
   normalize(`${dest(options)}/${options.name}.module`) as string;
 const getRoutingBasename = (options: ModuleOptions) =>
   normalize(`${dest(options)}/${options.name}-routing.module`) as string;
+
+const getModuleFilename = (filesMap: any, options: ModuleOptions) =>
+  filesMap[getModuleBasename(options)];
+const getRoutingFilename = (filesMap: any, options: ModuleOptions) =>
+  filesMap[getRoutingBasename(options)];
 
 const getDualFilesMap = (options: ModuleOptions) => {
   const files = [getModuleBasename(options)];
@@ -73,38 +82,9 @@ const getDualFilesMap = (options: ModuleOptions) => {
       all[current] = {
         web: `${current}.ts`,
         mobile: `${current}.tns.ts`,
-      }
+      };
       return all;
     }, {});
-}
-
-
-
-const shouldGenerateNsFiles = (options: ModuleOptions) => {
-  if (options.nativescript !== undefined) {
-    return options.nativescript;
-  }
-
-  const config = readFile<any>('package.json');
-  try {
-    return config.nativescript.id;
-  } catch(e) {
-    return false;
-  }
-}
-
-const shouldGenerateWebFiles = (options: ModuleOptions) => {
-  if (options.web !== undefined) {
-    return options.web;
-  }
-
-  const configRelativePath = join('.', configPath);
-  const config = readFile<CliConfig>(configRelativePath);
-  try {
-    return Object.values(config.apps).some(app => app.index);
-  } catch(e) {
-    return false;
-  }
 }
 
 const copyModules = (paths: ({ web: string, mobile: string})[]) =>

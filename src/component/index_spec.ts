@@ -4,7 +4,7 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
 import { Schema as ComponentOptions } from './schema';
-import { Tree, VirtualTree } from '@angular-devkit/schematics';
+import { VirtualTree } from '@angular-devkit/schematics';
 
 describe('Component Schematic', () => {
   const path = 'app';
