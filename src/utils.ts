@@ -25,6 +25,11 @@ class RemoveContent {
   public getEnd() {
     return this.end;
   }
+}
+
+const DEFAULT_EXTENSIONS = {
+  web: '',
+  ns: '.tns'
 };
 
 // Copied from @schematics/angular/app-shell because it's not exported
@@ -309,7 +314,7 @@ export const ns = (tree: Tree, options: any) => {
   }
 
   try {
-    const config = getJsonFile<any>(tree, 'package.json');
+    const config = getPackageJson(tree) as any;
     isNsProject = config.nativescript.id;
   } catch(e) {
     isNsProject = false;
@@ -329,14 +334,9 @@ export const web = (tree: Tree, options: any) => {
   }
 
   const configRelativePath = join('.', configPath);
-  const file = tree.get(configRelativePath)
-  if (!file) {
-    isWebProject = false;
-    return false;
-  }
 
   try {
-    const config = getJsonFile<CliConfig>(tree, 'package.json');
+    const config = getJsonFile<CliConfig>(tree, configRelativePath);
     isWebProject = Object.values(config.apps).some(app => app.index);
   } catch(e) {
     isWebProject = false;
@@ -344,6 +344,14 @@ export const web = (tree: Tree, options: any) => {
 
   return isWebProject;
 };
+
+export const getExtensions = (tree: Tree) => {
+  const config = getPackageJson(tree) as any;
+  return Object.assign(DEFAULT_EXTENSIONS, config.extensions);
+};
+
+const getPackageJson = (tree: Tree) =>
+  getJsonFile(tree, 'package.json');
 
 const getJsonFile = <T>(tree: Tree, path: string) => {
   const file = tree.get(path);
@@ -358,3 +366,4 @@ const getJsonFile = <T>(tree: Tree, path: string) => {
     throw new SchematicsException(`File ${path} could not be parsed!`);
   }
 };
+

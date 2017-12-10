@@ -10,6 +10,7 @@ import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-uti
 
 import { Schema as ModuleOptions } from './schema';
 import {
+  getExtensions,
   getSourceFile,
   findFullImports,
   findMetadataValueInArray,
@@ -20,36 +21,75 @@ import {
 } from '../utils';
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 
-export default function (options: ModuleOptions): Rule {
+interface Extensions {
+  web: string;
+  ns: string;
+};
 
+let originalExtensions;
+let extensions: Extensions;
+
+export default function (options: ModuleOptions): Rule {
   return chain([
-    validateProject(options),
+    validateOptions(options),
     externalSchematic('@schematics/angular', 'module', options),
 
+    (tree: Tree) => fillExtensions(tree, options),
+
     (tree: Tree) =>
-      ns(tree, options) ? performNsModifications(options)(tree) : tree
+      web(tree, options) ? renameWebModules()(tree) : tree,
+
+    (tree: Tree) =>
+      ns(tree, options) ? performNsModifications(options)(tree) : tree,
   ]);
 };
 
+const renameWebModules = () =>
+  (tree: Tree) => {
+    const files = getFilesBasenames();
+
+    const originalToWeb = files.map(f => ({
+      from: getOriginalFile(f),
+      to: getWebFile(f),
+    }));
+
+    renameFiles(originalToWeb)(tree);
+  };
+
 const performNsModifications = (options: ModuleOptions) =>
   (tree: Tree) => {
-    const dualFilesMap = getDualFilesMap(options);
+    const files = getFilesBasenames();
+
     if (web(tree, options)) {
-      copyModules(Object.values(dualFilesMap))(tree);
+      const webToNs = files.map(f => ({
+        from: getWebFile(f),
+        to: getNsFile(f),
+      }));
+
+      copyFiles(webToNs)(tree);
     } else {
-      renameModules(Object.values(dualFilesMap))(tree);
+      const originalToNs = files.map(f => ({
+        from: getOriginalFile(f),
+        to: getNsFile(f),
+      }));
+
+      renameFiles(originalToNs)(tree);
     }
 
     if (options.commonModule) {
-      ensureCommonModule(getModuleFilename(dualFilesMap, options).mobile)(tree);
+      const moduleFile = getModuleBasename(options);
+      const nsModule = getNsFile(moduleFile);
+      ensureCommonModule(nsModule)(tree);
     }
 
     if (options.routing) {
-      ensureRouting(getRoutingFilename(dualFilesMap, options).mobile)(tree);
+      const routingModule = getRoutingBasename(options);
+      const nsRoutingModule = getNsFile(routingModule);
+      ensureRouting(nsRoutingModule)(tree);
     }
   };
 
-const validateProject = (options) =>
+const validateOptions = (options) =>
   (tree: Tree) => {
     if (!web(tree, options) && !ns(tree, options)) {
       throw new SchematicsException('You need to specify project type!');
@@ -65,34 +105,39 @@ const getModuleBasename = (options: ModuleOptions) =>
 const getRoutingBasename = (options: ModuleOptions) =>
   normalize(`${dest(options)}/${options.name}-routing.module`) as string;
 
-const getModuleFilename = (filesMap: any, options: ModuleOptions) =>
-  filesMap[getModuleBasename(options)];
-const getRoutingFilename = (filesMap: any, options: ModuleOptions) =>
-  filesMap[getRoutingBasename(options)];
+const fillExtensions = (tree: Tree, options: ModuleOptions) => {
+  extensions = getExtensions(tree);
 
-const getDualFilesMap = (options: ModuleOptions) => {
-  const files = [getModuleBasename(options)];
+  originalExtensions = {
+    [getModuleBasename(options)]: '.ts',
+  };
+
   if (options.routing) {
-    files.push(getRoutingBasename(options));
+    originalExtensions.push({
+      [getRoutingBasename(options)]: '.ts',
+    });
   }
+};
 
-  return files
-    .reduce((all, current) =>  {
-      all[current] = {
-        web: `${current}.ts`,
-        mobile: `${current}.tns.ts`,
-      };
-      return all;
-    }, {});
+const getFilesBasenames = () => Object.keys(originalExtensions);
+
+const getOriginalFile = (basename: string) => {
+  return `${basename}${originalExtensions[basename]}`;
 }
 
-const copyModules = (paths: ({ web: string, mobile: string})[]) =>
-  (tree: Tree) =>
-    paths.forEach(({ web, mobile }) => copy(tree, web, mobile));
+const getWebFile = (basename: string) =>
+  `${basename}${extensions.web}${originalExtensions[basename]}`;
 
-const renameModules = (paths: ({ web: string, mobile: string})[]) =>
+const getNsFile = (basename: string) =>
+  `${basename}${extensions.ns}${originalExtensions[basename]}`;
+
+const copyFiles = (paths: ({ from: string, to: string})[]) =>
   (tree: Tree) =>
-    paths.forEach(({ web, mobile }) => tree.rename(web, mobile));
+    paths.forEach(({ from, to }) => copy(tree, from, to));
+
+const renameFiles = (paths: ({ from: string, to: string })[]) =>
+  (tree: Tree) =>
+    paths.forEach(({ from, to }) => tree.rename(from, to));
 
 const ensureCommonModule = (modulePath: string) =>
   (tree: Tree) => {
