@@ -21,39 +21,38 @@ import {
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 
 export default function (options: ModuleOptions): Rule {
-  const dualFilesMap = getDualFilesMap(options);
 
   return chain([
     validateProject(options),
     externalSchematic('@schematics/angular', 'module', options),
 
     (tree: Tree) =>
-      web(tree, options) ?
-        copyModules(Object.values(dualFilesMap))(tree):
-        renameModules(Object.values(dualFilesMap))(tree),
-
-    (tree: Tree) =>
-      ns(tree, options) ? modifyFilesForNs(dualFilesMap, options)(tree) : tree
+      ns(tree, options) ? performNsModifications(options)(tree) : tree
   ]);
 };
 
-const validateProject = (options) =>
+const performNsModifications = (options: ModuleOptions) =>
   (tree: Tree) => {
-    if (!web(tree, options) && !ns(tree, options)) {
-      throw new SchematicsException('You need to specify project type!');
+    const dualFilesMap = getDualFilesMap(options);
+    if (web(tree, options)) {
+      copyModules(Object.values(dualFilesMap))(tree);
+    } else {
+      renameModules(Object.values(dualFilesMap))(tree);
     }
 
-    return tree;
-  };
-
-const modifyFilesForNs = (dualFilesMap, options) =>
-  (tree: Tree) => {
     if (options.commonModule) {
       ensureCommonModule(getModuleFilename(dualFilesMap, options).mobile)(tree);
     }
 
     if (options.routing) {
       ensureRouting(getRoutingFilename(dualFilesMap, options).mobile)(tree);
+    }
+  };
+
+const validateProject = (options) =>
+  (tree: Tree) => {
+    if (!web(tree, options) && !ns(tree, options)) {
+      throw new SchematicsException('You need to specify project type!');
     }
 
     return tree;
