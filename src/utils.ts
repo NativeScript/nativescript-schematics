@@ -303,7 +303,7 @@ export const ns = (tree: Tree, options: any) => {
   }
 
   try {
-    const config = <any>tree.get('package.json');
+    const config = getJsonFile<any>(tree, 'package.json');
     return config.nativescript.id;
   } catch(e) {
     return false;
@@ -316,10 +316,29 @@ export const web = (tree: Tree, options: any) => {
   }
 
   const configRelativePath = join('.', configPath);
+  const file = tree.get(configRelativePath)
+  if (!file) {
+    return false;
+  }
+
   try {
-    const config = tree.get(configRelativePath) as CliConfig;
+    const config = getJsonFile<CliConfig>(tree, 'package.json');
     return Object.values(config.apps).some(app => app.index);
   } catch(e) {
     return false;
+  }
+};
+
+const getJsonFile = <T>(tree: Tree, path: string) => {
+  const file = tree.get(path);
+  if (!file) {
+    throw new SchematicsException(`File ${path} not found!`);
+  }
+
+  try {
+    const content = JSON.parse(file.content.toString());
+    return content as T;
+  } catch(e) {
+    throw new SchematicsException(`File ${path} could not be parsed!`);
   }
 };
