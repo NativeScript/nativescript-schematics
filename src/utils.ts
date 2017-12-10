@@ -345,9 +345,24 @@ export const web = (tree: Tree, options: any) => {
   return isWebProject;
 };
 
-export const getExtensions = (tree: Tree) => {
+export const getExtensions = (tree: Tree, options: any) => {
+  const { webext: web, nsext: ns } = options;
+  console.log(options.webext)
+  console.log(web)
+  const flags: any = {};
+  if (web !== undefined) {
+    flags.web = web;
+  }
+
+  if (ns !== undefined) {
+    flags.ns = ns;
+  }
+  console.log(flags)
   const config = getPackageJson(tree) as any;
-  return Object.assign(DEFAULT_EXTENSIONS, config.extensions);
+
+  const ext = Object.assign({}, DEFAULT_EXTENSIONS, config.extensions, flags);
+  console.log(ext)
+  return ext;
 };
 
 const getPackageJson = (tree: Tree) =>

@@ -106,7 +106,7 @@ const getRoutingBasename = (options: ModuleOptions) =>
   normalize(`${dest(options)}/${options.name}-routing.module`) as string;
 
 const fillExtensions = (tree: Tree, options: ModuleOptions) => {
-  extensions = getExtensions(tree);
+  extensions = getExtensions(tree, options);
 
   originalExtensions = {
     [getModuleBasename(options)]: '.ts',

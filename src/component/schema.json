@@ -4,6 +4,21 @@
   "title": "Angular Application Options Schema",
   "type": "object",
   "properties": {
+    "web": {
+      type: "boolean",
+      alias: "w"
+    },
+    "nativescript": {
+      type: "boolean",
+      alias: "ns"
+    },
+    "nsext?": {
+      type: "string",
+      "default": "shaqllq"
+    },
+    "webext?": {
+      type: "string"
+    },
     "path": {
       "type": "string",
       "default": "app"

@@ -28,9 +28,19 @@ describe('Module Schematic', () => {
   beforeAll(() => {
     appTree = createAppModule(new VirtualTree());
   });
-  
-  it('should create three files', () => {
+
+ 
+  it('should create three files when in nativescript-only project', () => {
     const options = { ...defaultOptions };
+    const tree = schematicRunner.runSchematic('module', options, appTree);
+
+    expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);
+    expect(tree.files.length).toEqual(3);
+  });
+
+ 
+  it('should create three files when in web-only project', () => {
+    const options = { ...defaultOptions, nativescript: false, web: true };
     const tree = schematicRunner.runSchematic('module', options, appTree);
 
     expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);

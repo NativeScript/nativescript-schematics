@@ -37,13 +37,14 @@ export default function (options: ComponentOptions): Rule {
   );
   const componentPath = normalize(`${dest}/${name}.component.ts`);
   const templatePath = normalize(`${dest}/${name}.component.html`);
+  console.log(options.nsext)
 
   return chain([
     externalSchematic('@schematics/angular', 'component', options),
     validateOptions(options),
 
     (tree: Tree) => {
-      extensions = getExtensions(tree);
+      extensions = getExtensions(tree, options);
       return tree;
     },
 
