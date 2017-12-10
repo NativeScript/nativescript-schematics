@@ -10,7 +10,7 @@
     },
     "nativescript": {
       "type": "boolean",
-      "alias": "n"
+      "alias": "ns"
     },
     "name": {
       "type": "string"
