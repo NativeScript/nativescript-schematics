@@ -297,20 +297,33 @@ export const copy = (tree: Tree, from: string, to: string) => {
   tree.create(to, file.content);
 }
 
+let isNsProject;
 export const ns = (tree: Tree, options: any) => {
+  if (isNsProject !== undefined) {
+    return isNsProject;
+  }
+
   if (options.nativescript !== undefined) {
-    return options.nativescript;
+    isNsProject = options.nativescript;
+    return isNsProject;
   }
 
   try {
     const config = getJsonFile<any>(tree, 'package.json');
-    return config.nativescript.id;
+    isNsProject = config.nativescript.id;
   } catch(e) {
-    return false;
+    isNsProject = false;
   }
+
+  return isNsProject;
 };
 
+let isWebProject;
 export const web = (tree: Tree, options: any) => {
+  if (isWebProject !== undefined) {
+    return isWebProject;
+  }
+
   if (options.web !== undefined) {
     return options.web;
   }
@@ -318,15 +331,18 @@ export const web = (tree: Tree, options: any) => {
   const configRelativePath = join('.', configPath);
   const file = tree.get(configRelativePath)
   if (!file) {
+    isWebProject = false;
     return false;
   }
 
   try {
     const config = getJsonFile<CliConfig>(tree, 'package.json');
-    return Object.values(config.apps).some(app => app.index);
+    isWebProject = Object.values(config.apps).some(app => app.index);
   } catch(e) {
-    return false;
+    isWebProject = false;
   }
+
+  return isWebProject;
 };
 
 const getJsonFile = <T>(tree: Tree, path: string) => {
