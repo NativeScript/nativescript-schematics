@@ -12,8 +12,6 @@ export interface Schema {
     sourceDir?: string;
     web?: boolean,
     nativescript?: boolean,
-    nsext?: string,
-    webext?: string,
     name: string;
     /**
      * Specifies if the style will be in the ts file.

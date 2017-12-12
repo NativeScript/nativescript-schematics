@@ -12,12 +12,6 @@
       "type": "boolean",
       "alias": "ns"
     },
-    "webext": {
-      "type": "string"
-    },
-    "nsext": {
-      "type": "string"
-    },
     "path": {
       "type": "string",
       "default": "app"
