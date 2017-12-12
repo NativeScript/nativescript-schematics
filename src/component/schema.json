@@ -5,19 +5,18 @@
   "type": "object",
   "properties": {
     "web": {
-      type: "boolean",
-      alias: "w"
+      "type": "boolean",
+      "alias": "w"
     },
     "nativescript": {
-      type: "boolean",
-      alias: "ns"
+      "type": "boolean",
+      "alias": "ns"
     },
-    "nsext?": {
-      type: "string",
-      "default": "shaqllq"
+    "webext": {
+      "type": "string"
     },
-    "webext?": {
-      type: "string"
+    "nsext": {
+      "type": "string"
     },
     "path": {
       "type": "string",

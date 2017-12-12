@@ -18,6 +18,7 @@ import { InsertChange } from '@schematics/angular/utility/change';
 import { dasherize } from '@schematics/angular/strings';
 
 import {
+  Extensions,
   addSymbolToComponentMetadata,
   getSourceFile,
   ns,
@@ -27,7 +28,7 @@ import {
 import { Schema as ComponentOptions } from './schema';
 import { Path, normalize } from '@angular-devkit/core';
 
-let extensions;
+let extensions: Extensions;
 export default function (options: ComponentOptions): Rule {
   let { name, sourceDir, path, flat } = options;
   name = dasherize(name);
@@ -37,14 +38,13 @@ export default function (options: ComponentOptions): Rule {
   );
   const componentPath = normalize(`${dest}/${name}.component.ts`);
   const templatePath = normalize(`${dest}/${name}.component.html`);
-  console.log(options.nsext)
 
   return chain([
     externalSchematic('@schematics/angular', 'component', options),
     validateOptions(options),
 
     (tree: Tree) => {
-      extensions = getExtensions(tree, options);
+      extensions = getExtensions(tree);
       return tree;
     },
 
@@ -108,6 +108,7 @@ const addFiles = (options: ComponentOptions) => {
       dasherize,
       'if-flat': (s: string) => options.flat ? '' : s,
       ...options as object,
+      nsext: extensions.ns,
     }),
     move(sourceDir),
   ]);

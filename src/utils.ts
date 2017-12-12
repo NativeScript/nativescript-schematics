@@ -27,7 +27,12 @@ class RemoveContent {
   }
 }
 
-const DEFAULT_EXTENSIONS = {
+export interface Extensions {
+  web: string,
+  ns: string,
+};
+
+const DEFAULT_EXTENSIONS: Extensions = {
   web: '',
   ns: '.tns'
 };
@@ -345,24 +350,9 @@ export const web = (tree: Tree, options: any) => {
   return isWebProject;
 };
 
-export const getExtensions = (tree: Tree, options: any) => {
-  const { webext: web, nsext: ns } = options;
-  console.log(options.webext)
-  console.log(web)
-  const flags: any = {};
-  if (web !== undefined) {
-    flags.web = web;
-  }
-
-  if (ns !== undefined) {
-    flags.ns = ns;
-  }
-  console.log(flags)
+export const getExtensions = (tree: Tree): Extensions => {
   const config = getPackageJson(tree) as any;
-
-  const ext = Object.assign({}, DEFAULT_EXTENSIONS, config.extensions, flags);
-  console.log(ext)
-  return ext;
+  return Object.assign({}, DEFAULT_EXTENSIONS, config.extensions);
 };
 
 const getPackageJson = (tree: Tree) =>
