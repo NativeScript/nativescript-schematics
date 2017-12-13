@@ -113,7 +113,7 @@ const fillExtensions = (tree: Tree, options: ModuleOptions) => {
   };
 
   if (options.routing) {
-    originalExtensions.push({
+    Object.assign(originalExtensions, {
       [getRoutingBasename(options)]: '.ts',
     });
   }
