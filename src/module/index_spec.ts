@@ -123,4 +123,17 @@ fdescribe('Module Schematic', () => {
       expect(tree.exists(nsModulePath)).toBeFalsy();
     });
   });
+
+  describe('when in ns+web project', () => {
+    let tree;
+    beforeEach(() => {
+      const options = { ...defaultOptions, nativescript: true, web: true };
+      tree = schematicRunner.runSchematic('module', options, appTree);
+    });
+
+    it('should generate both web and ns module files', () => {
+      expect(tree.exists(nsModulePath)).toBeTruthy();
+      expect(tree.exists(webModulePath)).toBeTruthy();
+    });
+  })
 });
