@@ -372,3 +372,10 @@ const getJsonFile = <T>(tree: Tree, path: string) => {
   }
 };
 
+export const removeNsSchemaOptions = (options: any) => {
+  const duplicate = { ...options };
+  delete duplicate['web'];
+  delete duplicate['nativescript'];
+
+  return duplicate;
+};

@@ -24,6 +24,7 @@ import {
   ns,
   web,
   getExtensions,
+  removeNsSchemaOptions,
 } from "../utils";
 import { Schema as ComponentOptions } from './schema';
 import { Path, normalize } from '@angular-devkit/core';
@@ -40,7 +41,7 @@ export default function (options: ComponentOptions): Rule {
   const templatePath = normalize(`${dest}/${name}.component.html`);
 
   return chain([
-    externalSchematic('@schematics/angular', 'component', options),
+    externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options)),
     validateOptions(options),
 
     (tree: Tree) => {

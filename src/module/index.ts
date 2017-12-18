@@ -18,6 +18,7 @@ import {
   copy,
   ns,
   web,
+  removeNsSchemaOptions,
 } from '../utils';
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 
@@ -32,7 +33,7 @@ let extensions: Extensions;
 export default function (options: ModuleOptions): Rule {
   return chain([
     validateOptions(options),
-    externalSchematic('@schematics/angular', 'module', options),
+    externalSchematic('@schematics/angular', 'module', removeNsSchemaOptions(options)),
 
     (tree: Tree) => fillExtensions(tree, options),
 
