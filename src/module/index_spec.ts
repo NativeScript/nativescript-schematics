@@ -1,12 +1,13 @@
 import { join } from 'path';
 
+import { Tree, VirtualTree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
-import { Tree, VirtualTree } from '@angular-devkit/schematics';
+import { DEFAULT_EXTENSIONS, createEmptyProject } from '../utils';
 
-describe('Module Schematic', () => {
+fdescribe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
@@ -21,87 +22,105 @@ describe('Module Schematic', () => {
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
   );
-  const modulePath = `/${sourceDir}/${path}/${name}/${name}.module.ts`;
-  const routingModulePath = `/${sourceDir}/${path}/${name}/${name}-routing.module.ts`;
+  const nsModulePath = `/${sourceDir}/${path}/${name}/${name}.module${DEFAULT_EXTENSIONS.ns}.ts`;
+  const nsRoutingModulePath = `/${sourceDir}/${path}/${name}/${name}-routing.module${DEFAULT_EXTENSIONS.ns}.ts`;
+
+  const webModulePath = `/${sourceDir}/${path}/${name}/${name}.module${DEFAULT_EXTENSIONS.web}.ts`;
   let appTree: Tree;
   
-  beforeAll(() => {
-    appTree = createAppModule(new VirtualTree());
+  beforeEach(() => {
+    appTree = new VirtualTree();
+    appTree = createAppModule(appTree);
+    appTree = createEmptyProject(appTree);
   });
-
  
-  it('should create three files when in nativescript-only project', () => {
-    const options = { ...defaultOptions };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+  describe('when in ns-only project', () => {
+    describe('with default options', () => {
+      let tree;
+      beforeEach(() => {
+        const options = { ...defaultOptions };
+        tree = schematicRunner.runSchematic('module', options, appTree);
+      });
 
-    expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);
-    expect(tree.files.length).toEqual(3);
-  });
+      it('should create tns module file', () => {
+        expect(tree.exists(nsModulePath)).toBeTruthy();
+        expect(getFileContent(tree, nsModulePath)).toContain('NativeScriptCommonModule');
+        expect(getFileContent(tree, nsModulePath)).toContain('class FooModule');
+      });
 
- 
-  it('should create three files when in web-only project', () => {
-    const options = { ...defaultOptions, nativescript: false, web: true };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+      it('should not create web module file', () => {
+        expect(tree.exists(webModulePath)).toBeFalsy();
+      });
 
-    expect(tree.files.indexOf(modulePath)).toBeGreaterThanOrEqual(0);
-    expect(tree.files.length).toEqual(3);
-  });
+      it('should not have CommonModule imported', () => {
+        const content = getFileContent(tree, nsModulePath);
+        expect(content).not.toMatch(`import { CommonModule } from '@angular/common'`);
 
-  it('should not have CommonModule imported', () => {
-    const options = { ...defaultOptions };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
-
-    const content = getFileContent(tree, modulePath);
-    expect(content).not.toMatch(`import { CommonModule } from '@angular/common'`);
-
-    expect(content).not.toMatch(new RegExp(
-      '@NgModule\\(\\{\\s*' +
-        'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
+        expect(content).not.toMatch(new RegExp(
+          '@NgModule\\(\\{\\s*' +
+          'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
           'CommonModule'
-    ));
-  });
+        ));
+      });
 
-  it('should have NativeScriptCommonModule imported', () => {
-    const options = { ...defaultOptions };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+      it('should have NativeScriptCommonModule imported', () => {
+        const content = getFileContent(tree, nsModulePath);
+        expect(content).toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+      });
+    });
 
-    const content = getFileContent(tree, modulePath);
-    expect(content).toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
-  });
+    it('should not have NativeScriptCommonModule imported if that is specified explicitly', () => {
+      const options = { ...defaultOptions, commonModule: false };
+      const tree = schematicRunner.runSchematic('module', options, appTree);
 
-  it('should not have NativeScriptCommonModule imported if that is specified explicitly', () => {
-    const options = { ...defaultOptions, commonModule: false };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+      const content = getFileContent(tree, nsModulePath);
+      expect(content).not.toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+    });
 
-    const content = getFileContent(tree, modulePath);
-    expect(content).not.toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
-  });
+    it('should not have RouterModule imported in the routing module', () => {
+      const options = { ...defaultOptions, routing: true };
+      const tree = schematicRunner.runSchematic('module', options, appTree);
 
-  it('should not have RouterModule imported in the routing module', () => {
-    const options = { ...defaultOptions, routing: true };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+      const content = getFileContent(tree, nsRoutingModulePath);
+      expect(content).not.toMatch(`import { RouterModule } from '@angular/router'`);
 
-    const content = getFileContent(tree, routingModulePath);
-    expect(content).not.toMatch(`import { RouterModule } from '@angular/router'`);
-
-    expect(content).not.toMatch(new RegExp(
-      '@NgModule\\(\\{\\s*' +
+      expect(content).not.toMatch(new RegExp(
+        '@NgModule\\(\\{\\s*' +
         'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
-          'RouterModule.forChild\\('
-    ));
+        'RouterModule.forChild\\('
+      ));
 
-    expect(content).not.toMatch(new RegExp(
-      '@NgModule\\(\\{\\s*' +
+      expect(content).not.toMatch(new RegExp(
+        '@NgModule\\(\\{\\s*' +
         'exports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
-          'RouterModule'
-    ));
+        'RouterModule'
+      ));
+    });
+
+    it('should have NativeScriptRouterModule imported', () => {
+      const options = { ...defaultOptions, routing: true };
+      const tree = schematicRunner.runSchematic('module', options, appTree);
+
+      const content = getFileContent(tree, nsRoutingModulePath);
+      expect(content).toMatch(`import { NativeScriptRouterModule } from 'nativescript-angular/router'`);
+    });
   });
 
-  it('should have NativeScriptRouterModule imported', () => {
-    const options = { ...defaultOptions, routing: true };
-    const tree = schematicRunner.runSchematic('module', options, appTree);
+  describe('when in web-only project', () => {
+    let tree;
+    beforeEach(() => {
+      const options = { ...defaultOptions, nativescript: false, web: true };
+      tree = schematicRunner.runSchematic('module', options, appTree);
+    });
 
-    const content = getFileContent(tree, routingModulePath);
-    expect(content).toMatch(`import { NativeScriptRouterModule } from 'nativescript-angular/router'`);
+    it('should create web module file', () => {
+      expect(tree.files.indexOf(webModulePath)).toBeGreaterThanOrEqual(0);
+      expect(getFileContent(tree, webModulePath)).toContain('CommonModule');
+      expect(getFileContent(tree, webModulePath)).toContain('class FooModule');
+    });
+
+    it('should not create ns module file', () => {
+      expect(tree.exists(nsModulePath)).toBeFalsy();
+    });
   });
 });

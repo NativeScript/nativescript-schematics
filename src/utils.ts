@@ -32,7 +32,7 @@ export interface Extensions {
   ns: string,
 };
 
-const DEFAULT_EXTENSIONS: Extensions = {
+export const DEFAULT_EXTENSIONS: Extensions = {
   web: '',
   ns: '.tns'
 };
@@ -307,33 +307,20 @@ export const copy = (tree: Tree, from: string, to: string) => {
   tree.create(to, file.content);
 }
 
-let isNsProject;
 export const ns = (tree: Tree, options: any) => {
-  if (isNsProject !== undefined) {
-    return isNsProject;
-  }
-
   if (options.nativescript !== undefined) {
-    isNsProject = options.nativescript;
-    return isNsProject;
+    return options.nativescript;
   }
 
   try {
     const config = getPackageJson(tree) as any;
-    isNsProject = config.nativescript.id;
+    return config.nativescript.id;
   } catch(e) {
-    isNsProject = false;
+    return false;
   }
-
-  return isNsProject;
 };
 
-let isWebProject;
 export const web = (tree: Tree, options: any) => {
-  if (isWebProject !== undefined) {
-    return isWebProject;
-  }
-
   if (options.web !== undefined) {
     return options.web;
   }
@@ -342,12 +329,10 @@ export const web = (tree: Tree, options: any) => {
 
   try {
     const config = getJsonFile<CliConfig>(tree, configRelativePath);
-    isWebProject = Object.values(config.apps).some(app => app.index);
+    return Object.values(config.apps).some(app => app.index);
   } catch(e) {
-    isWebProject = false;
+    return false;
   }
-
-  return isWebProject;
 };
 
 export const getExtensions = (tree: Tree): Extensions => {
@@ -379,3 +364,10 @@ export const removeNsSchemaOptions = (options: any) => {
 
   return duplicate;
 };
+
+export function createEmptyProject(tree: Tree): Tree {
+  tree.create('/.angular-cli.json', JSON.stringify({}));
+  tree.create('/package.json', JSON.stringify({}));
+
+  return tree;
+}
