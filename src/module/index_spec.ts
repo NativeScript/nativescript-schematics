@@ -7,7 +7,7 @@ import { getFileContent, createAppModule } from '@schematics/angular/utility/tes
 import { Schema as ModuleOptions } from './schema';
 import { DEFAULT_EXTENSIONS, createEmptyProject } from '../utils';
 
-fdescribe('Module Schematic', () => {
+describe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
