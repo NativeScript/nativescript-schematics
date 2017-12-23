@@ -3,6 +3,7 @@ import {
   Tree,
   chain,
   externalSchematic,
+  SchematicsException,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { dasherize, normalize } from '@angular-devkit/core';
@@ -12,15 +13,16 @@ import { Schema as ModuleOptions } from './schema';
 import {
   getExtensions,
   getSourceFile,
-  findFullImports,
-  findMetadataValueInArray,
   removeNode,
   copy,
   ns,
   web,
   removeNsSchemaOptions,
 } from '../utils';
-import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
+import {
+  findFullImports,
+  findMetadataValueInArray,
+} from '../ast-utils';
 
 interface Extensions {
   web: string;

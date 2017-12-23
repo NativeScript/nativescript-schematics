@@ -19,13 +19,13 @@ import { dasherize } from '@schematics/angular/strings';
 
 import {
   Extensions,
-  addSymbolToComponentMetadata,
   getSourceFile,
   ns,
   web,
   getExtensions,
   removeNsSchemaOptions,
 } from "../utils";
+import { addSymbolToComponentMetadata } from "../ast-utils";
 import { Schema as ComponentOptions } from './schema';
 import { Path, normalize } from '@angular-devkit/core';
 
