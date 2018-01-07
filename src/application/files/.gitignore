@@ -1,0 +1,8 @@
+node_modules/
+platforms/
+node_modules/
+platforms/
+hooks/
+
+<%= sourceDir %>/**/*.js
+
