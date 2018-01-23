@@ -22,6 +22,12 @@
         "schema": "./module/schema.json"
     },
 
+    "app-resources": {
+        "factory": "./app-resources",
+        "description": "Create App Resources",
+        "schema": "./app-resources/schema.json"
+    },
+
     "class": {
       "aliases": [ "cl" ],
       "extends": "@schematics/angular:class"

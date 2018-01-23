@@ -1,25 +1,33 @@
 import {
   apply,
+  chain,
   url,
   move,
   template,
-  branchAndMerge,
   mergeWith,
   TemplateOptions,
+  schematic,
 } from '@angular-devkit/schematics';
 import * as stringUtils from '@schematics/angular/strings';
 
 export default function (options: any) {
-  console.log(options);
-  return branchAndMerge(mergeWith(
-    apply(url('./files'), [
-      template(<TemplateOptions>{
-        utils: stringUtils,
-        sourcedir: options.sourceDir || 'app',
-        dot: ".",
-        ...options as any,
-      }),
-      move(options.name || '.'),
-    ])
-  ))
+  const appPath = options.name || '.';
+  const sourcedir = options.sourceDir || 'app';
+
+  return chain([
+    mergeWith(
+      apply(url('./files'), [
+        template(<TemplateOptions>{
+          utils: stringUtils,
+          sourcedir,
+          dot: '.',
+          ...options as any,
+        }),
+        move(appPath),
+      ]),
+    ),
+    schematic('app-resources', {
+      path: `${appPath}/${sourcedir}`,
+    }),
+  ])
 }
