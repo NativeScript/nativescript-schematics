@@ -16,6 +16,7 @@ export default function (options: any) {
       template(<TemplateOptions>{
         utils: stringUtils,
         sourcedir: options.sourceDir || 'app',
+        dot: ".",
         ...options as any,
       }),
       move(options.name || '.'),
