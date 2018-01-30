@@ -8,7 +8,14 @@
 android {  
   defaultConfig {  
     generatedDensities = []
-    applicationId = "org.nativescript.leapp"  
+    applicationId = "__PACKAGE__" 
+    
+    //override supported platforms
+    // ndk {
+    //       abiFilters.clear()
+    //   		abiFilters "armeabi-v7a"
+ 		// }
+  
   }  
   aaptOptions {  
     additionalParameters "--no-version-vectors"  
