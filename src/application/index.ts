@@ -8,7 +8,7 @@ import {
   TemplateOptions,
   schematic,
 } from '@angular-devkit/schematics';
-import * as stringUtils from '@schematics/angular/strings';
+import { stringUtils } from '../utils';
 
 export default function (options: any) {
   const appPath = options.name || '.';

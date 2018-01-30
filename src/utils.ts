@@ -5,7 +5,7 @@ import {
   Tree,
 } from '@angular-devkit/schematics';
 import { configPath, CliConfig } from '@schematics/angular/utility/config';
-
+import * as angularStringUtils from '@schematics/angular/strings';
 import * as ts from 'typescript';
 
 import { Node } from "./ast-utils";
@@ -113,3 +113,25 @@ export function createEmptyProject(tree: Tree): Tree {
 
   return tree;
 }
+
+/**
+ * Sanitizes a given string by removing all characters that
+ * are not letters or digits.
+ *
+ ```javascript
+ sanitize('nativescript-app');         // 'nativescriptapp'
+ sanitize('action_name');       // 'actioname'
+ sanitize('css-class-name');    // 'cssclassname'
+ sanitize('my favorite items'); // 'myfavoriteitems'
+ ```
+
+ @method sanitize
+ @param {String} str The string to sanitize.
+ @return {String} the sanitized string.
+*/
+export const sanitize = (str: string): string => str
+  .split("")
+  .filter(char => /[a-zA-Z0-9]/.test(char))
+  .join("");
+
+export const stringUtils = { ...angularStringUtils, sanitize };
