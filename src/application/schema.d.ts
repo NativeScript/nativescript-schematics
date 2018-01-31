@@ -8,7 +8,7 @@ export interface Schema {
      */
     sourceDir?: string;
     /**
-     * Create a minimal app (inline styles/templates, no theme or routing).
+     * Create a minimal app (empty template, no theme or routing).
      */
     minimal?: boolean;
     /**

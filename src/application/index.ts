@@ -8,11 +8,14 @@ import {
   TemplateOptions,
   schematic,
 } from '@angular-devkit/schematics';
-import { stringUtils } from '../utils';
 
-export default function (options: any) {
+import { stringUtils } from '../utils';
+import { Schema as ApplicationOptions } from './schema';
+
+export default function (options: ApplicationOptions) {
   const appPath = options.name || '.';
   const sourcedir = options.sourceDir || 'app';
+  const appRootSelector = `${options.prefix}-root`;
 
   return chain([
     mergeWith(
@@ -21,6 +24,7 @@ export default function (options: any) {
           utils: stringUtils,
           sourcedir,
           dot: '.',
+          appRootSelector,
           ...options as any,
         }),
         move(appPath),
