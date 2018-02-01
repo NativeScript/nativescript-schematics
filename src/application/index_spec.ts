@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { Schema as ApplicationOptions } from './schema';
 
-fdescribe('Application Schematic', () => {
+describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     path.join(__dirname, '../collection.json'),
@@ -23,7 +23,7 @@ fdescribe('Application Schematic', () => {
 
     const tree = schematicRunner.runSchematic('application', options);
     const files = tree.files;
-    // expect(files.indexOf('/foo/.angular-cli.json')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/.angular-cli.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);

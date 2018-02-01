@@ -30,6 +30,11 @@ export default function (options: ApplicationOptions) {
         move(appPath),
       ]),
     ),
+    schematic('ng-cli-config', {
+      path: appPath,
+      style: options.style,
+      sourceDir: options.sourceDir,
+    }),
     schematic('app-resources', {
       path: `${appPath}/${sourcedir}`,
     }),

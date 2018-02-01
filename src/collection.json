@@ -28,6 +28,12 @@
         "schema": "./app-resources/schema.json"
     },
 
+    "ng-cli-config": {
+        "factory": "./ng-cli-config",
+        "description": "Create .angular-cli.json",
+        "schema": "./ng-cli-config/schema.json"
+    },
+
     "class": {
       "aliases": [ "cl" ],
       "extends": "@schematics/angular:class"

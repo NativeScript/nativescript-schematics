@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNgCliConfig",
+  "title": "NG CLI Config Options Schema",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Specifies the destination path.",
+      "alias": "p",
+      "default": "."
+    },
+    "style": {
+      "type": "string",
+      "description": "The file extension to be used for style files.",
+      "default": "css"
+    },
+    "sourceDir": {
+      "type": "string",
+      "description": "The path of the source directory.",
+      "default": "app",
+      "alias": "sd"
+    }
+  }
+}
