@@ -1,18 +1,13 @@
 {
-  "name": "nativescript-schematics",
-  "version": "0.0.0",
-  "description": "A schematics",
+  "name": "@nativescript/schematics",
+  "version": "0.0.1",
+  "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json",
     "test": "npm run build && jasmine **/*_spec.js",
     "prepare": "npm run build"
   },
-  "keywords": [
-    "schematics"
-  ],
-  "author": "",
-  "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
     "typescript": "^2.5.2",
@@ -25,5 +20,27 @@
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "jasmine": "^2.8.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nativescript/nativescript-schematics.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nativescript/nativescript-schematics/issues"
+  },
+  "homepage": "https://github.com/nativescript/nativescript-schematics#readme",
+  "keywords": [
+    "schematics",
+    "NativeScript",
+    "Angular",
+    "code generation",
+    "blueprints"
+  ],
+  "author": {
+    "name": "NativeScript Team",
+  },
+  "contributors": [
+    "Stanimira Vlaeva <Stanimira.Vlaeva@progress.com>"
+  ],
+  "license": "Apache-2.0",
 }
