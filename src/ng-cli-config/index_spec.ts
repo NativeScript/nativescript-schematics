@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { Schema as NgCliConfigOptions } from './schema';
 
-fdescribe('Ng CLI Config Schematic', () => {
+describe('Ng CLI Config Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     path.join(__dirname, '../collection.json'),
@@ -14,6 +14,7 @@ fdescribe('Ng CLI Config Schematic', () => {
     path: appPath,
     sourceDir: 'app',
     style: 'css',
+    prefix: 'app',
   };
   const configPath = `/${appPath}/.angular-cli.json`;
 
@@ -33,12 +34,19 @@ fdescribe('Ng CLI Config Schematic', () => {
     expect(getFileContent(tree, configPath)).toContain(`"styleExt": "${style}"`);
   });
 
-
   it('should respect the source directory option', () => {
     const sourceDir = 'src/app';
     const options = { ...defaultOptions, sourceDir };
 
     const tree = schematicRunner.runSchematic('ng-cli-config', options);
     expect(getFileContent(tree, configPath)).toContain(`"root": "${sourceDir}"`);
+  });
+
+  it('should respect the prefix option', () => {
+    const prefix = 'my-app-prefix';
+    const options = { ...defaultOptions, prefix };
+
+    const tree = schematicRunner.runSchematic('ng-cli-config', options);
+    expect(getFileContent(tree, configPath)).toContain(`"prefix": "${prefix}"`);
   });
 });

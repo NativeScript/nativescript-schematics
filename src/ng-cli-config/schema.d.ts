@@ -11,4 +11,8 @@ export interface Schema {
      * The path of the source directory.
      */
     sourceDir: string;
+    /**
+     * The prefix to apply to generated selectors.
+     */
+    prefix: string;
  }

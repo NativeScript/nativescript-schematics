@@ -7,7 +7,6 @@
     "path": {
       "type": "string",
       "description": "Specifies the destination path.",
-      "alias": "p",
       "default": "."
     },
     "style": {
@@ -20,6 +19,11 @@
       "description": "The path of the source directory.",
       "default": "app",
       "alias": "sd"
+    },
+    "prefix": {
+      "type": "string",
+      "description": "The prefix to apply to generated selectors.",
+      "default": "app"
     }
   }
 }

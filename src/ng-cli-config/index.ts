@@ -14,9 +14,8 @@ export default function (options: NgCliConfigSchema) {
   return branchAndMerge(mergeWith(
     apply(url('./files'), [
       template(<TemplateOptions>{
-        sourcedir: options.sourceDir,
-        style: options.style,
         dot: ".",
+        ...options,
       }),
       move(options.path),
     ])

@@ -1,7 +1,8 @@
 {
     "apps": [
         {
-            "root": "<%= sourcedir %>"
+            "root": "<%= sourceDir %>",
+            "prefix": "<%= prefix %>"
         }
     ],
     "defaults": {
