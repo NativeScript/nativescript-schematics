@@ -70,4 +70,26 @@ describe('Application Schematic', () => {
       .toMatch(new RegExp('AppComponent {\\s*}'));
   });
 
+  it('should handle the theme flag', () => {
+    const options = { ...defaultOptions, theme: false };
+    const tree = schematicRunner.runSchematic('application', options);
+
+    const appComponent = '/foo/app/app.component.ts';
+    expect(getFileContent(tree, appComponent))
+      .not
+      .toMatch(new RegExp('class="h1 text-center"'));
+
+     expect(getFileContent(tree, appComponent))
+      .not
+      .toMatch(new RegExp('class="btn btn-primary btn-active"'));
+
+     expect(getFileContent(tree, appComponent))
+      .not
+      .toMatch(new RegExp('class="h2 text-center"'));
+
+    const appCss = '/foo/app/app.css';
+    expect(getFileContent(tree, appCss))
+      .not
+      .toMatch(new RegExp('@import "~nativescript-theme-core/css/core.light.css";'));
+  });
 }); 

@@ -26,7 +26,7 @@ describe('Ng CLI Config Schematic', () => {
     expect(files.indexOf(configPath)).toBeGreaterThanOrEqual(0);
   }); 
 
-  it('should respect the style extension option', () => {
+  it('should handle the style extension option', () => {
     const style = 'scss';
     const options = { ...defaultOptions, style };
 
@@ -34,7 +34,7 @@ describe('Ng CLI Config Schematic', () => {
     expect(getFileContent(tree, configPath)).toContain(`"styleExt": "${style}"`);
   });
 
-  it('should respect the source directory option', () => {
+  it('should handle the source directory option', () => {
     const sourceDir = 'src/app';
     const options = { ...defaultOptions, sourceDir };
 
@@ -42,7 +42,7 @@ describe('Ng CLI Config Schematic', () => {
     expect(getFileContent(tree, configPath)).toContain(`"root": "${sourceDir}"`);
   });
 
-  it('should respect the prefix option', () => {
+  it('should handle the prefix option', () => {
     const prefix = 'my-app-prefix';
     const options = { ...defaultOptions, prefix };
 
