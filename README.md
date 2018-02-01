@@ -1,28 +1,58 @@
-# Getting Started With Schematics
+# NativeScript Schematics
 
-This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.
+This repository contains schematics for generating components in NativeScript Angular apps using the Angular CLI.
 
-### Testing
+## Installation
 
-To test locally, install `@angular-devkit/schematics` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
-
-Check the documentation with
+### Install Angular CLI
 ```bash
-schematics --help
+npm i -g @angular/cli
 ```
 
-### Unit Testing
-
-`npm run test` will run the unit tests, using Jasmine as a runner and test framework.
-
-### Publishing
-
-To publish, simply do:
-
+### Install NativeScript Schematics
 ```bash
-npm run build
-npm publish
+npm i -g @nativescript/schematics
 ```
 
-That's it!
- 
+## Usage
+
+### Creating a new project
+To generate new NativeScript Angular project, you can use `ng new` with `@nativescript/schematics` specified as the schematics collection.
+
+```bash
+ng new --collection=@nativescript/schematics my-mobile-app
+```
+
+You can specify the following options when generating new applications:
+| Option | Description
+| -- | -- |
+| routing | Generates a routing module.
+| prefix | The prefix to apply to generated selectors.
+| theme | Specifies whether the {N} css theme should be included.
+| minimal | Generates a minimal app (empty template, no theme).
+
+### Prerequisites for using in existing project
+You need to add an `.angular-cli.json` configuration file to your NativeScript project root directory. That will allow you to use Angular CLI for generating components.
+```json
+{
+    "apps": [
+        {
+            "root": ".",
+            "prefix": "your-app-prefix"
+        }
+    ],
+    "defaults": {
+        "styleExt": "css",
+        "schematics": {
+            "collection": "@nativescript/schematics"
+        }
+    }
+}
+```
+
+> **Note:** If you created your project with `ng new`, your project already has `.angular-cli.json`.
+
+### Generating Components, Modules, Directives, etc.
+You can use the `ng generate` (or just `ng g`) command to generate pretty much any Angular building unit - components, modules, directives, classes and so on. For the full list, check out the Angular CLI [repo](https://github.com/angular/angular-cli#generating-components-directives-pipes-and-services).
+Some of these generators are overwritten in NativeScript Schematics to suite the needs of a NativeScript Angular application. 
+
