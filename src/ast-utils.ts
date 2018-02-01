@@ -1,5 +1,6 @@
-import { getDecoratorMetadata } from '@schematics/angular/utility/ast-utils';
+import { getDecoratorMetadata, addImportToModule, addBootstrapToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
+import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
 export interface Node {
@@ -250,6 +251,42 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
     });
 
     return values;
+}
+
+export function addBootstrapToNgModule(modulePath: string): Rule {
+  return (host: Tree) => {
+    const content = host.read(modulePath);
+    if (!content) {
+      throw new SchematicsException(`File ${modulePath} does not exist.`);
+    }
+    const sourceText = content.toString('utf-8');
+    const source = ts.createSourceFile(modulePath, sourceText, ts.ScriptTarget.Latest, true);
+
+    const componentModule = './app.component';
+
+    const importChanges = addImportToModule(source,
+      modulePath,
+      'NativeScriptModule',
+      'nativescript-angular/nativescript.module');
+    const bootstrapChanges = addBootstrapToModule(source,
+      modulePath,
+      'AppComponent',
+      componentModule);
+    const changes = [
+      ...importChanges,
+      ...bootstrapChanges,
+    ];
+
+    const recorder = host.beginUpdate(modulePath);
+    for (const change of changes) {
+      if (change instanceof InsertChange) {
+        recorder.insertLeft(change.pos, change.toAdd);
+      }
+    }
+    host.commitUpdate(recorder);
+
+    return host;
+  };
 }
 
 function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {

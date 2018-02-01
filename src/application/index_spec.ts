@@ -28,7 +28,6 @@ describe('Application Schematic', () => {
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/webpack.config.js')).toBeGreaterThanOrEqual(0);
-    // expect(files.indexOf('/foo/tslint.json')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.ts')).toBeGreaterThanOrEqual(0);
@@ -91,5 +90,21 @@ describe('Application Schematic', () => {
     expect(getFileContent(tree, appCss))
       .not
       .toMatch(new RegExp('@import "~nativescript-theme-core/css/core.light.css";'));
+  });
+
+  it('should handle the routing flag', () => {
+    const options = { ...defaultOptions, routing: true };
+    const tree = schematicRunner.runSchematic('application', options);
+
+    const appModule = '/foo/app/app.module.ts';
+    expect(tree.exists(appModule)).toBeTruthy();
+    expect(getFileContent(tree, appModule)).toMatch(new RegExp(
+      '@NgModule\\(\\{\\s*' +
+      'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
+      'AppRoutingModule'
+    ));
+
+    const appRoutingModule = '/foo/app/app-routing.module.ts';
+    expect(tree.exists(appRoutingModule)).toBeTruthy();
   });
 }); 

@@ -10,6 +10,13 @@ import * as ts from 'typescript';
 
 import { Node } from "./ast-utils";
 
+class FileNotFoundException extends Error {
+  constructor(fileName: string) {
+    const message = `File ${fileName} not found!`;
+    super(message);
+  }
+}
+
 export interface Extensions {
   web: string,
   ns: string,
@@ -77,18 +84,29 @@ export const web = (tree: Tree, options: any) => {
   }
 };
 
-export const getExtensions = (tree: Tree): Extensions => {
-  const config = getPackageJson(tree) as any;
-  return Object.assign({}, DEFAULT_EXTENSIONS, config.extensions);
+export const getExtensions = (tree: Tree, passedExtensions?: any): Extensions => {
+  const assignOrder = [DEFAULT_EXTENSIONS];
+
+  try {
+    const config = getPackageJson(tree) as any;
+    assignOrder.push(config.extensions);
+  } catch (e) {
+    if (!(e instanceof FileNotFoundException)) {
+      throw e;
+    }
+  }
+
+  assignOrder.push(passedExtensions);
+  return Object.assign({}, ...assignOrder);
 };
 
 const getPackageJson = (tree: Tree) =>
-  getJsonFile(tree, 'package.json');
+    getJsonFile(tree, 'package.json');
 
 const getJsonFile = <T>(tree: Tree, path: string) => {
   const file = tree.get(path);
   if (!file) {
-    throw new SchematicsException(`File ${path} not found!`);
+    throw new FileNotFoundException(path);
   }
 
   try {
@@ -103,6 +121,8 @@ export const removeNsSchemaOptions = (options: any) => {
   const duplicate = { ...options };
   delete duplicate['web'];
   delete duplicate['nativescript'];
+  delete duplicate['nsExtension'];
+  delete duplicate['webExtension'];
 
   return duplicate;
 };
