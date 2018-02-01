@@ -37,10 +37,10 @@
     "blueprints"
   ],
   "author": {
-    "name": "NativeScript Team",
+    "name": "NativeScript Team"
   },
   "contributors": [
     "Stanimira Vlaeva <Stanimira.Vlaeva@progress.com>"
   ],
-  "license": "Apache-2.0",
+  "license": "Apache-2.0"
 }
