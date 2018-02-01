@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "build": "tsc -p tsconfig.json",

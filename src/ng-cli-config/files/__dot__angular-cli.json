@@ -8,7 +8,7 @@
     "defaults": {
         "styleExt": "<%= style %>",
         "schematics": {
-            "collection": "nativescript-schematics"
+            "collection": "@nativescript/schematics"
         }
     }
 }
