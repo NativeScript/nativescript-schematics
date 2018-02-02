@@ -29,6 +29,7 @@ You can specify the following options when generating new applications:
 | routing | Generates a routing module.
 | prefix | The prefix to apply to generated selectors.
 | theme | Specifies whether the {N} css theme should be included.
+| style | Specifies whether the app should use 'css' or 'scss' files for styling.
 | minimal | Generates a minimal app (empty template, no theme).
 
 ### Prerequisites for using in existing project
