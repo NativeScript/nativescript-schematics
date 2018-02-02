@@ -52,5 +52,11 @@ export default function (options: ApplicationOptions) {
     schematic('app-resources', {
       path: `${appPath}/${sourcedir}`,
     }),
+    schematic('styling', {
+      appPath,
+      sourceDir: sourcedir,
+      extension: options.style,
+      theme: options.theme,
+    }),
   ])
 }

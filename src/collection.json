@@ -28,6 +28,12 @@
         "schema": "./app-resources/schema.json"
     },
 
+    "styling": {
+        "factory": "./styling",
+        "description": "Create styling files",
+        "schema": "./styling/schema.json"
+    },
+
     "ng-cli-config": {
         "factory": "./ng-cli-config",
         "description": "Create .angular-cli.json",

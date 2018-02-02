@@ -17,6 +17,12 @@ class FileNotFoundException extends Error {
   }
 }
 
+export interface NodeDependency {
+  name: string;
+  version: string;
+  type: 'dependency' | 'devDependency'
+}
+
 export interface Extensions {
   web: string,
   ns: string,
@@ -100,8 +106,31 @@ export const getExtensions = (tree: Tree, passedExtensions?: any): Extensions =>
   return Object.assign({}, ...assignOrder);
 };
 
+export const addDependency = (tree: Tree, dependency: NodeDependency, packageJsonDir?: string) => {
+  const path = packageJsonDir ?
+    `${packageJsonDir}/package.json` :
+    'package.json';
+
+  const packageJson: any = getJsonFile(tree, path);
+
+  if (dependency.type === 'dependency') {
+    const dependenciesMap = Object.assign({}, packageJson.dependecies);
+    packageJson.dependecies = setDependency(dependenciesMap, dependency);
+  } else {
+    const dependenciesMap = Object.assign({}, packageJson.devDependencies);
+    packageJson.devDependencies = setDependency(dependenciesMap, dependency);
+  }
+
+  tree.overwrite(path, JSON.stringify(packageJson, null, 2));
+};
+
+const setDependency = (
+  dependenciesMap: { [key: string]: string },
+  { name, version }: NodeDependency
+) => Object.assign(dependenciesMap, { [name]: version });
+
 const getPackageJson = (tree: Tree) =>
-    getJsonFile(tree, 'package.json');
+  getJsonFile(tree, 'package.json');
 
 const getJsonFile = <T>(tree: Tree, path: string) => {
   const file = tree.get(path);
@@ -139,7 +168,7 @@ export function createEmptyProject(tree: Tree): Tree {
  * are not letters or digits.
  *
  ```javascript
- sanitize('nativescript-app');         // 'nativescriptapp'
+ sanitize('nativescript-app');  // 'nativescriptapp'
  sanitize('action_name');       // 'actioname'
  sanitize('css-class-name');    // 'cssclassname'
  sanitize('my favorite items'); // 'myfavoriteitems'

@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsStyling",
+  "title": "Styling Options Schema",
+  "type": "object",
+  "properties": {
+    "appPath": {
+      "type": "string",
+      "description": "The path to the app."
+    },
+    "sourceDir": {
+      "type": "string",
+      "description": "The path of the source directory."
+    },
+    "extension": {
+      "type": "string",
+      "enum": [
+        "css",
+        "scss"
+      ],
+      "description": "The file extension to be used for style files. Supported are css and scss."
+    },
+    "theme": {
+      "type": "boolean",
+      "description": "Specifies whether the {N} theme should be included."
+    }
+  }
+}
+ 

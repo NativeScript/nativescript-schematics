@@ -35,7 +35,6 @@ describe('Application Schematic', () => {
     expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.css')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/vendor.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/vendor-platform.android.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/vendor-platform.ios.ts')).toBeGreaterThanOrEqual(0);
@@ -85,11 +84,6 @@ describe('Application Schematic', () => {
      expect(getFileContent(tree, appComponent))
       .not
       .toMatch(new RegExp('class="h2 text-center"'));
-
-    const appCss = '/foo/app/app.css';
-    expect(getFileContent(tree, appCss))
-      .not
-      .toMatch(new RegExp('@import "~nativescript-theme-core/css/core.light.css";'));
   });
 
   it('should handle the routing flag', () => {
