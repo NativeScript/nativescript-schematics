@@ -1,7 +1,9 @@
-import { getDecoratorMetadata, addImportToModule, addBootstrapToModule } from '@schematics/angular/utility/ast-utils';
+import { getDecoratorMetadata, addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
+
+import { toComponentClassName } from './utils';
 
 export interface Node {
     getStart();
@@ -286,7 +288,7 @@ function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.SourceFile
   }
 }
 
-export function addBootstrapToNgModule(modulePath: string): Rule {
+export function addBootstrapToNgModule(modulePath: string, rootComponentName: string): Rule {
   return (host: Tree) => {
     const content = host.read(modulePath);
     if (!content) {
@@ -295,19 +297,30 @@ export function addBootstrapToNgModule(modulePath: string): Rule {
     const sourceText = content.toString('utf-8');
     const source = ts.createSourceFile(modulePath, sourceText, ts.ScriptTarget.Latest, true);
 
-    const componentModule = './app.component';
+    const componentModule = `./${rootComponentName}.component`;
+    const rootComponentClassName = toComponentClassName(rootComponentName);
 
     const importChanges = addImportToModule(source,
       modulePath,
       'NativeScriptModule',
       'nativescript-angular/nativescript.module');
+
     const bootstrapChanges = addBootstrapToModule(source,
       modulePath,
-      'AppComponent',
+      rootComponentClassName,
       componentModule);
+
+    const declarationChanges = addSymbolToNgModuleMetadata(
+      source,
+      modulePath,
+      'declarations',
+      rootComponentClassName,
+    );
+
     const changes = [
       ...importChanges,
       ...bootstrapChanges,
+      ...declarationChanges,
     ];
 
     const recorder = host.beginUpdate(modulePath);

@@ -184,3 +184,9 @@ export const sanitize = (str: string): string => str
   .join("");
 
 export const stringUtils = { ...angularStringUtils, sanitize };
+
+export const toComponentClassName = (name: string) =>
+  `${stringUtils.classify(name)}Component`;
+
+export const toNgModuleClassName = (name: string) =>
+  `${stringUtils.classify(name)}Module`;

@@ -43,7 +43,7 @@ export default function (options: ApplicationOptions) {
       spec: false,
       nsExtension: ''
     }),
-    addBootstrapToNgModule(`${appPath}/${sourcedir}/app.module.ts`),
+    addBootstrapToNgModule(`${appPath}/${sourcedir}/app.module.ts`, 'app'),
     schematic('ng-cli-config', {
       path: appPath,
       style: options.style,

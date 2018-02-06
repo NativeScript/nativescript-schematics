@@ -3,6 +3,7 @@ import { getFileContent } from '@schematics/angular/utility/test';
 import * as path from 'path';
 
 import { Schema as ApplicationOptions } from './schema';
+import { isInModuleMetadata } from '../test-utils';
 
 describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
@@ -38,6 +39,19 @@ describe('Application Schematic', () => {
     expect(files.indexOf('/foo/app/vendor.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/vendor-platform.android.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/vendor-platform.ios.ts')).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should create root NgModule with bootstrap information', () => {
+    const options = { ...defaultOptions };
+    const tree = schematicRunner.runSchematic('application', options);
+    const content = getFileContent(tree, '/foo/app/app.module.ts');
+
+    expect(content).toMatch(isInModuleMetadata('AppModule', 'bootstrap', 'AppComponent', true));
+    expect(content).toMatch(isInModuleMetadata('AppModule', 'declarations', 'AppComponent', true));
+    expect(content).toMatch(isInModuleMetadata('AppModule', 'imports', 'NativeScriptModule', true));
+
+    expect(content).toMatch('import { NativeScriptModule } from \'nativescript-angular/nativescript.module\'');
+    expect(content).toMatch('import { AppComponent } from \'./app.component\'');
   });
 
   it('should handle a different sourceDir', () => {

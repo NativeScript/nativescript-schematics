@@ -4,7 +4,7 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 import { VirtualTree } from '@angular-devkit/schematics';
 
-import { createEmptyProject, stringUtils } from '../utils';
+import { createEmptyProject, toComponentClassName } from '../utils';
 import { isInComponentMetadata } from '../test-utils';
 import { Schema as ComponentOptions } from './schema';
 
@@ -12,7 +12,7 @@ describe('Component Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
-  const componentName = `${stringUtils.classify(name)}Component`;
+  const componentClassName = toComponentClassName(name);
   const defaultOptions: ComponentOptions = { name, path, sourceDir };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
@@ -33,7 +33,7 @@ describe('Component Schematic', () => {
 
   const hasModuleId = () => {
     const content = getFileContent(tree, componentPath);
-    const matcher = isInComponentMetadata(componentName, 'moduleId', 'module.id', false);
+    const matcher = isInComponentMetadata(componentClassName, 'moduleId', 'module.id', false);
     return content.match(matcher);
   };
 
