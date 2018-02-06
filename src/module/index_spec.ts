@@ -5,12 +5,14 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
-import { DEFAULT_EXTENSIONS, createEmptyProject } from '../utils';
+import { DEFAULT_EXTENSIONS, createEmptyProject, stringUtils } from '../utils';
+import { isInModuleMetadata } from '../test-utils';
 
 describe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
+  const moduleName = `${stringUtils.classify(name)}Module`;
   const defaultOptions: ModuleOptions = {
     name,
     path,
@@ -45,7 +47,7 @@ describe('Module Schematic', () => {
       it('should create tns module file', () => {
         expect(tree.exists(nsModulePath)).toBeTruthy();
         expect(getFileContent(tree, nsModulePath)).toContain('NativeScriptCommonModule');
-        expect(getFileContent(tree, nsModulePath)).toContain('class FooModule');
+        expect(getFileContent(tree, nsModulePath)).toContain(`class ${moduleName}`);
       });
 
       it('should not create web module file', () => {
@@ -56,16 +58,23 @@ describe('Module Schematic', () => {
         const content = getFileContent(tree, nsModulePath);
         expect(content).not.toMatch(`import { CommonModule } from '@angular/common'`);
 
-        expect(content).not.toMatch(new RegExp(
-          '@NgModule\\(\\{\\s*' +
-          'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
-          'CommonModule'
-        ));
+        expect(content).not.toMatch(isInModuleMetadata(moduleName, 'imports', 'CommonModule', true));
       });
 
       it('should have NativeScriptCommonModule imported', () => {
         const content = getFileContent(tree, nsModulePath);
         expect(content).toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+      });
+
+      it('should have NO_ERRORS_SCHEMA imported', () => {
+        const content = getFileContent(tree, nsModulePath);
+        expect(content).toMatch(/import { [^}]*NO_ERRORS_SCHEMA(.*)} from '@angular\/core';/);
+      });
+
+      it('should have NO_ERRORS_SCHEMA declared', () => {
+        const content = getFileContent(tree, nsModulePath);
+        expect(content).toMatch(
+          isInModuleMetadata(moduleName, 'schemas', 'NO_ERRORS_SCHEMA', true));
       });
     });
 
@@ -116,7 +125,7 @@ describe('Module Schematic', () => {
     it('should create web module file', () => {
       expect(tree.files.indexOf(webModulePath)).toBeGreaterThanOrEqual(0);
       expect(getFileContent(tree, webModulePath)).toContain('CommonModule');
-      expect(getFileContent(tree, webModulePath)).toContain('class FooModule');
+      expect(getFileContent(tree, webModulePath)).toContain(`class ${moduleName}`);
     });
 
     it('should not create ns module file', () => {
