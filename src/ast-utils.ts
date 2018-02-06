@@ -203,19 +203,8 @@ export function findFullImports(importName: string, source: ts.SourceFile):
         if (namedImports.elements.length === 1) {
           imports.push(importDecl);
         } else {
-          const content = source.getText();
-          const start = importSpec.getFullStart();
-          const end = importSpec.getEnd();
-          const symbolBefore = content.substring(start - 1, start);
-          const symbolAfter = content.substring(end, end + 1);
-
-          if (symbolBefore === ",") {
-            imports.push(new RemoveContent(start - 1, end));
-          } else if (symbolAfter === ",") {
-            imports.push(new RemoveContent(start, end + 1));
-          } else {
-            imports.push(importSpec);
-          }
+          const toRemove = normalizeNodeToRemove<ts.ImportSpecifier>(importSpec, source);
+          imports.push(toRemove);
         }
       });
 
@@ -225,7 +214,7 @@ export function findFullImports(importName: string, source: ts.SourceFile):
 }
 
 export function findMetadataValueInArray(source: ts.SourceFile, property: string, value: string):
-  ts.Node[] {
+  (ts.Node | RemoveContent)[] {
 
   const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator)
 
@@ -261,14 +250,40 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
       return [];
     }
 
-    const values: ts.Node[] = [];
+    const values: (ts.Node | RemoveContent)[] = [];
     ts.forEachChild(arrayLiteral, (child: ts.Node) => {
       if (child.getText() === value) {
-        values.push(child);
+        const toRemove = normalizeNodeToRemove(child, source);
+        values.push(toRemove);
       }
     });
 
     return values;
+}
+
+/**
+ * 
+ * @param node The node that should be remove
+ * @param source The source file that we are removing from
+ * This method ensures that if there's a comma before or after the node,
+ * it will be removed, too.
+ */
+function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.SourceFile)
+  : (T | RemoveContent) {
+
+  const content = source.getText();
+  const start = node.getFullStart();
+  const end = node.getEnd();
+  const symbolBefore = content.substring(start - 1, start);
+  const symbolAfter = content.substring(end, end + 1);
+
+  if (symbolBefore === ",") {
+    return new RemoveContent(start - 1, end);
+  } else if (symbolAfter === ",") {
+    return new RemoveContent(start, end + 1);
+  } else {
+    return node;
+  }
 }
 
 export function addBootstrapToNgModule(modulePath: string): Rule {
