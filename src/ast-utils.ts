@@ -26,15 +26,33 @@ class RemoveContent implements Node {
   }
 }
 
-// Almost identical to addSymbolToNgModuleMetadata from @schematics/angular/utility/ast-utils
-// the above method can be refactored to be applicable to all kinds of decorators
 export function addSymbolToComponentMetadata(
   source: ts.SourceFile,
   componentPath: string,
   metadataField: string,
   symbolName: string,
 ): Change[] {
-  const nodes = getDecoratorMetadata(source, 'Component', '@angular/core');
+  return addSymbolToDecoratorMetadata(
+    source,
+    componentPath,
+    metadataField,
+    symbolName,
+    'Component',
+    '@angular/core'
+  );
+}
+
+// Almost identical to addSymbolToNgModuleMetadata from @schematics/angular/utility/ast-utils
+// the method can be refactored so that it can be used with custom decorators
+export function addSymbolToDecoratorMetadata(
+  source: ts.SourceFile,
+  componentPath: string,
+  metadataField: string,
+  symbolName: string,
+  decoratorName: string,
+  decoratorPackage: string,
+): Change[] {
+  const nodes = getDecoratorMetadata(source, decoratorName, decoratorPackage);
   let node: any = nodes[0];  // tslint:disable-line:no-any
 
   // Find the decorator declaration.
