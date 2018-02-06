@@ -5,7 +5,7 @@ import {
   Tree,
 } from '@angular-devkit/schematics';
 import { configPath, CliConfig } from '@schematics/angular/utility/config';
-import * as angularStringUtils from '@schematics/angular/strings';
+import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
 
 import { Node } from "./ast-utils";

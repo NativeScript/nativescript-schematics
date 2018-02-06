@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "SchematicsAngularModule",
-  "title": "Angular Module Options Schema",
+  "id": "SchematicsNativeScriptAngularModule",
+  "title": "NativeScript Angular Module Options Schema",
   "type": "object",
   "properties": {
     "web": {

@@ -15,7 +15,6 @@ import {
   filter,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { dasherize } from '@schematics/angular/strings';
 
 import {
   Extensions,
@@ -28,6 +27,7 @@ import {
 import { addSymbolToComponentMetadata } from "../ast-utils";
 import { Schema as ComponentOptions } from './schema';
 import { Path, normalize } from '@angular-devkit/core';
+import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 let extensions: Extensions;
 export default function (options: ComponentOptions): Rule {

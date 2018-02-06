@@ -6,7 +6,7 @@ import {
   SchematicsException,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { dasherize, normalize } from '@angular-devkit/core';
+import { normalize } from '@angular-devkit/core';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 import { Schema as ModuleOptions } from './schema';
@@ -23,6 +23,7 @@ import {
   findFullImports,
   findMetadataValueInArray,
 } from '../ast-utils';
+import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 interface Extensions {
   web: string;
