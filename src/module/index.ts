@@ -79,9 +79,11 @@ const performNsModifications = (options: ModuleOptions) =>
       renameFiles(originalToNs)(tree);
     }
 
+    const moduleFile = getModuleBasename(options);
+    const nsModule = getNsFile(moduleFile);
+    ensureSchema(nsModule)(tree);
+
     if (options.commonModule) {
-      const moduleFile = getModuleBasename(options);
-      const nsModule = getNsFile(moduleFile);
       ensureCommonModule(nsModule)(tree);
     }
 
@@ -205,6 +207,24 @@ const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
   return tree;
 };
 
+const ensureSchema = (modulePath: string) =>
+  (tree: Tree) => {
+    const moduleSource = getSourceFile(tree, modulePath);
+    const recorder = tree.beginUpdate(modulePath);
+
+    const metadataChange = addSymbolToNgModuleMetadata(
+      moduleSource, modulePath,
+      'schemas', 'NO_ERRORS_SCHEMA',
+      '@angular/core');
+
+    metadataChange.forEach((change: InsertChange) =>
+      recorder.insertRight(change.pos, change.toAdd)
+    );
+    tree.commitUpdate(recorder);
+
+    return tree;
+  };
+
 const removeNGCommonModule = (tree: Tree, modulePath: string) => {
   const moduleName = 'CommonModule';
   removeImport(tree, modulePath, moduleName);
@@ -212,7 +232,7 @@ const removeNGCommonModule = (tree: Tree, modulePath: string) => {
 
   return tree;
 };
-  
+
 const addNSCommonModule = (tree: Tree, modulePath: string) => {
   const moduleSource = getSourceFile(tree, modulePath);
   const recorder = tree.beginUpdate(modulePath);
