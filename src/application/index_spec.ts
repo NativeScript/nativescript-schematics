@@ -104,15 +104,21 @@ describe('Application Schematic', () => {
     const options = { ...defaultOptions, routing: true };
     const tree = schematicRunner.runSchematic('application', options);
 
-    const appModule = '/foo/app/app.module.ts';
-    expect(tree.exists(appModule)).toBeTruthy();
-    expect(getFileContent(tree, appModule)).toMatch(new RegExp(
-      '@NgModule\\(\\{\\s*' +
-      'imports: \\[(\\s*|(\\s*\\.*),(\\s*))' +
-      'AppRoutingModule'
-    ));
+    const appModulePath = '/foo/app/app.module.ts';
+    expect(tree.exists(appModulePath)).toBeTruthy();
+    const appModuleContent = getFileContent(tree, appModulePath);
+    expect(appModuleContent).toMatch(
+      isInModuleMetadata('AppModule', 'imports', 'AppRoutingModule', true)
+    );
 
-    const appRoutingModule = '/foo/app/app-routing.module.ts';
-    expect(tree.exists(appRoutingModule)).toBeTruthy();
+    const files = tree.files;
+    expect(files.indexOf('/foo/app/app-routing.module.ts')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/item/item-detail.component.html')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/item/item-detail.component.ts')).toBeGreaterThanOrEqual(0);
+
+    expect(files.indexOf('/foo/app/item/items.component.html')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/item/items.component.ts')).toBeGreaterThanOrEqual(0);
+
+    expect(files.indexOf('/foo/app/item/item.ts')).toBeGreaterThanOrEqual(0);
   });
 }); 

@@ -24,9 +24,10 @@ ng new --collection=@nativescript/schematics my-mobile-app
 ```
 
 You can specify the following options when generating new applications:
+
 | Option | Description
-| -- | -- |
-| routing | Generates a routing module.
+| --- | ---
+| routing | Generates a routing module and master-detail navigation.
 | prefix | The prefix to apply to generated selectors.
 | theme | Specifies whether the {N} css theme should be included.
 | style | Specifies whether the app should use 'css' or 'scss' files for styling.

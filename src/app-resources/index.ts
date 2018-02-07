@@ -12,7 +12,7 @@ import { Schema as AppResourcesSchema } from './schema';
 
 export default function (options: AppResourcesSchema) {
   return branchAndMerge(mergeWith(
-    apply(url('./files'), [
+    apply(url('./_files'), [
       template(<TemplateOptions>{
         name: options.name
       }),

@@ -7,43 +7,46 @@ import {
   mergeWith,
   TemplateOptions,
   schematic,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { stringUtils } from '../utils';
 import { Schema as ApplicationOptions } from './schema';
-import { addBootstrapToNgModule } from '../ast-utils';
 
 export default function (options: ApplicationOptions) {
   const appPath = options.name || '.';
   const sourcedir = options.sourceDir || 'app';
-  const appRootSelector = `${options.prefix}-root`;
+  const routing = options.routing && !options.minimal;
 
   return chain([
     mergeWith(
-      apply(url('./files'), [
+      apply(url('./_files'), [
         template(<TemplateOptions>{
+          ...options as any,
           utils: stringUtils,
+          routing,
           sourcedir,
           dot: '.',
-          appRootSelector,
-          ...options as any,
         }),
         move(appPath),
       ]),
     ),
-    schematic('module', {
-      name: 'app',
-      nativescript: true,
-      commonModule: false,
-      flat: true,
-      routing: options.routing,
-      routingScope: 'Root',
-      path: '.',
-      sourceDir: `${appPath}/${sourcedir}`,
-      spec: false,
-      nsExtension: ''
-    }),
-    addBootstrapToNgModule(`${appPath}/${sourcedir}/app.module.ts`, 'app'),
+
+    routing ?
+      mergeWith(
+        apply(url('./_routing-files'), [
+          template(<TemplateOptions>{
+            ...options as any,
+            utils: stringUtils,
+            routing,
+            sourcedir,
+            dot: '.',
+          }),
+          move(appPath),
+        ]),
+      ) :
+      noop(),
+
     schematic('ng-cli-config', {
       path: appPath,
       style: options.style,

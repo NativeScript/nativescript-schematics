@@ -44,7 +44,7 @@ const keyValueInArray = (
 ) =>
     `${property}: \\[` +
     nonLastValueInArrayMatcher +
-    value +
+    `${value},?` +
     nonLastValueInArrayMatcher +
     lastValueInArrayMatcher +
     `\\s*]`;

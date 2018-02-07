@@ -104,7 +104,7 @@ const addFiles = (options: ComponentOptions) => {
     throw new SchematicsException(`sourceDir option is required.`);
   }
 
-  const templateSource = apply(url('./files'), [
+  const templateSource = apply(url('./_files'), [
     template(<TemplateOptions>{
       dasherize,
       'if-flat': (s: string) => options.flat ? '' : s,

@@ -14,8 +14,8 @@ import { Schema as StylingOptions } from './schema';
 import { addDependency, NodeDependency } from '../utils';
 
 const extensionFilesMap = {
-  css: "css-files",
-  scss: "scss-files",
+  css: "_css-files",
+  scss: "_scss-files",
 };
 
 export default function (options: StylingOptions) {

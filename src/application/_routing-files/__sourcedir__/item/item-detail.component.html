@@ -1,0 +1,8 @@
+<ActionBar title="Details"<% if (theme) { %> class="action-bar"<% } %>></ActionBar>
+<FlexboxLayout flexDirection="column" class="page">
+    <FlexboxLayout class="m-15">
+        <Label<% if (theme) { %> class="h2"<% } %> [text]="item.id + '. '"></Label>
+        <Label<% if (theme) { %> class="h2"<% } %> [text]="item.name"></Label>
+    </FlexboxLayout>
+    <Label<% if (theme) { %> class="h4"<% } %> [text]="item.role"></Label>
+</FlexboxLayout>

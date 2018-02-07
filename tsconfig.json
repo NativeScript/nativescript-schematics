@@ -28,6 +28,6 @@
     "src/**/*"
   ],
   "exclude": [
-    "src/*/files/**/*"
+    "src/*/_*files/**/*"
   ]
 }
