@@ -95,6 +95,14 @@
       "type": "boolean",
       "default": false,
       "description": "Specifies if declaring module exports the component."
+    },
+    "nsExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for {N}"
+    },
+    "webExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for web"
     }
   },
   "required": [
