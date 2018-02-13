@@ -28,9 +28,20 @@ export interface Extensions {
   ns: string,
 };
 
-export const DEFAULT_EXTENSIONS: Extensions = {
+export const DEFAULT_SHARED_EXTENSIONS: Extensions = {
   web: '',
   ns: '.tns'
+};
+
+export const getDefaultExtensions = (web: boolean, ns: boolean) => {
+  if (web && ns) {
+    return DEFAULT_SHARED_EXTENSIONS;
+  } else {
+    return {
+      web: '',
+      ns: '',
+    };
+  }
 };
 
 export function getSourceFile(host: Tree, path: string): ts.SourceFile {
@@ -90,9 +101,19 @@ export const web = (tree: Tree, options: any) => {
   }
 };
 
-export const getExtensions = (tree: Tree, passedExtensions?: any): Extensions => {
-  const assignOrder = [DEFAULT_EXTENSIONS];
+export const getExtensions = (tree: Tree, options: any): Extensions => {
+  const passedExtensions: any = {};
+  if (options.nsExtension !== undefined) {
+    passedExtensions.ns = options.nsExtension;
+  }
+  if (options.webExtension !== undefined) {
+    passedExtensions.web = options.webExtension;
+  }
+  
+  const isWeb = web(tree, options);
+  const isNs = ns(tree, options);
 
+  const assignOrder = [getDefaultExtensions(isWeb, isNs)];
   try {
     const config = getPackageJson(tree) as any;
     assignOrder.push(config.extensions);
