@@ -45,7 +45,7 @@ export default function (options: ComponentOptions): Rule {
     validateOptions(options),
 
     (tree: Tree) => {
-      extensions = getExtensions(tree);
+      extensions = getExtensions(tree, options);
       return tree;
     },
 

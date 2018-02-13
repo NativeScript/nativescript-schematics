@@ -46,4 +46,11 @@ export interface Schema {
      * Specifies if declaring module exports the component.
      */
     export?: boolean;
-}
+    /**
+     * Allows specification of the used extension for {N}
+     */
+    nsExtension?: string;
+    /**
+     * Allows specification of the used extension for web
+     */
+    webExtension?: string;}

@@ -4,7 +4,7 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 import { VirtualTree } from '@angular-devkit/schematics';
 
-import { createEmptyProject, toComponentClassName } from '../utils';
+import { createEmptyProject, toComponentClassName, DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInComponentMetadata } from '../test-utils';
 import { Schema as ComponentOptions } from './schema';
 
@@ -20,11 +20,15 @@ describe('Component Schematic', () => {
   );
 
   const componentPath = `${sourceDir}/${path}/${name}/${name}.component.ts`;
-  const nsTemplatePath = `${sourceDir}/${path}/${name}/${name}.component.tns.html`;
-  const webTemplatePath = `${sourceDir}/${path}/${name}/${name}.component.html`;
+
+  const getTemplatePath = (extension: string) =>
+    `${sourceDir}/${path}/${name}/${name}.component${extension}.html`;
+  const noExtensionTemplatePath = getTemplatePath('');
+  const nsTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.ns);
+  const webTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.web);
+
   let appTree;
   let tree;
-  
   beforeEach(() => {
     appTree = new VirtualTree();
     appTree = createAppModule(appTree, `/${sourceDir}/${path}/app.module.ts`);
@@ -37,17 +41,17 @@ describe('Component Schematic', () => {
     return content.match(matcher);
   };
 
-  const ensureWebTemplate = () => {
-    expect(tree.exists(webTemplatePath)).toBeTruthy();
+  const ensureWebTemplate = (tree: VirtualTree, path: string) => {
+    expect(tree.exists(path)).toBeTruthy();
 
     const content = getFileContent(tree, webTemplatePath);
     expect(content).toMatch(/\<p\>/);
   };
 
-  const ensureNsTemplate = () => {
-    expect(tree.exists(nsTemplatePath)).toBeTruthy();
+  const ensureNsTemplate = (tree: VirtualTree, path: string) => {
+    expect(tree.exists(path)).toBeTruthy();
 
-    const content = getFileContent(tree, nsTemplatePath);
+    const content = getFileContent(tree, path);
     expect(content).toMatch(/Button/);
   };
 
@@ -57,7 +61,11 @@ describe('Component Schematic', () => {
       tree = schematicRunner.runSchematic('component', options, appTree);
     });
 
-    it('should add {N}-specific markup file', ensureNsTemplate);
+    it('should create template without extension', () =>
+      expect(tree.exists(noExtensionTemplatePath)).toBeTruthy());
+    it('should not create template with {N} extension', () =>
+      expect(tree.exists(nsTemplatePath)).toBeFalsy());
+    it('should add {N}-specific markup in template', () => ensureNsTemplate(tree, noExtensionTemplatePath));
     it('should add module id', () => expect(hasModuleId()).toBeTruthy());
   });
 
@@ -67,7 +75,7 @@ describe('Component Schematic', () => {
       tree = schematicRunner.runSchematic('component', options, appTree);
     });
 
-    it('should add web-specific markup file', ensureWebTemplate);
+    it('should add web-specific markup file', () => ensureWebTemplate(tree, webTemplatePath));
     it('should add module id', () => expect(hasModuleId()).toBeFalsy());
   });
 
@@ -77,9 +85,41 @@ describe('Component Schematic', () => {
       tree = schematicRunner.runSchematic('component', options, appTree);
     });
 
-    it('should add web-specific markup file', ensureWebTemplate);
-    it('should add {N}-specific markup file', ensureNsTemplate);
+    it('should add web-specific markup file', () => ensureWebTemplate(tree ,webTemplatePath));
+    it('should add {N}-specific markup file', () => ensureNsTemplate(tree ,nsTemplatePath));
 
     it('should add module id', () => expect(hasModuleId()).toBeTruthy());
+  });
+
+  describe('specifying custom extension', () => {
+    it('should respect specified {N} extension', () => {
+      const customExtension = '.mobile';
+      const options = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
+      tree = schematicRunner.runSchematic('component', options, appTree);
+
+      const componentTemplatePath = getTemplatePath(customExtension);
+      expect(tree.exists(componentTemplatePath)).toBeTruthy();
+    });
+
+    it('should respect specified web extension', () => {
+      const customExtension = '.web';
+      const options = { ...defaultOptions, webExtension: customExtension, web: true };
+      tree = schematicRunner.runSchematic('component', options, appTree);
+
+      const componentTemplatePath = getTemplatePath(customExtension);
+      expect(tree.exists(componentTemplatePath)).toBeTruthy();
+    });
+
+    it('should respect both web and {N} extensions', () => {
+      const nsExtension = '.mobile';
+      const webExtension = '.web';
+      const options = { ...defaultOptions, nsExtension, webExtension, web: true, nativescript: true };
+      tree = schematicRunner.runSchematic('component', options, appTree);
+
+      const nsTemplate = getTemplatePath(nsExtension);
+      const webTemplate = getTemplatePath(webExtension);
+      expect(tree.exists(nsTemplate)).toBeTruthy();
+      expect(tree.exists(webTemplate)).toBeTruthy();
+    });
   });
 });
