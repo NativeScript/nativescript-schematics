@@ -82,7 +82,7 @@ const performNsModifications = (options: ModuleOptions) =>
 
     const moduleFile = getModuleBasename(options);
     const nsModule = getNsFile(moduleFile);
-    ensureSchema(nsModule)(tree);
+    addSchema(nsModule)(tree);
 
     if (options.commonModule) {
       ensureCommonModule(nsModule)(tree);
@@ -200,7 +200,7 @@ const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
   return tree;
 };
 
-const ensureSchema = (modulePath: string) =>
+const addSchema = (modulePath: string) =>
   (tree: Tree) => {
     const moduleSource = getSourceFile(tree, modulePath);
     const recorder = tree.beginUpdate(modulePath);

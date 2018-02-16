@@ -46,19 +46,14 @@ export default function (options: ComponentOptions): Rule {
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
-      return tree;
     },
 
     (tree: Tree, context: SchematicContext) => web(tree, options) ?
-      templateToWeb(templatePath)(tree) :
-      filter((path: Path) => !path.match(templatePath))(tree, context),
-
-    (tree: Tree) => ns(tree, options) ?
-      insertModuleId(componentPath)(tree) :
-      tree,
+      renameWebTemplate(templatePath)(tree) :
+      removeWebTemplate(templatePath)(tree, context),
 
     (tree: Tree, context: SchematicContext) => ns(tree, options) ?
-      addFiles(options)(tree, context) :
+      performNsModifications(options, componentPath)(tree, context) :
       tree,
   ]);
 };
@@ -76,11 +71,23 @@ const validateOptions = (options: ComponentOptions) =>
     }
   };
 
-const templateToWeb = (path: string) =>
+const renameWebTemplate = (path: string) =>
   (tree: Tree) => {
     const webName = path.replace(".html", `${extensions.web}.html`);
     tree.rename(path, webName);
+
+    return tree;
   };
+
+const removeWebTemplate = (templatePath: string | RegExp) =>
+  (tree: Tree, context: SchematicContext) =>
+    filter((path: Path) => !path.match(templatePath))(tree, context)
+
+const performNsModifications = (options: ComponentOptions, componentPath: string) =>
+  (tree: Tree, context: SchematicContext) => {
+    insertModuleId(componentPath)(tree);
+    return addNativeScriptFiles(options)(tree, context);
+  }
 
 const insertModuleId = (component: string) =>
   (tree: Tree) => {
@@ -94,11 +101,9 @@ const insertModuleId = (component: string) =>
       recorder.insertRight(change.pos, change.toAdd)
     );
     tree.commitUpdate(recorder);
-
-    return tree;
   };
 
-const addFiles = (options: ComponentOptions) => {
+const addNativeScriptFiles = (options: ComponentOptions) => {
   const sourceDir = options.sourceDir;
   if (!sourceDir) {
     throw new SchematicsException(`sourceDir option is required.`);
