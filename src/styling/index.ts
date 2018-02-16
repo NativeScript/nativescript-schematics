@@ -14,8 +14,8 @@ import { Schema as StylingOptions } from './schema';
 import { addDependency, NodeDependency } from '../utils';
 
 const extensionFilesMap = {
-  css: "_css-files",
-  scss: "_scss-files",
+  css: '_css-files',
+  scss: '_scss-files',
 };
 
 export default function (options: StylingOptions) {
@@ -30,12 +30,12 @@ export default function (options: StylingOptions) {
         move(`${options.appPath}/${options.sourceDir}`)
       ]),
     ),
-    options.extension === "scss" ?
+    options.extension === 'scss' ?
       (tree: Tree) => {
         const sassDependency: NodeDependency = {
-          name: "sass-loader",
-          version: "~6.0.6",
-          type: "devDependency",
+          name: 'sass-loader',
+          version: '~6.0.6',
+          type: 'devDependency',
         };
 
         addDependency(tree, sassDependency, options.appPath);
