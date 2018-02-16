@@ -14,8 +14,8 @@ import { stringUtils } from '../utils';
 import { Schema as ApplicationOptions } from './schema';
 
 export default function (options: ApplicationOptions) {
-  const appPath = options.name || '.';
-  const sourcedir = options.sourceDir || 'app';
+  const appPath = options.name;
+  const sourcedir = options.sourceDir;
   const routing = options.routing && !options.minimal;
 
   return chain([
