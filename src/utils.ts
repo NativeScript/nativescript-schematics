@@ -95,7 +95,9 @@ export const web = (tree: Tree, options: any) => {
 
   try {
     const config = getJsonFile<CliConfig>(tree, configRelativePath);
-    return Object.values(config.apps).some(app => app.index);
+
+    const apps = config.apps || [];
+    return apps.some(app => !!app.index);
   } catch(e) {
     return false;
   }
@@ -200,9 +202,9 @@ export function createEmptyProject(tree: Tree): Tree {
  @return {String} the sanitized string.
 */
 export const sanitize = (str: string): string => str
-  .split("")
+  .split('')
   .filter(char => /[a-zA-Z0-9]/.test(char))
-  .join("");
+  .join('');
 
 export const stringUtils = { ...angularStringUtils, sanitize };
 
