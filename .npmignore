@@ -2,5 +2,5 @@
 !*.d.ts
 *.js.map
 
-tsconfig.json
+/tsconfig.json
 
