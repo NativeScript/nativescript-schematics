@@ -40,6 +40,12 @@
         "schema": "./ng-cli-config/schema.json"
     },
 
+    "migrate-ns": {
+      "factory": "./migrate-ns",
+      "description": "Migrates {N} to a code sharing project structure",
+      "schema": "./migrate-ns/schema.json"
+    },
+
     "class": {
       "aliases": [ "cl" ],
       "extends": "@schematics/angular:class"

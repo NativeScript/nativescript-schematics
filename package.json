@@ -1,19 +1,20 @@
 {
   "name": "@nativescript/schematics",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json",
     "test": "npm run build && jasmine **/*_spec.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "debug": "node --debug-brk ./node_modules/@angular/cli/bin/ng g command"
   },
   "schematics": "./src/collection.json",
   "dependencies": {
     "typescript": "~2.6.2",
-    "@angular-devkit/core": "^0.2.0",
-    "@angular-devkit/schematics": "^0.2.0",
-    "@schematics/angular": "^0.2.0",
+    "@angular-devkit/core": "~0.4.6",
+    "@angular-devkit/schematics": "~0.4.6",
+    "@schematics/angular": "~0.4.6",
     "rxjs": "^5.5.6"
   },
   "devDependencies": {
