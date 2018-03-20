@@ -6,6 +6,7 @@ src/**/*.js.map
 .idea/
 jsconfig.json
 .vscode/
+.history
 
 # Misc
 node_modules/
