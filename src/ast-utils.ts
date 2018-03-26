@@ -1,15 +1,9 @@
-import { getDecoratorMetadata, addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
+import { getDecoratorMetadata, addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata, findNodes } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
-import { toComponentClassName } from './utils';
-
-export interface Node {
-    getStart();
-    getFullStart();
-    getEnd();
-}
+import { toComponentClassName, Node, getSourceFile, removeNode } from './utils';
 
 class RemoveContent implements Node {
   constructor(private pos: number, private end: number) {
@@ -62,6 +56,10 @@ export function addSymbolToDecoratorMetadata(
     return [];
   }
 
+  return getSymbolsToAddToObject(componentPath, node, metadataField, symbolName);
+}
+
+export function getSymbolsToAddToObject(path: string, node: any, metadataField: string, symbolName: string) {
   // Get all the children property assignment of object literals.
   const matchingProperties: ts.ObjectLiteralElement[] =
     (node as ts.ObjectLiteralExpression).properties
@@ -72,7 +70,7 @@ export function addSymbolToDecoratorMetadata(
       const name = prop.name;
       switch (name.kind) {
         case ts.SyntaxKind.Identifier:
-          return (name as ts.Identifier).getText(source) == metadataField;
+          return (name as ts.Identifier).getText() == metadataField;
         case ts.SyntaxKind.StringLiteral:
           return (name as ts.StringLiteral).text == metadataField;
       }
@@ -85,7 +83,7 @@ export function addSymbolToDecoratorMetadata(
     return [];
   }
 
-  if (matchingProperties.length == 0) {
+  if (matchingProperties.length === 0) {
     // We haven't found the field in the metadata declaration. Insert a new field.
     const expr = node as ts.ObjectLiteralExpression;
     let position: number;
@@ -97,16 +95,16 @@ export function addSymbolToDecoratorMetadata(
       node = expr.properties[expr.properties.length - 1];
       position = node.getEnd();
       // Get the indentation of the last element, if any.
-      const text = node.getFullText(source);
+      const text = node.getFullText();
       const matches = text.match(/^\r?\n\s*/);
-      if (matches.length > 0) {
+      if (matches && matches.length > 0) {
         toInsert = `,${matches[0]}${metadataField}: ${symbolName},`;
       } else {
         toInsert = `, ${metadataField}: ${symbolName},`;
       }
     }
 
-    return [new InsertChange(componentPath, position, toInsert)];
+    return [new InsertChange(path, position, toInsert)];
   }
 
   const assignment = matchingProperties[0] as ts.PropertyAssignment;
@@ -123,7 +121,6 @@ export function addSymbolToDecoratorMetadata(
   } else {
     node = arrLiteral.elements;
   }
-
   if (!node) {
     console.log('No app module found. Please add your new class to your component.');
 
@@ -133,7 +130,7 @@ export function addSymbolToDecoratorMetadata(
   if (Array.isArray(node)) {
     const nodeArray = node as {} as Array<ts.Node>;
     const symbolsArray = nodeArray.map(node => node.getText());
-    if (symbolsArray.indexOf(symbolName) === -1) {
+    if (symbolsArray.indexOf(symbolName) !== -1) {
       return [];
     }
 
@@ -142,7 +139,7 @@ export function addSymbolToDecoratorMetadata(
 
   let toInsert: string;
   let position = node.getEnd();
-  if (node.kind == ts.SyntaxKind.ObjectLiteralExpression) {
+  if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
     // We haven't found the field in the metadata declaration. Insert a new
     // field.
     const expr = node as ts.ObjectLiteralExpression;
@@ -153,7 +150,7 @@ export function addSymbolToDecoratorMetadata(
       node = expr.properties[expr.properties.length - 1];
       position = node.getEnd();
       // Get the indentation of the last element, if any.
-      const text = node.getFullText(source);
+      const text = node.getFullText();
       if (text.match('^\r?\r?\n')) {
         toInsert = `,${text.match(/^\r?\n\s+/)[0]}${metadataField}: [${symbolName},]`;
       } else {
@@ -166,7 +163,7 @@ export function addSymbolToDecoratorMetadata(
     toInsert = `${symbolName}`;
   } else {
     // Get the indentation of the last element, if any.
-    const text = node.getFullText(source);
+    const text = node.getFullText();
     if (text.match(/^\r?\n/)) {
       toInsert = `,${text.match(/^\r?\n(\r?)\s+/)[0]}${symbolName},`;
     } else {
@@ -174,7 +171,7 @@ export function addSymbolToDecoratorMetadata(
     }
   }
 
-  return [new InsertChange(componentPath, position, toInsert)];
+  return [new InsertChange(path, position, toInsert)];
 }
 
 export function findFullImports(importName: string, source: ts.SourceFile):
@@ -212,19 +209,49 @@ export function findFullImports(importName: string, source: ts.SourceFile):
 
       return imports;
     }, []);
-
 }
 
-export function findMetadataValueInArray(source: ts.SourceFile, property: string, value: string):
+export function findImports(importName: string, source: ts.SourceFile):
+  (ts.ImportDeclaration)[] {
+
+  const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
+
+  return allImports
+    .filter(({ importClause: clause }) =>
+      clause && !clause.name && clause.namedBindings &&
+      clause.namedBindings.kind === ts.SyntaxKind.NamedImports
+    )
+    .reduce((
+      imports: (ts.ImportDeclaration)[],
+      importDecl: ts.ImportDeclaration
+    ) => {
+      const importClause = importDecl.importClause as ts.ImportClause;
+      const namedImports = importClause.namedBindings as ts.NamedImports;
+
+      namedImports.elements.forEach((importSpec: ts.ImportSpecifier) => {
+        const importId = importSpec.name;
+        if (importId.text === importName) {
+          imports.push(importDecl);
+        }
+      });
+
+      return imports;
+    }, []);
+}
+
+export function findMetadataValueInArray(source: ts.Node, property: string, value: string):
   (ts.Node | RemoveContent)[] {
 
   const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator)
+  return getNodesToRemoveFromNestedArray(decorators, property, value);
+}
 
-  const valuesNode = decorators 
+export function getNodesToRemoveFromNestedArray(nodes: ts.Node[], property: string, value: string) {
+  const valuesNode = nodes 
     .reduce(
-      (nodes, decorator) => [
+      (nodes, current) => [
         ...nodes,
-        ...collectDeepNodes<ts.PropertyAssignment>(decorator, ts.SyntaxKind.PropertyAssignment)
+        ...collectDeepNodes<ts.PropertyAssignment>(current, ts.SyntaxKind.PropertyAssignment)
       ], [])
     .find(assignment => {
       let isValueForProperty = false;
@@ -255,7 +282,7 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
     const values: (ts.Node | RemoveContent)[] = [];
     ts.forEachChild(arrayLiteral, (child: ts.Node) => {
       if (child.getText() === value) {
-        const toRemove = normalizeNodeToRemove(child, source);
+        const toRemove = normalizeNodeToRemove(child, arrayLiteral);
         values.push(toRemove);
       }
     });
@@ -265,26 +292,24 @@ export function findMetadataValueInArray(source: ts.SourceFile, property: string
 
 /**
  * 
- * @param node The node that should be remove
+ * @param node The node that should be removed
  * @param source The source file that we are removing from
  * This method ensures that if there's a comma before or after the node,
  * it will be removed, too.
  */
-function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.SourceFile)
+function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.Node)
   : (T | RemoveContent) {
 
   const content = source.getText();
-  const start = node.getFullStart();
-  const end = node.getEnd();
+  const nodeStart = node.getFullStart();
+  const nodeEnd = node.getEnd();
+  const start = nodeStart - source.getFullStart();
   const symbolBefore = content.substring(start - 1, start);
-  const symbolAfter = content.substring(end, end + 1);
 
   if (symbolBefore === ",") {
-    return new RemoveContent(start - 1, end);
-  } else if (symbolAfter === ",") {
-    return new RemoveContent(start, end + 1);
+    return new RemoveContent(nodeStart - 1, nodeEnd);
   } else {
-    return node;
+    return new RemoveContent(nodeStart, nodeEnd + 1);
   }
 }
 
@@ -335,7 +360,7 @@ export function addBootstrapToNgModule(modulePath: string, rootComponentName: st
   };
 }
 
-function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
+export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
   const nodes: T[] = [];
   const helper = (child: ts.Node) => {
     if (child.kind === kind) {
@@ -348,3 +373,106 @@ function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind)
   return nodes;
 }
 
+export function filterByChildNode(
+  root: ts.Node,
+  condition: (node: ts.Node) => boolean
+): boolean {
+  let matches = false;
+  const helper = (child: ts.Node) => {
+    if (condition(child)) {
+      matches = true;
+      return;
+    }
+  }
+
+  ts.forEachChild(root, helper);
+
+  return matches;
+}
+
+export const getDecoratedClass = (tree: Tree, filePath: string, decoratorName: string, className: string) => {
+  return getDecoratedClasses(tree, filePath, decoratorName)
+    .find(c => !!(c.name && c.name.getText() === className));
+};
+
+export const getDecoratedClasses = (tree: Tree, filePath: string, decoratorName: string) => {
+  const moduleSource = getSourceFile(tree, filePath);
+  const classes = collectDeepNodes<ts.ClassDeclaration>(moduleSource, ts.SyntaxKind.ClassDeclaration);
+
+  return classes.filter(c => !!getDecorator(c, decoratorName))
+};
+
+export const getDecoratorMetadataFromClass = (classNode: ts.Node, decoratorName: string) => {
+  const decorator = getDecorator(classNode, decoratorName);
+  if (!decorator) {
+    return;
+  }
+
+  return (<ts.CallExpression>decorator.expression).arguments[0];
+};
+
+const getDecorator = (node: ts.Node, name: string) => {
+  return node.decorators && node.decorators.find((decorator: ts.Decorator) => 
+    decorator.expression.kind === ts.SyntaxKind.CallExpression &&
+      (<ts.CallExpression>decorator.expression).expression.getText() === name
+  );
+};
+
+export const removeMetadataArrayValue = (tree: Tree, filePath: string, property: string, value: string) => {
+  const source = getSourceFile(tree, filePath);
+  const nodesToRemove = findMetadataValueInArray(source, property, value);
+
+  nodesToRemove.forEach(declaration =>
+    removeNode(declaration, filePath, tree)
+  );
+}
+
+export const removeImport = (tree: Tree, filePath: string, importName: string) => {
+  const source = getSourceFile(tree, filePath);
+  const importsToRemove = findFullImports(importName, source);
+
+  importsToRemove.forEach(declaration =>
+    removeNode(declaration, filePath, tree)
+  );
+};
+
+/**
+ * Insert `toInsert` after the last occurence of `ts.SyntaxKind[nodes[i].kind]`
+ * or after the last of occurence of `syntaxKind` if the last occurence is a sub child
+ * of ts.SyntaxKind[nodes[i].kind] and save the changes in file.
+ *
+ * @param nodes insert after the last occurence of nodes
+ * @param toInsert string to insert
+ * @param file file to insert changes into
+ * @param fallbackPos position to insert if toInsert happens to be the first occurence
+ * @param syntaxKind the ts.SyntaxKind of the subchildren to insert after
+ * @return Change instance
+ * @throw Error if toInsert is first occurence but fall back is not set
+ */
+export function insertBeforeFirstOccurence(nodes: ts.Node[],
+                                          toInsert: string,
+                                          file: string,
+                                          fallbackPos: number,
+                                          syntaxKind?: ts.SyntaxKind): Change {
+  let firstItem = nodes.sort(nodesByPosition).shift();
+  if (!firstItem) {
+    throw new Error();
+  }
+  if (syntaxKind) {
+    firstItem = findNodes(firstItem, syntaxKind).sort(nodesByPosition).shift();
+  }
+  if (!firstItem && fallbackPos == undefined) {
+    throw new Error(`tried to insert ${toInsert} as first occurence with no fallback position`);
+  }
+  const firstItemPosition: number = firstItem ? firstItem.getStart() : fallbackPos;
+
+  return new InsertChange(file, firstItemPosition, toInsert);
+}
+
+/**
+ * Helper for sorting nodes.
+ * @return function to sort nodes in increasing order of position in sourceFile
+ */
+function nodesByPosition(first: ts.Node, second: ts.Node): number {
+  return first.getStart() - second.getStart();
+}
