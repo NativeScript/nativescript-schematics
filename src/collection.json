@@ -46,6 +46,12 @@
       "schema": "./migrate-ns/schema.json"
     },
 
+    "refactor-nsng-modules": {
+        "factory": "./refactor-nsng-modules",
+        "description": "Upgrades existing {N} Angular projects.",
+        "schema": "./refactor-nsng-modules/schema.json"
+    },
+
     "class": {
       "aliases": [ "cl" ],
       "extends": "@schematics/angular:class"

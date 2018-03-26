@@ -8,7 +8,12 @@ import { configPath, CliConfig } from '@schematics/angular/utility/config';
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
 
-import { Node } from "./ast-utils";
+export interface Node {
+    getStart();
+    getFullStart();
+    getEnd();
+}
+
 
 class FileNotFoundException extends Error {
   constructor(fileName: string) {
@@ -155,7 +160,7 @@ const setDependency = (
 const getPackageJson = (tree: Tree) =>
   getJsonFile(tree, 'package.json');
 
-const getJsonFile = <T>(tree: Tree, path: string) => {
+export const getJsonFile = <T>(tree: Tree, path: string) => {
   const file = tree.get(path);
   if (!file) {
     throw new FileNotFoundException(path);

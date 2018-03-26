@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsRefactorNsNgModules",
+  "title": "Refactor NativeScript Angular Modules Options Schema",
+  "type": "object",
+  "properties": {
+    "sourceDir": {
+      "type": "string",
+      "description": "The path of the source directory.",
+      "default": "app"
+    }
+  }
+}
+ 

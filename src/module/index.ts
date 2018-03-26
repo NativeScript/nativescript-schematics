@@ -13,15 +13,14 @@ import { Schema as ModuleOptions } from './schema';
 import {
   getExtensions,
   getSourceFile,
-  removeNode,
   copy,
   ns,
   web,
   removeNsSchemaOptions,
 } from '../utils';
 import {
-  findFullImports,
-  findMetadataValueInArray,
+  removeImport,
+  removeMetadataArrayValue,
 } from '../ast-utils';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
@@ -241,22 +240,4 @@ const addNSCommonModule = (tree: Tree, modulePath: string) => {
   tree.commitUpdate(recorder);
 
   return tree;
-};
-
-const removeMetadataArrayValue = (tree: Tree, filePath: string, property: string, value: string) => {
-  const source = getSourceFile(tree, filePath);
-  const nodesToRemove = findMetadataValueInArray(source, property, value);
-
-  nodesToRemove.forEach(declaration =>
-    removeNode(declaration, filePath, tree)
-  );
-}
-
-const removeImport = (tree: Tree, filePath: string, importName: string) => {
-  const source = getSourceFile(tree, filePath);
-  const importsToRemove = findFullImports(importName, source);
-
-  importsToRemove.forEach(declaration =>
-    removeNode(declaration, filePath, tree)
-  );
 };
