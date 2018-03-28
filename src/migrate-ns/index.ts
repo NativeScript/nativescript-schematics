@@ -30,7 +30,9 @@ export default function (options: MigrationOptions): Rule {
     web: (options.webExtension.length > 0) ? '.' + options.webExtension : ''
   };
   return chain([
+    // TODO: need to add nsext and webext to some project configuration
     validateOptions(options),
+    validatePrerequisits,
     getProjectSettings,
     applyNsExtensionToCoreFiles,
     updateWebpackConfig,
@@ -38,6 +40,15 @@ export default function (options: MigrationOptions): Rule {
     mergeNgProjectSettings,
     addWebFiles(),
   ]);
+}
+
+const validatePrerequisits = (tree: Tree) => {
+  //make sure that nativescript-dev-webpack is installed
+  if (!tree.exists(webpackConfigPath)) {
+    throw new SchematicsException(`nativescript-dev-webpack is missing. Run:
+npm nativescript-dev-webpack
+and try again.`);
+  }
 }
 
 /**
@@ -85,11 +96,20 @@ function addExtension(path: string, extension: string) {
  * - app.module -> app.module.tns#AppModule
  */
 const updateWebpackConfig = (tree: Tree) => {
+  installDevWebpackIfRequired(tree);
   updateMainTsExtension(tree);
   updateTsConfigExtension(tree);
   updateEntryModuleExtension(tree);
   return tree;
 };
+
+function installDevWebpackIfRequired(tree: Tree) {
+  if (!tree.exists(webpackConfigPath)) {
+    // TODO: code to install nativescript-dev-webpack
+    // for now validatePrerequisits() will throw an exception if nativescript-dev-webpack is missing.
+  }
+}
+
 /**
  * Find bundle in webpack.config.js
  * If the value is:  bundle: "./main.ts",
@@ -186,6 +206,16 @@ const mergeFiles = (tree: Tree) => {
     mergePackageJson(tree);
 };
 function mergeGitIgnore(tree: Tree) {
+    // create gitignore if it doesn't exists yet
+    if (!tree.exists('.gitignore')) {
+        const gitignoreContent = `node_modules/
+platforms/
+hooks/
+${projectSettings.appRoot}/**/*.js`;
+
+        tree.create('.gitignore', gitignoreContent);
+    }
+
     const webLines = getFileContents(tree, '/tmp/.gitignore').split('\n');
     const nsLines = getFileContents(tree, '.gitignore').split('\n');
     const recorder = tree.beginUpdate('.gitignore');
@@ -336,7 +366,7 @@ function mergeRemainingJsonProperties(to: string, from: string) {
   Object.assign(to, properties);
 }
 
-const addWebFiles = () => (tree, context) => {
+const addWebFiles = () => (tree: Tree, context: SchematicContext) => {
     const templateOptions = {
         dasherize: dasherize,
         // webext: '.www',
