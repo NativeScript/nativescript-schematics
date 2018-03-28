@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { Tree, SchematicContext } from '@angular-devkit/schematics';
 
 import { getSourceFile } from '../utils';
@@ -46,7 +46,6 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
     }
 
     parseAngularCli(tree, context, settings);
-    parsePackageJson(tree, context, settings);
     parseMain(tree, context, settings);
     parseEntryModule(tree, context, settings);
     parseEntryComponent(tree, context, settings);
@@ -57,22 +56,30 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
 function parseAngularCli(tree: Tree, context: SchematicContext, settings: AngularProjectSettings) {
   const angularCliJson = JSON.parse(getFileContents(tree, '.angular-cli.json'));
-  settings.appRoot = angularCliJson.apps[0].root;
-
+  
+  const app = angularCliJson.apps[0];
+  settings.appRoot = app.root;
   context.logger.error(`appRoot: ${settings.appRoot}`);
-}
 
-// Step 2 - get main => open ${appRoot}/package.json -> get main - remove '.js'
-function parsePackageJson(tree: Tree, context: SchematicContext, settings: AngularProjectSettings) {
-  const path = `${settings.appRoot}/package.json`;
-  const appPackageJson = JSON.parse(getFileContents(tree, path));
-  settings.mainName = appPackageJson.main.replace('.js', '');
+  if (app.main) {
+    settings.mainName = app.main.replace('.ts', '');
+  } else {
+    // if you are in a {N} project, then get main from package.json
+    settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
+  }
+
   settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
-
   context.logger.info(`main: ${settings.mainName}`);
 }
 
-// Step 3 - get entryModule and entryModulePath   => open ${appRoot}/${main}.ts 
+// get main => open ${appRoot}/package.json -> get main - remove '.js'
+function getMainFromNativeScriptPackageJson(tree: Tree, appRoot: string) {
+  const path = `${appRoot}/package.json`;
+  const appPackageJson = JSON.parse(getFileContents(tree, path));
+  return appPackageJson.main.replace('.js', '');
+}
+
+// Step 2 - get entryModule and entryModulePath   => open ${appRoot}/${main}.ts 
 // - get entryModule from .bootstrapModule(__value__)
 // - get entryModulePath from import { ${entryModule} } from "__value__" -- might need to remove ./
 function parseMain(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
@@ -86,15 +93,17 @@ function parseMain(tree: Tree, _context: SchematicContext, settings: AngularProj
   const importPath: string = findImportPath(source, entryModuleName);
 
   settings.entryModuleImportPath = importPath;
-  settings.entryModulePath = join(settings.appRoot, importPath) + '.ts';
+  
+  const mainDir = dirname(settings.mainPath);
+  settings.entryModulePath = join(mainDir, importPath) + '.ts';
 }
 
-// Step 4 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
+// Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
 // - get appComponent from bootstrap: [ __value__ ]
 // - get appComponentPath from import { ${appComponent} } from "__value__"
 function parseEntryModule(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
   const source = getSourceFile(tree, settings.entryModulePath);
-
+  
   // find -> bootstrap -> array -> array value
   // bootstrap: [
   //   AppComponent  <- end result
@@ -110,10 +119,12 @@ function parseEntryModule(tree: Tree, _context: SchematicContext, settings: Angu
 
   const importPath = findImportPath(source, componentName);
   settings.entryComponentImportPath = importPath;
-  settings.entryComponentPath = join(settings.appRoot, importPath) + '.ts';
+
+  const entryModuleDir = dirname(settings.entryModulePath);
+  settings.entryComponentPath = join(entryModuleDir, importPath) + '.ts';
 }
 
-// Step 5 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: "__value__"
+// Step 4 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: "__value__"
 function parseEntryComponent(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
   const source = getSourceFile(tree, settings.entryComponentPath);
 
