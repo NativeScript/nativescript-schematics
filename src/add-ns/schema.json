@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNativeScriptAngularComponent",
+  "title": "NativeScript Angular migrate-ns Options Schema",
+  "type": "object",
+  "properties": {
+    "nsExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for {N}",
+      "default": "tns"
+    },
+    "webExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for web",
+      "default": ""
+    }
+  },
+  "required": [
+  ]
+}

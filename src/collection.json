@@ -45,6 +45,11 @@
       "description": "Migrates {N} to a code sharing project structure",
       "schema": "./migrate-ns/schema.json"
     },
+    "add-ns": {
+      "factory": "./add-ns",
+      "description": "Migrates an ng web project to a code sharing project structure, by adding {N}",
+      "schema": "./add-ns/schema.json"
+    },
 
     "refactor-nsng-modules": {
         "factory": "./refactor-nsng-modules",
