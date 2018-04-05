@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
     selector: '<%= indexAppRootTag %>',
     moduleId: module.id,
-    templateUrl: '<%= entryComponentImportPath %>',
+    templateUrl: '<%= entryComponentImportPath %>.html',
 })
 
 export class <%= entryComponentName %> { }
