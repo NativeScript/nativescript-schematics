@@ -1,10 +1,33 @@
-import { Rule, SchematicContext, Tree, chain, SchematicsException, apply, url, template, branchAndMerge, mergeWith, schematic } from '@angular-devkit/schematics';
+import {
+  Rule,
+  SchematicContext,
+  Tree,
+  chain,
+  SchematicsException,
+  apply,
+  url,
+  template,
+  branchAndMerge,
+  mergeWith,
+  schematic,
+  TaskConfigurationGenerator,
+  TaskConfiguration,
+} from '@angular-devkit/schematics';
+import {
+  NodePackageInstallTask,
+  NodePackageLinkTask,
+} from '@angular-devkit/schematics/tasks';
+import {
+  BuiltinTaskExecutor
+} from '@angular-devkit/schematics/tasks/node';
+
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MigrationOptions } from './schema';
 import { Extensions, getJsonFile } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../migrate-ns/angular-project-parser';
 import { settings } from 'cluster';
+import { isJSDocPropertyLikeTag } from 'typescript';
 
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
@@ -19,6 +42,8 @@ export default function (options: MigrationOptions): Rule {
     validateOptions(options),
     validatePrerequisits,
     getProjectSettings,
+
+    installNpmModules(),
 
     updatePackageJson,
 
@@ -44,40 +69,47 @@ const getProjectSettings = (tree: Tree, context: SchematicContext) => {
   projectSettings = getAngularProjectSettings(tree, context);
 };
 
+const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
+  
+  
+  const dependeciesToAdd = {
+    dependencies: {
+      "nativescript-angular": "~5.2.0",
+      "nativescript-theme-core": "~1.0.4",
+      "reflect-metadata": "~0.1.8",
+      "tns-core-modules": "~3.4.0"
+    },
+    devDependecies: {
+      "babel-traverse": "6.26.0",
+      "babel-types": "6.26.0",
+      "babylon": "6.18.0",
+      "copy-webpack-plugin": "~4.3.0",
+      "css-loader": "~0.28.7",
+      "extract-text-webpack-plugin": "~3.0.2",
+      "lazy": "1.0.11",
+      "nativescript-dev-typescript": "~0.6.0",
+      "nativescript-dev-webpack": "^0.9.1",
+      "nativescript-worker-loader": "~0.8.1",
+      "raw-loader": "~0.5.1",
+      "resolve-url-loader": "~2.2.1",
+      "uglifyjs-webpack-plugin": "~1.1.6",
+      "webpack": "~3.10.0",
+      "webpack-bundle-analyzer": "^2.9.1",
+      "webpack-sources": "~1.1.0",
+      
+      "@ngtools/webpack": "1.10.2",
+
+      "typescript": "2.6.2"
+    }
+  }
+
+  return schematic('npm-install', {
+    json: JSON.stringify(dependeciesToAdd)
+  })(tree, context);
+}
+
 const updatePackageJson = (tree: Tree) => {
   const packageJson: any = getJsonFile(tree, 'package.json');
-
-  const dependeciesToAdd = {
-    "nativescript-angular": "~5.2.0",
-    "nativescript-theme-core": "~1.0.4",
-    "reflect-metadata": "~0.1.8",
-    "tns-core-modules": "~3.4.0"
-  };
-
-  const devDependeciesToAdd = {
-    "babel-traverse": "6.26.0",
-    "babel-types": "6.26.0",
-    "babylon": "6.18.0",
-    "copy-webpack-plugin": "~4.3.0",
-    "css-loader": "~0.28.7",
-    "extract-text-webpack-plugin": "~3.0.2",
-    "lazy": "1.0.11",
-    "nativescript-dev-typescript": "~0.6.0",
-    "nativescript-dev-webpack": "^0.9.1",
-    "nativescript-worker-loader": "~0.8.1",
-    "raw-loader": "~0.5.1",
-    "resolve-url-loader": "~2.2.1",
-    "uglifyjs-webpack-plugin": "~1.1.6",
-    "webpack": "~3.10.0",
-    "webpack-bundle-analyzer": "^2.9.1",
-    "webpack-sources": "~1.1.0",
-    "@ngtools/webpack": "~1.9.4",
-
-    "typescript": "2.6.2"
-  };
-
-  Object.assign(packageJson.dependencies, dependeciesToAdd);
-  Object.assign(packageJson.devDependencies, devDependeciesToAdd);
 
   packageJson.nativescript = {
     "id": "org.nativescript.ngsample"
