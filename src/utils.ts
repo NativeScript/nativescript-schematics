@@ -157,8 +157,17 @@ const setDependency = (
   { name, version }: NodeDependency
 ) => Object.assign(dependenciesMap, { [name]: version });
 
-const getPackageJson = (tree: Tree) =>
+export const getPackageJson = (tree: Tree): PackageJson =>
   getJsonFile(tree, 'package.json');
+
+export interface PackageJson {
+  dependencies: Object;
+  devDependencies: Object;
+  name?: string;
+  version?: string;
+  license?: string;
+  scripts?: Object;
+}
 
 export const getJsonFile = <T>(tree: Tree, path: string) => {
   const file = tree.get(path);
