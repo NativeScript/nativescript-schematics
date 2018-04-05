@@ -79,7 +79,7 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
       "reflect-metadata": "~0.1.8",
       "tns-core-modules": "~3.4.0"
     },
-    devDependecies: {
+    devDependencies: {
       "babel-traverse": "6.26.0",
       "babel-types": "6.26.0",
       "babylon": "6.18.0",
