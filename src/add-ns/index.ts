@@ -131,7 +131,7 @@ const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
     entryModulePrefix: projectSettings.entryModuleName.replace('Module', ''),
     entryModuleImportPath: projectSettings.entryModuleImportPath,
 
-    entryModulePath: projectSettings.entryModulePath,
+    entryModulePath: projectSettings.entryModulePath.replace('.ts',`${extensions.ns}.ts`),
     // entryModulePath: projectSettings.entryModulePath.replace(projectSettings.appRoot, '.'),
     
     entryComponentName: projectSettings.entryComponentName,
