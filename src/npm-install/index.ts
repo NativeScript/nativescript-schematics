@@ -12,43 +12,80 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import { Schema as NpmInstallOptions } from './schema';
 import { getJsonFile, PackageJson, getPackageJson } from '../utils';
 
+interface Dependencies {
+  dependencies: NpmPackageInfo[],
+  devDependencies: NpmPackageInfo[]
+}
+
 interface NpmPackageInfo {
   name: string;
   version: string;
 }
 
 export default function(options: NpmInstallOptions): Rule {
+  console.log(`*** Installing npm packages ***`);
   console.log(JSON.stringify(options, null, 2));
 
   return chain([
+    validateInput(options),
     updatePackageJson(options),
     installNpmModules
   ]);
+}
+
+const validateInput = (options: NpmInstallOptions) => () => {
+  if ((options.dependencies || options.devDependencies) && options.json) {
+    throw new SchematicsException('Too many parameters provided to [npm-install] schematic. Use either json, or dependencies with devDependencies, but not all 3 of them');
+  }
 }
 
 const updatePackageJson = (options: NpmInstallOptions) => (tree: Tree) => {
   // const packageJson: any = getJsonFile(tree, 'package.json');
   const packageJson: PackageJson = getPackageJson(tree);
 
-  const newDependencies = parseDependencies(options.dependencies);
-  const newDevDependencies = parseDependencies(options.devDependencies);
+  let newDependencies = parseDependencies(options);
 
-  addNpmPackages(packageJson.dependencies, newDependencies);
-  addNpmPackages(packageJson.devDependencies, newDevDependencies);
+  addNpmPackages(packageJson.dependencies, newDependencies.dependencies);
+  addNpmPackages(packageJson.devDependencies, newDependencies.devDependencies);
+  
+  checkForDuplicatePackages(packageJson, newDependencies);
 
-  checkForDuplicatePackages(packageJson, newDependencies, newDevDependencies);
 
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
 }
 
-function parseDependencies(param: string): NpmPackageInfo[] {
+function parseDependencies(options: NpmInstallOptions): Dependencies {
+  const result: Dependencies = {
+    dependencies: [],
+    devDependencies: []
+  }
+  
+  if (options.dependencies) {
+    result.dependencies = parseStringToDependencies(options.dependencies);
+  }
+
+  if (options.devDependencies) {
+    result.devDependencies = parseStringToDependencies(options.devDependencies);
+  }
+
+  if (options.json) {
+    const json = JSON.parse(options.json);
+
+    result.dependencies = parseObjectToDependencies(json.dependencies);
+    result.devDependencies = parseObjectToDependencies(json.devDependencies);
+  }
+
+  return result;
+}
+
+function parseStringToDependencies(param: string): NpmPackageInfo[] {
   if (!param || param === '') {
     return [];
   }
 
   const list: string[] = param.replace(' ','').split(',');
 
-  const dependencies: NpmPackageInfo[] = list.map(item => {
+  const result: NpmPackageInfo[] = list.map(item => {
     const index = item.lastIndexOf('@');
 
     if (index === -1) {
@@ -61,7 +98,23 @@ function parseDependencies(param: string): NpmPackageInfo[] {
     }
   });
 
-  return dependencies;  
+  return result;  
+}
+
+function parseObjectToDependencies(dependencies: Object): NpmPackageInfo[] {
+  if (!dependencies) {
+    return [];
+  }
+
+  const result: NpmPackageInfo[] = [];
+  for (let key in dependencies) {
+    result.push({
+      name: key,
+      version: dependencies[key]
+    })
+  }
+
+  return result;
 }
 
 // TODO: check if we need a validation when dependency already exists in a devDependency or vice versa
@@ -75,15 +128,15 @@ function addNpmPackages(dependencies: Object, npmPackages: NpmPackageInfo[]) {
   })
 }
 
-function checkForDuplicatePackages(packageJson: PackageJson, newDependencies: NpmPackageInfo[], newDevDependencies: NpmPackageInfo[]) {
-  newDependencies.forEach(dep => {
+function checkForDuplicatePackages(packageJson: PackageJson, newDependencies: Dependencies) {
+  newDependencies.dependencies.forEach(dep => {
     if (packageJson.devDependencies[dep.name]) {
       console.log(`warn: Dev Dependency ${dep.name}, was moved to dependencies.`);
       delete packageJson.devDependencies[dep.name];
     }
   })
   
-  newDevDependencies.forEach(dep => {
+  newDependencies.devDependencies.forEach(dep => {
     if (packageJson.dependencies[dep.name]) {
       console.log(`warn: Dependency ${dep.name}, was moved to devDependencies.`);
       delete packageJson.dependencies[dep.name];
@@ -92,5 +145,6 @@ function checkForDuplicatePackages(packageJson: PackageJson, newDependencies: Np
 }
 
 const installNpmModules = (tree: Tree, context: SchematicContext) => {
+  console.log('> running: npm i');
   context.addTask(new NodePackageInstallTask());
 }
