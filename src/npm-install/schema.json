@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNativeScriptInstallNpm",
+  "title": "NativeScript Angular install-npm Options Schema",
+  "type": "object",
+  "properties": {
+    "dependencies": {
+      "type": "string",
+      "description": "A comma separated list of npm modules in the format name@version for each. i.e. '@angular/material@^5.2.0,@angular/cdk@^5.2.0'"
+    },
+    "devDependencies": {
+      "type": "string",
+      "description": "A comma separated list of npm modules in the format name@version for each. i.e. '@angular/material@^5.2.0,@angular/cdk@^5.2.0'"
+    }
+  },
+  "required": [
+  ]
+}
