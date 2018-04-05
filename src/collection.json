@@ -50,6 +50,11 @@
       "description": "Migrates an ng web project to a code sharing project structure, by adding {N}",
       "schema": "./add-ns/schema.json"
     },
+    "npm-install": {
+      "description": "Adds npm module(s) to package.json and installs it",
+      "factory": "./npm-install",
+      "schema": "./npm-install/schema.json"
+    },
 
     "refactor-nsng-modules": {
         "factory": "./refactor-nsng-modules",
