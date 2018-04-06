@@ -55,7 +55,11 @@
       "factory": "./npm-install",
       "schema": "./npm-install/schema.json"
     },
-
+    "update-dev-webpack": {
+      "description": "Updates webpack.config.js file, to work with a code sharing structure",
+      "factory": "./update-dev-webpack",
+      "schema": "./update-dev-webpack/schema.json"
+    },
     "refactor-nsng-modules": {
         "factory": "./refactor-nsng-modules",
         "description": "Upgrades existing {N} Angular projects.",
