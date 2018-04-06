@@ -59,7 +59,6 @@ function parseAngularCli(tree: Tree, context: SchematicContext, settings: Angula
   
   const app = angularCliJson.apps[0];
   settings.appRoot = app.root;
-  context.logger.error(`appRoot: ${settings.appRoot}`);
 
   if (app.main) {
     settings.mainName = app.main.replace('.ts', '');
@@ -69,7 +68,6 @@ function parseAngularCli(tree: Tree, context: SchematicContext, settings: Angula
   }
 
   settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
-  context.logger.info(`main: ${settings.mainName}`);
 }
 
 // get main => open ${appRoot}/package.json -> get main - remove '.js'
