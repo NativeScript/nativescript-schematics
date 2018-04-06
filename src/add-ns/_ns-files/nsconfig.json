@@ -1,4 +1,4 @@
 {
-	"appResourcesPath": "App_Resources",
-	"appPath": "<%= sourcedir %>"
+  "appResourcesPath": "App_Resources",
+  "appPath": "<%= sourceDir %>"
 }
