@@ -2,12 +2,12 @@ export interface Schema {
   /**
    * A comma separated list of npm modules in the format name@version for each. i.e. '@angular/material@^5.2.0,@angular/cdk@^5.2.0'
    */
-  dependencies: string;
+  dependencies?: string;
   
   /**
    * A comma separated list of npm modules in the format name@version for each. i.e. '@angular/material@^5.2.0,@angular/cdk@^5.2.0'
    */
-  devDependencies: string;
+  devDependencies?: string;
 
   /**
    * Stringified object containing dependencies and devDependencies, just like in the same format as in package.json
@@ -17,5 +17,5 @@ export interface Schema {
    *  devDependencies: { }
    * } 
    */
-  json: string;
+  json?: string;
 }
