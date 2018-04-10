@@ -3,36 +3,25 @@ import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 import { AppRoutingModule } from './app.routing<%= nsext %>';
 import { <%= entryComponentName %> } from '<%= entryComponentImportPath %>';
 
-// TODO: update these components
-import { ItemService } from './item/item.service';
-import { ItemsComponent } from './item/items.component';
-import { ItemDetailComponent } from './item/item-detail.component';
-
-// Uncomment and add to NgModule imports if you need to use two-way binding
-// import { NativeScriptFormsModule } from 'nativescript-angular/forms';
-
-// Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
-// import { NativeScriptHttpModule } from 'nativescript-angular/http';
+import { BarcelonaModule } from './barcelona/barcelona.module';
 
 @NgModule({
-    bootstrap: [
-        <%= entryComponentName %>
-    ],
-    imports: [
-        NativeScriptModule,
-        AppRoutingModule
-    ],
-    declarations: [
-        <%= entryComponentName %>,
-        ItemsComponent,
-        ItemDetailComponent
-    ],
-    providers: [
-        ItemService
-    ],
-    schemas: [
-        NO_ERRORS_SCHEMA
-    ]
+  bootstrap: [
+    <%= entryComponentName %>
+  ],
+  imports: [
+    NativeScriptModule,
+    AppRoutingModule,
+    BarcelonaModule
+  ],
+  declarations: [
+    <%= entryComponentName %>
+  ],
+  providers: [
+  ],
+  schemas: [
+    NO_ERRORS_SCHEMA
+  ]
 })
 /*
 Pass your application module to the bootstrapModule function located in main.ts to start your app

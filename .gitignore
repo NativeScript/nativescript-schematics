@@ -20,3 +20,4 @@ yarn-error.log*
 **/*.tgz
 
 !src/add-ns/_ns-files/**/*.js
+!src/add-ns/_webpack-files/**/*.js
