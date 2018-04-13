@@ -14,6 +14,10 @@ export interface Node {
     getEnd();
 }
 
+export interface FromTo {
+  from: string,
+  to: string
+}
 
 class FileNotFoundException extends Error {
   constructor(fileName: string) {
@@ -49,7 +53,7 @@ export const getDefaultExtensions = (web: boolean, ns: boolean) => {
   }
 };
 
-export function getSourceFile(host: Tree, path: string): ts.SourceFile {
+export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
   const buffer = host.read(path);
   if (!buffer) {
     throw new SchematicsException(`Could not find bootstrapped module.`);
@@ -60,7 +64,7 @@ export function getSourceFile(host: Tree, path: string): ts.SourceFile {
   return source;
 }
 
-export function removeNode(node: Node, filePath: string, tree: Tree) {
+export const removeNode = (node: Node, filePath: string, tree: Tree) => {
   const recorder = tree.beginUpdate(filePath);
 
   const start = node.getFullStart();
@@ -183,6 +187,22 @@ export const getJsonFile = <T>(tree: Tree, path: string) => {
   }
 };
 
+export const getFileContents = (tree: Tree, filePath: string): string => {
+  const buffer = tree.read(filePath) || '';
+  return buffer.toString();
+}
+
+export const renameFiles = (paths: FromTo[]) => 
+  (tree: Tree) => paths.forEach(({ from, to }) => tree.rename(from, to));
+
+export const renameFilesForce = (paths: FromTo[]) => 
+  (tree: Tree) => paths.forEach(({ from, to }) => {
+    const content = getFileContents(tree, from);
+    tree.create(to, content);
+
+    tree.delete(from);
+});
+
 export const removeNsSchemaOptions = (options: any) => {
   const duplicate = { ...options };
   delete duplicate['web'];
@@ -193,7 +213,7 @@ export const removeNsSchemaOptions = (options: any) => {
   return duplicate;
 };
 
-export function createEmptyProject(tree: Tree): Tree {
+export const createEmptyProject = (tree: Tree): Tree => {
   tree.create('/.angular-cli.json', JSON.stringify({}));
   tree.create('/package.json', JSON.stringify({}));
 
@@ -227,3 +247,27 @@ export const toComponentClassName = (name: string) =>
 
 export const toNgModuleClassName = (name: string) =>
   `${stringUtils.classify(name)}Module`;
+
+export const findMissingJsonProperties = (to: Object, from: Object, resolveConflict = (_key: string) => { }) => {
+  if (!to) {
+    return from;
+  }
+  const result = {};
+  for (let key in from) {
+    if (!to[key]) {
+      result[key] = from[key];
+    }
+    else if (to[key] !== from[key]) {
+      resolveConflict(key);
+    }
+  }
+  return result;
+}
+  
+/**
+* Example: source: abc.123.def , text: -x-, where: .123 => abc-x-.123.def
+*/
+export const insertTextWhere = (source: string, text: string, where: string) => {
+  const index = source.indexOf(where);
+  return source.substring(0, index) + text + source.substring(index);
+}
