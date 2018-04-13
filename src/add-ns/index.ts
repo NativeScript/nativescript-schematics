@@ -29,7 +29,7 @@ import { Schema as MigrationOptions } from './schema';
 import { Schema as NpmInstallOptions } from '../npm-install/schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 import { Extensions, getJsonFile } from '../utils';
-import { getAngularProjectSettings, AngularProjectSettings } from '../migrate-ns/angular-project-parser';
+import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
 
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
