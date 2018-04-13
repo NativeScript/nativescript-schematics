@@ -4,5 +4,5 @@
   },
   "main": "<%= main %>.js",
   "name": "migration-ng",
-  "version": "3.4.3"
+  "version": "4.0.0"
 }
