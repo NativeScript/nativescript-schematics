@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { VirtualTree } from '@angular-devkit/schematics';
+import { Tree, VirtualTree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
@@ -34,7 +34,7 @@ describe('Module Schematic', () => {
   const nsRoutingModulePath = getRoutingModulePath(DEFAULT_SHARED_EXTENSIONS.ns);
   const webRoutingModulePath = getRoutingModulePath(DEFAULT_SHARED_EXTENSIONS.web);
 
-  let appTree;
+  let appTree: Tree;
   
   beforeEach(() => {
     appTree = new VirtualTree();

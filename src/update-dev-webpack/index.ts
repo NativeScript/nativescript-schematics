@@ -1,5 +1,6 @@
 import {
   Rule,
+  SchematicContext,
   Tree,
   chain,
   SchematicsException
@@ -39,6 +40,27 @@ const validateOptions = (options: UpdateOptions) => () => {
     throw new SchematicsException(`nsext [${options.nsext}] should start with a .`);
   }
 };
+
+
+/**
+ * Find bundle in webpack.config.js
+ * If the value is:  bundle: "./main.ts",
+ * then update it to bundle: "./main.tns.ts"
+ */
+const updateMainTsExtension = (main: string, nsext: string) => (tree) => {
+  const source = getSourceFile(tree, webpackConfigPath);
+  // const fileToUpdate = 'main.ts'; // TODO: this should come from settings
+  const fileToUpdate = main + '.ts';
+
+  const node = findNode(source, [
+    { kind: ts.SyntaxKind.VariableDeclaration, name: 'config' },
+    { kind: ts.SyntaxKind.PropertyAssignment, name: 'entry' },
+    { kind: ts.SyntaxKind.PropertyAssignment, name: 'bundle' }
+  ], fileToUpdate);
+
+  const updatedFilePath = insertTextWhere(fileToUpdate, nsext, '.ts');
+  replaceTextInNode(tree, node, fileToUpdate, updatedFilePath);
+}
 
 /**
  * Find tsConfigPath in webpack.config.js

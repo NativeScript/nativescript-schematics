@@ -53,7 +53,7 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
   }
 
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
-function parseAngularCli(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
+function parseAngularCli(tree: Tree, context: SchematicContext, settings: AngularProjectSettings) {
   // For Angular before 6.0
   if (tree.exists('.angular-cli.json')) {
     const angularCliJson = getJsonFile<any>(tree, '.angular-cli.json');
@@ -70,7 +70,7 @@ function parseAngularCli(tree: Tree, _context: SchematicContext, settings: Angul
     settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
   } else {
     // for Angular 6.0 and after
-    // const angularJson = getJsonFile(tree, 'angular.json');
+    const angularJson = getJsonFile(tree, 'angular.json');
     settings.appRoot = 'src';
     settings.mainName = 'main';
     settings.mainPath = 'src/main.ts';

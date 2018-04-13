@@ -10,11 +10,18 @@ import {
   branchAndMerge,
   mergeWith,
   schematic,
+  TaskConfigurationGenerator,
+  TaskConfiguration,
   TaskId,
 } from '@angular-devkit/schematics';
 import {
+  NodePackageInstallTask,
+  NodePackageLinkTask,
   RunSchematicTask,
 } from '@angular-devkit/schematics/tasks';
+import {
+  BuiltinTaskExecutor
+} from '@angular-devkit/schematics/tasks/node';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
@@ -116,10 +123,9 @@ const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding NativeScript Project ID to package.json');
   const packageJson: any = getJsonFile(tree, 'package.json');
 
-  packageJson.nativescript = packageJson.nativescript || {};
-  packageJson.nativescript = Object.assign({
-    id: 'org.nativescript.ngsample'
-  }, packageJson.nativescript);
+  packageJson.nativescript = {
+    "id": "org.nativescript.ngsample"
+  };
 
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
 }
@@ -149,9 +155,6 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
 
   if (cliV1) {
     Object.assign(dependeciesToAdd.devDependencies, {
-      "@ngtools/webpack": "1.10.2",
-      "clean-webpack-plugin": "~0.1.19",
-
       "copy-webpack-plugin": "~4.3.0",
       "css-loader": "~0.28.7",
       "extract-text-webpack-plugin": "~3.0.2",
@@ -162,6 +165,8 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
       "webpack": "~3.10.0",
       "webpack-bundle-analyzer": "^2.9.1",
       "webpack-sources": "~1.1.0",
+      
+      "@ngtools/webpack": "1.10.2"
     });
 
     const options: NpmInstallOptions = {
