@@ -6,11 +6,10 @@ import {
   SchematicsException
 } from '@angular-devkit/schematics';
 
-import { BuiltinTaskExecutor } from '@angular-devkit/schematics/tasks/node';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import { Schema as NpmInstallOptions } from './schema';
-import { getJsonFile, PackageJson, getPackageJson } from '../utils';
+import { PackageJson, getPackageJson } from '../utils';
 
 interface Dependencies {
   dependencies: NpmPackageInfo[],
@@ -27,6 +26,9 @@ export default function(options: NpmInstallOptions): Rule {
   console.log(JSON.stringify(options, null, 2));
 
   return chain([
+    (_tree: Tree, context: SchematicContext) => {
+      context.logger.warn('Installing npm packages');
+    },
     validateInput(options),
     updatePackageJson(options),
     installNpmModules
@@ -49,7 +51,6 @@ const updatePackageJson = (options: NpmInstallOptions) => (tree: Tree) => {
   addNpmPackages(packageJson.devDependencies, newDependencies.devDependencies);
   
   checkForDuplicatePackages(packageJson, newDependencies);
-
 
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
 }
@@ -118,6 +119,7 @@ function parseObjectToDependencies(dependencies: Object): NpmPackageInfo[] {
 }
 
 // TODO: check if we need a validation when dependency already exists in a devDependency or vice versa
+//       currently: checkForDuplicatePackages, cleans up if that is the case
 function addNpmPackages(dependencies: Object, npmPackages: NpmPackageInfo[]) {
   npmPackages.forEach(npmPackage => {
     if (dependencies[npmPackage.name] && dependencies[npmPackage.name] !== npmPackage.version) {
@@ -144,7 +146,6 @@ function checkForDuplicatePackages(packageJson: PackageJson, newDependencies: De
   })
 }
 
-const installNpmModules = (tree: Tree, context: SchematicContext) => {
-  console.log('> running: npm i');
+const installNpmModules = (_tree: Tree, context: SchematicContext) => {
   context.addTask(new NodePackageInstallTask());
 }
