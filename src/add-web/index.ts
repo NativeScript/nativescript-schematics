@@ -15,8 +15,8 @@ import {
   mergeWith,
   schematic
 } from '@angular-devkit/schematics';
-import { getAngularProjectSettings, AngularProjectSettings } from './angular-project-parser';
-import { renameFilesForce, getFileContents, findMissingJsonProperties } from './utils';
+import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
+import { renameFilesForce, getFileContents, findMissingJsonProperties } from '../utils';
 import { findNode } from '../ast-utils';
 
 import * as ts from 'typescript';
