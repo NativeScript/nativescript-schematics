@@ -23,6 +23,7 @@ import { Schema as NpmInstallOptions } from '../npm-install/schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 import { Extensions, getJsonFile } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
+import { getAngularSemver, getAngularCLISemver } from '../node-utils';
 
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
@@ -129,10 +130,10 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Installing npm modules');
   const dependeciesToAdd = {
     dependencies: {
-      "nativescript-angular": "~5.2.0",
+      // "nativescript-angular": "~5.3.0",
       "nativescript-theme-core": "~1.0.4",
       "reflect-metadata": "~0.1.8",
-      "tns-core-modules": "~3.4.0"
+      "tns-core-modules": "~4.0.0"
     },
     devDependencies: {
       // "babel-traverse": "6.26.0",
@@ -143,11 +144,27 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
       "nativescript-dev-typescript": "~0.7.0",
       "nativescript-dev-webpack": "^0.10.0",
 
-      "typescript": "2.6.2"
+      "typescript": "2.7.2"
     }
   }
 
-  if (cliV1) {
+  const ngVersion = getAngularSemver(tree);
+
+  if (ngVersion.major === '6') {
+    dependeciesToAdd.dependencies["nativescript-angular"] = 'file:nativescript-angular-6.0.0-rc.0.tgz'
+  } else {
+    dependeciesToAdd.dependencies["nativescript-angular"] = "5.3.0";
+  }
+
+  if (getAngularCLISemver(tree).major === '1') {
+    console.log('@angular/cli v1 detected');
+  } else {
+    context.logger.warn('@angular/cli v6+ detected');
+  }
+
+
+  // if (cliV1) {
+  if (getAngularCLISemver(tree).major === '1') {
     Object.assign(dependeciesToAdd.devDependencies, {
       "@ngtools/webpack": "1.10.2",
       "clean-webpack-plugin": "~0.1.19",
