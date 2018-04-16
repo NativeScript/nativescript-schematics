@@ -2,8 +2,7 @@ import * as ts from 'typescript';
 import { join, dirname } from 'path';
 import { Tree, SchematicContext } from '@angular-devkit/schematics';
 
-import { getSourceFile } from '../utils';
-import { getFileContents } from './utils';
+import { getSourceFile, getJsonFile, getFileContents } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
 
 export interface AngularProjectSettings {
@@ -54,22 +53,29 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
   }
 
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
-function parseAngularCli(tree: Tree, context: SchematicContext, settings: AngularProjectSettings) {
-  const angularCliJson = JSON.parse(getFileContents(tree, '.angular-cli.json'));
-  
-  const app = angularCliJson.apps[0];
-  settings.appRoot = app.root;
-  context.logger.error(`appRoot: ${settings.appRoot}`);
-
-  if (app.main) {
-    settings.mainName = app.main.replace('.ts', '');
+function parseAngularCli(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
+  // For Angular before 6.0
+  if (tree.exists('.angular-cli.json')) {
+    const angularCliJson = getJsonFile<any>(tree, '.angular-cli.json');
+    
+    const app = angularCliJson.apps[0];
+    settings.appRoot = app.root;
+    
+    if (app.main) {
+      settings.mainName = app.main.replace('.ts', '');
+    } else {
+      // if you are in a {N} project, then get main from package.json
+      settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
+    } 
+    settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
   } else {
-    // if you are in a {N} project, then get main from package.json
-    settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
+    // for Angular 6.0 and after
+    // const angularJson = getJsonFile(tree, 'angular.json');
+    settings.appRoot = 'src';
+    settings.mainName = 'main';
+    settings.mainPath = 'src/main.ts';
+    // angularJson.projects
   }
-
-  settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
-  context.logger.info(`main: ${settings.mainName}`);
 }
 
 // get main => open ${appRoot}/package.json -> get main - remove '.js'

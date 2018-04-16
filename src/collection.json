@@ -40,12 +40,26 @@
         "schema": "./ng-cli-config/schema.json"
     },
 
-    "migrate-ns": {
-      "factory": "./migrate-ns",
+    "add-web": {
+      "factory": "./add-web",
       "description": "Migrates {N} to a code sharing project structure",
-      "schema": "./migrate-ns/schema.json"
+      "schema": "./add-web/schema.json"
     },
-
+    "add-ns": {
+      "factory": "./add-ns",
+      "description": "Migrates an ng web project to a code sharing project structure, by adding {N}",
+      "schema": "./add-ns/schema.json"
+    },
+    "npm-install": {
+      "description": "Adds npm module(s) to package.json and installs it",
+      "factory": "./npm-install",
+      "schema": "./npm-install/schema.json"
+    },
+    "update-dev-webpack": {
+      "description": "Updates webpack.config.js file, to work with a code sharing structure",
+      "factory": "./update-dev-webpack",
+      "schema": "./update-dev-webpack/schema.json"
+    },
     "refactor-nsng-modules": {
         "factory": "./refactor-nsng-modules",
         "description": "Upgrades existing {N} Angular projects.",

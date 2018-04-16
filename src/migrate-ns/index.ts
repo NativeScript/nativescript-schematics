@@ -330,13 +330,10 @@ const deleteNgProject = (tree: Tree) => {
 //     const importPath = projectSettings.entryModuleImportPath;
 //     let fileContent = getFileContents(tree, projectSettings.mainPath);
 //     fileContent = fileContent.replace(importPath, importPath + extensions.ns);
-
 //     tree.delete(projectSettings.mainPath);
-
 //     const mainTnsPath = addExtension(projectSettings.mainPath, extensions.ns);
 //     tree.create(mainTnsPath, fileContent);
 // };
-
 /**
  * Updates the path AppModule import path to ./app.module.tns
  */

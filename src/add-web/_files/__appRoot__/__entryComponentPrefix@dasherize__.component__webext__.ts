@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: '<%= indexAppRootTag %>',
-  templateUrl: './app.component.html'
+  templateUrl: '<%= entryComponentImportPath %>.html'
 })
 export class <%= entryComponentName %> {
   title = 'app';
