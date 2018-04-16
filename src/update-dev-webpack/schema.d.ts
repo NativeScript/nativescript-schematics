@@ -18,5 +18,5 @@ export interface Schema {
   /**
    * The name of the entry Module class. Default AppModule
    */
-  entryModuleName: string;
+  entryModuleClassName: string;
 }

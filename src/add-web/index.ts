@@ -104,7 +104,7 @@ const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
     sourceDir: projectSettings.appRoot,
     nsext: extensions.ns,
     entryModulePath: projectSettings.entryModulePath.replace('.ts',''),
-    entryModuleName: projectSettings.entryModuleName,
+    entryModuleClassName: projectSettings.entryModuleClassName,
     main: projectSettings.mainName
   }
 
@@ -169,7 +169,7 @@ const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
 // function updateEntryModuleExtension(tree: Tree) {
 //     const source = getSourceFile(tree, webpackConfigPath);
 //     // const propertyText = 'module#AppModule';
-//     const propertyText = `module#${projectSettings.entryModuleName}`;
+//     const propertyText = `module#${projectSettings.entryModuleClassName}`;
 
 //     const node = findNode(source, [
 //         { kind: ts.SyntaxKind.NewExpression, name: 'nsWebpack.NativeScriptAngularCompilerPlugin' },
@@ -177,7 +177,7 @@ const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
 //     ], propertyText);
 
 //     // const updatedFilePath = insertTextWhere(fileToUpdate, extensions.ns, '#AppModule');
-//     const updatedFilePath = insertTextWhere(propertyText, extensions.ns, `#${projectSettings.entryModuleName}`);
+//     const updatedFilePath = insertTextWhere(propertyText, extensions.ns, `#${projectSettings.entryModuleClassName}`);
 //     replaceTextInNode(tree, node, propertyText, updatedFilePath);
 // }
 
@@ -360,7 +360,7 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
       const importPath = projectSettings.entryModuleImportPath;
       
       const node = findNode<ts.ImportDeclaration>(source, [
-        { kind: ts.SyntaxKind.ImportDeclaration, name: projectSettings.entryModuleName },
+        { kind: ts.SyntaxKind.ImportDeclaration, name: projectSettings.entryModuleClassName },
       ]);
       replaceTextInNode(tree, node, importPath, importPath + extensions.ns);
     };
@@ -386,12 +386,12 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
         webext: extensions.web,
         appRoot: projectSettings.appRoot,
         main: projectSettings.mainName,
-        entryModuleName: projectSettings.entryModuleName,
-        entryModulePrefix: projectSettings.entryModuleName.replace('Module', ''),
+        entryModuleClassName: projectSettings.entryModuleClassName,
+        entryModulePrefix: projectSettings.entryModuleClassName.replace('Module', ''),
         entryModuleImportPath: projectSettings.entryModuleImportPath,
         // entryModulePath: projectSettings.entryModulePath.replace(projectSettings.appRoot, '.'),
-        entryComponentName: projectSettings.entryComponentName,
-        entryComponentPrefix: projectSettings.entryComponentName.replace('Component', ''),
+        entryComponentClassName: projectSettings.entryComponentClassName,
+        entryComponentPrefix: projectSettings.entryComponentClassName.replace('Component', ''),
         entryComponentImportPath: projectSettings.entryComponentImportPath,
         // entryComponentPath: projectSettings.entryComponentPath.replace(projectSettings.appRoot, '.'),
         indexAppRootTag: projectSettings.indexAppRootTag,

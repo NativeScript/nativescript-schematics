@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: '<%= entryComponentImportPath %>.html',
 })
 
-export class <%= entryComponentName %> { }
+export class <%= entryComponentClassName %> { }

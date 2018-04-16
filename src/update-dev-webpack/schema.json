@@ -22,7 +22,7 @@
       "type": "string",
       "description": "Path to the entry module"
     },
-    "entryModuleName": {
+    "entryModuleClassName": {
       "type": "string",
       "description": "The name of the entry Module class",
       "default": "AppModule"

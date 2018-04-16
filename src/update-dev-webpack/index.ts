@@ -66,7 +66,7 @@ const updateTsConfigExtension = (nsext: string) => (tree: Tree) => {
 const updateEntryModuleExtension = (options: UpdateOptions) => (tree: Tree) => {
   const source = getSourceFile(tree, webpackConfigPath);
   // const propertyText = 'module#AppModule';
-  const propertyText = `module#${options.entryModuleName}`;
+  const propertyText = `module#${options.entryModuleClassName}`;
 
   const node = findNode<ts.CallExpression>(source, [
     { kind: ts.SyntaxKind.NewExpression, name: 'nsWebpack.NativeScriptAngularCompilerPlugin' },
@@ -75,7 +75,7 @@ const updateEntryModuleExtension = (options: UpdateOptions) => (tree: Tree) => {
   ], propertyText);
 
   const currentEntryModuleNode = node.arguments[1];
-  const newEntryModulePath = `"${options.entryModulePath}${options.nsext}#${options.entryModuleName}"`
+  const newEntryModulePath = `"${options.entryModulePath}${options.nsext}#${options.entryModuleClassName}"`
 
   updateNodeText(tree, currentEntryModuleNode, newEntryModulePath);
 }

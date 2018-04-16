@@ -6,19 +6,33 @@ import { getSourceFile, getJsonFile, getFileContents } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
 
 export interface AngularProjectSettings {
+  /** default: "src" */
   appRoot: string,
-
+  
+  /** default: "main"*/
   mainName: string,
+  /** default: "src/main.ts"*/
   mainPath: string;
 
+  /** default: "AppModule"*/
+  entryModuleClassName: string,
+  /** default: "App"*/
   entryModuleName: string,
+  /** default: "src/app/app.module.ts"*/
   entryModulePath: string,
+  /** default: "./app/app.module"*/
   entryModuleImportPath: string,
 
-  entryComponentName: string,
+  /** default: "AppComponent" */
+  entryComponentClassName: string,
+  /** default: "App" */
+  entryComponentName: string;
+  /** default: "src/app/app.component.ts" */
   entryComponentPath: string,
+  /** default: "./app.component" */
   entryComponentImportPath: string,
 
+  /** default: "app-root"*/
   indexAppRootTag: string,
 }
 
@@ -31,11 +45,13 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
       mainPath: '---',
 
       // app.module.ts
+      entryModuleClassName: '---',
       entryModuleName: '---',
       entryModulePath: '---',
       entryModuleImportPath: '---',
 
       // app.componet.ts
+      entryComponentClassName: '---',
       entryComponentName: '---',
       entryComponentPath: '---',
       entryComponentImportPath: '---',
@@ -93,10 +109,11 @@ function parseMain(tree: Tree, _context: SchematicContext, settings: AngularProj
   const source = getSourceFile(tree, settings.mainPath);
 
   const params = getFunctionParams(source, 'bootstrapModule');
-  const entryModuleName = params[0];
-  settings.entryModuleName = entryModuleName;
+  const entryModuleClassName = params[0];
+  settings.entryModuleClassName = entryModuleClassName;
+  settings.entryModuleName = entryModuleClassName.replace('Module', '');
 
-  const importPath: string = findImportPath(source, entryModuleName);
+  const importPath: string = findImportPath(source, entryModuleClassName);
 
   settings.entryModuleImportPath = importPath;
   
@@ -121,7 +138,8 @@ function parseEntryModule(tree: Tree, _context: SchematicContext, settings: Angu
   ]);
 
   const componentName = node.elements[0].getText();
-  settings.entryComponentName = componentName;
+  settings.entryComponentClassName = componentName;
+  settings.entryComponentName = componentName.replace('Component', '');
 
   const importPath = findImportPath(source, componentName);
   settings.entryComponentImportPath = importPath;

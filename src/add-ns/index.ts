@@ -85,12 +85,12 @@ const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
 
     main: projectSettings.mainName,
 
+    entryModuleClassName: projectSettings.entryModuleClassName,
     entryModuleName: projectSettings.entryModuleName,
-    entryModulePrefix: projectSettings.entryModuleName.replace('Module', ''),
     entryModuleImportPath: projectSettings.entryModuleImportPath,
     
+    entryComponentClassName: projectSettings.entryComponentClassName,
     entryComponentName: projectSettings.entryComponentName,
-    entryComponentPrefix: projectSettings.entryComponentName.replace('Component', ''),
     entryComponentImportPath: projectSettings.entryComponentImportPath,
 
     indexAppRootTag: projectSettings.indexAppRootTag,
@@ -210,7 +210,7 @@ const updateDevWebpack = () => (tree: Tree, context: SchematicContext) => {
     sourceDir: projectSettings.appRoot,
     nsext: extensions.ns,
     entryModulePath: projectSettings.entryModulePath.replace('.ts',''),
-    entryModuleName: projectSettings.entryModuleName,
+    entryModuleClassName: projectSettings.entryModuleClassName,
     main: projectSettings.mainName
   }
 
