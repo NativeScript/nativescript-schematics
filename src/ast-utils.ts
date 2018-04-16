@@ -616,3 +616,16 @@ export function findImportPath(source: ts.Node, name) {
   path = path.replace(/["']/g, '');
   return path;
 }
+
+export const insertModuleId = (component: string) => (tree: Tree) => {
+  const componentSource = getSourceFile(tree, component);
+  const recorder = tree.beginUpdate(component);
+
+  const metadataChange = addSymbolToComponentMetadata(
+    componentSource, component, 'moduleId', 'module.id');
+
+  metadataChange.forEach((change: InsertChange) =>
+    recorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(recorder);
+};
