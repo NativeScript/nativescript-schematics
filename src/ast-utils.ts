@@ -629,3 +629,23 @@ export const insertModuleId = (component: string) => (tree: Tree) => {
   );
   tree.commitUpdate(recorder);
 };
+
+/**
+ * Can be used to retrieve the metada from @Component, @NgModule etc. decorators
+ * @param source source node, use => getSourceFile(tree, filePath)
+ * @param name name of the decorator
+ */
+export const findDecoratorNode = (source: ts.Node, name: string): ts.CallExpression => {
+  // Remove @ in case @Component or @NgModule provided
+  const safeName = name.replace('@', '');
+
+  const node = findNode<ts.CallExpression>(source, [
+    { kind: ts.SyntaxKind.CallExpression, name: safeName}
+  ]);
+
+  if (!node) {
+    throw new SchematicsException(`Couldn't find ${name} Decorator in ${source.getSourceFile().fileName}`);
+  }
+
+  return node;
+}

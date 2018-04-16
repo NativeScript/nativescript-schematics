@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, relative } from 'path';
 
 import {
   SchematicsException,
@@ -276,4 +276,24 @@ export const addExtension = (path: string, extension: string) => {
   const index = path.lastIndexOf('.');
   const newPath = path.slice(0, index) + extension + path.slice(index);
   return newPath;
+}
+
+/**
+ * Find relative path, and remove .tns (to make it an import path)
+ * @param from path to the importing file
+ * @param to path to the imported file
+ */
+export const findRelativeImportPath = (from, to): string => {
+  let relativePath = relative(from, to);
+
+  // if starts with ../../ then relative is going to skip one folder too many
+  if(relativePath.startsWith('../../')) {
+    relativePath = relativePath.replace('../../', '../');
+  } else if(relativePath.startsWith('../')) {
+    relativePath = relativePath.replace('../', './');
+  } else if (relativePath === '') {
+    relativePath = './';
+  }
+
+  return relativePath.replace(/.ts$/, '');
 }

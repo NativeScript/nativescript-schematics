@@ -99,6 +99,13 @@
     "service": {
       "aliases": [ "s" ],
       "extends": "@schematics/angular:service"
+    },
+
+    "migrate-component": {
+      "aliases": [ "mc"],
+      "description": "Converts a component into a code sharing component",
+      "factory": "./migrate-component",
+      "schema": "./migrate-component/schema.json"
     }
   }
 }
