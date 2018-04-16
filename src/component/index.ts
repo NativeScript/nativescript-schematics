@@ -14,17 +14,15 @@ import {
   TemplateOptions,
   filter,
 } from '@angular-devkit/schematics';
-import { InsertChange } from '@schematics/angular/utility/change';
 
 import {
   Extensions,
-  getSourceFile,
   ns,
   web,
   getExtensions,
   removeNsSchemaOptions,
 } from "../utils";
-import { addSymbolToComponentMetadata, insertModuleId } from "../ast-utils";
+import { insertModuleId } from "../ast-utils";
 import { Schema as ComponentOptions } from './schema';
 import { Path, normalize } from '@angular-devkit/core';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';

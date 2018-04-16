@@ -18,14 +18,12 @@ import { join, dirname } from 'path';
 import { Schema as MigrateComponentSchema } from './schema';
 
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
-import { getAngularSemver, getAngularCLISemver } from '../node-utils';
-import { Extensions, getSourceFile, addExtension, findRelativeImportPath } from '../utils';
-import { findImportPath, addSymbolToComponentMetadata, findNode, findDecoratorNode, insertModuleId } from '../ast-utils';
+import { getSourceFile, addExtension, findRelativeImportPath } from '../utils';
+import { findImportPath, findNode, findDecoratorNode, insertModuleId } from '../ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
-import { buildRelativePath } from '@schematics/angular/utility/find-module';
 
-let extensions: Extensions;
+// let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
 
 interface ComponentInfo {
@@ -54,11 +52,11 @@ export default function(options: MigrateComponentSchema): Rule {
     updateComponentClass(),
     addNsFiles(options),
 
-    addComponentToNsModuleProviders()
+    addComponentToNsModuleProviders(options)
   ]);
 }
 
-const parseInput = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+const parseInput = (options: MigrateComponentSchema) => (tree: Tree) => {
   findComponentInfo(options, tree);
 }
 
@@ -218,7 +216,7 @@ const addNsFiles = (options: MigrateComponentSchema) => (tree: Tree, context: Sc
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
 
-const addComponentToNsModuleProviders = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+const addComponentToNsModuleProviders = (options: MigrateComponentSchema) => (tree: Tree) => {
   if (options.skipModule) {
     return;
   }
