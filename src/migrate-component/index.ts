@@ -28,7 +28,6 @@ import { buildRelativePath } from '@schematics/angular/utility/find-module';
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
 
-
 interface ComponentInfo {
   className: string;
   modulePath: string;
@@ -55,30 +54,20 @@ export default function(options: MigrateComponentSchema): Rule {
     updateComponentClass(),
     addNsFiles(options),
 
-    addToNsModule()
+    addComponentToNsModuleProviders()
   ]);
 }
 
 const parseInput = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
-  componentInfo.className = classify(`${options.name}Component`);
-  
   findComponentInfo(options, tree);
-
-  // context.logger.info(JSON.stringify(projectSettings));
-  // console.log(JSON.stringify(projectSettings, null, 2));
-  
 }
 
 const findComponentInfo = (options: MigrateComponentSchema, tree: Tree) => {
-  const componentClassName = `${classify(options.name)}Component`;
-  // const componentDirectoryName = dasherize(options.name);
-
-  let moduleName = '';
   const hasModule: boolean = !options.skipModule;
+
+  componentInfo.className = classify(`${options.name}Component`);
   componentInfo.modulePath = (hasModule) ? findModulePath(options, tree) : '';
-
   componentInfo.componentPath = findComponentPath(componentInfo.modulePath, options, tree);
-
   componentInfo.componentHtmlPath = findTemplateUrl(tree);
 
   console.log(`ComponentInfo
@@ -127,7 +116,7 @@ Expecting something like: module-name/module-name.module.ts`);
 }
 
 const findComponentPath = (modulePath: string, options: MigrateComponentSchema, tree: Tree): string => {
-  const componentClassName = `${classify(options.name)}Component`;
+  const componentClassName = componentInfo.className;
   let componentPath = '';
 
   // When the path is provided, then there is no need to look anywhere else
@@ -174,19 +163,6 @@ Expecting something like: component-name/component-name.component.ts`);
     } else {
       console.log(`Couldn't find the component .ts file`);
     }
-    /*
-    // if module provided
-    else if (options.module) {
-      // search at src/app/dasherize(module-name)/file-name
-      if (tree.exists(join(app, dasherize(options.module || ''), fileName)) {
-
-      }
-      // search at src/app/dasherize(module-name)/(component-name)/file-name
-      if (tree.exists(join(app, dasherize(options.module || ''), dasherize(options.name), fileName))) {
-
-      }
-    }
-    */
   }
 
   return componentPath;
@@ -242,7 +218,11 @@ const addNsFiles = (options: MigrateComponentSchema) => (tree: Tree, context: Sc
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
 
-const addToNsModule = () => (tree: Tree, context: SchematicContext) => {
+const addComponentToNsModuleProviders = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+  if (options.skipModule) {
+    return;
+  }
+  
   const nsext = '.tns';
   const nsModulePath = addExtension(componentInfo.modulePath, nsext);
   
