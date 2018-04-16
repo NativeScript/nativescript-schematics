@@ -1,7 +1,7 @@
 import { Schema as MigrationOptions } from './schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 
-import { Extensions, getSourceFile } from '../utils';
+import { Extensions, getSourceFile, addExtension } from '../utils';
 import {
   Rule,
   chain,
@@ -87,11 +87,7 @@ const applyNsExtensionToCoreFiles = (tree: Tree) => {
   });
   renameFilesForce(paths)(tree);
 };
-function addExtension(path: string, extension: string) {
-  const index = path.lastIndexOf('.');
-  const newPath = path.slice(0, index) + extension + path.slice(index);
-  return newPath;
-}
+
 /**
 * update webpack.config referenes:
 * - main.ts -> bundle: "./main.tns.ts",

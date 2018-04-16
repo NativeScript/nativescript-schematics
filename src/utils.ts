@@ -271,3 +271,9 @@ export const insertTextWhere = (source: string, text: string, where: string) => 
   const index = source.indexOf(where);
   return source.substring(0, index) + text + source.substring(index);
 }
+
+export const addExtension = (path: string, extension: string) => {
+  const index = path.lastIndexOf('.');
+  const newPath = path.slice(0, index) + extension + path.slice(index);
+  return newPath;
+}
