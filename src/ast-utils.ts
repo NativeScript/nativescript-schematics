@@ -555,44 +555,51 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
   switch (searchParam.kind) {
     case ts.SyntaxKind.VariableDeclaration:
     case ts.SyntaxKind.PropertyAssignment:
-    child = node.getChildAt(0);
-    break;
+      child = node.getChildAt(0);
+      break;
     case ts.SyntaxKind.CallExpression:
-    const callExpression = node as ts.CallExpression;
-    const expression = callExpression.expression;
-    // if function is an object's property - i.e. parent.fname()
-    if (ts.isPropertyAccessExpression(expression)) {
-      child = expression.name;
-    }
-    else {
-      child = expression;
-    }
-    break;
+      const callExpression = node as ts.CallExpression;
+      const expression = callExpression.expression;
+      // if function is an object's property - i.e. parent.fname()
+      if (ts.isPropertyAccessExpression(expression)) {
+        child = expression.name;
+      }
+      else {
+        child = expression;
+      }
+      break;
     case ts.SyntaxKind.Identifier:
-    child = node;
-    break;
+      child = node;
+      break;
     case ts.SyntaxKind.NewExpression:
-    const newExpression = node as ts.NewExpression;
-    child = newExpression.expression;
-    break;
+      const newExpression = node as ts.NewExpression;
+      child = newExpression.expression;
+      break;
     case ts.SyntaxKind.ImportDeclaration:
-    const importDeclaration = node as ts.ImportDeclaration;
-    if (!importDeclaration.importClause || !importDeclaration.importClause.namedBindings) {
-      return false;
-    }
-    const namedBindings = importDeclaration.importClause.namedBindings;
-    // for imports like: import { a, b } from 'path'
-    // import names [a,b] are at: node.importClause.namedBindings.elements
-    if (ts.isNamedImports(namedBindings)) {
-      const elements = namedBindings.elements;
-      return elements.some(element => element.getText() === searchParam.name);
-    }
-    // otherwise, it is an import like: import * as abc from 'path'
-    // import name [abc] is at: node.importClause.namedBindings.name
-    child = namedBindings.name;
-    break;
+      const importDeclaration = node as ts.ImportDeclaration;
+      if (!importDeclaration.importClause || !importDeclaration.importClause.namedBindings) {
+        return false;
+      }
+      const namedBindings = importDeclaration.importClause.namedBindings;
+      // for imports like: import { a, b } from 'path'
+      // import names [a,b] are at: node.importClause.namedBindings.elements
+      if (ts.isNamedImports(namedBindings)) {
+        const elements = namedBindings.elements;
+        return elements.some(element => element.getText() === searchParam.name);
+      }
+      // otherwise, it is an import like: import * as abc from 'path'
+      // import name [abc] is at: node.importClause.namedBindings.name
+      child = namedBindings.name;
+      break;
+    case ts.SyntaxKind.ClassDeclaration:
+      const classDeclaration = node as ts.ClassDeclaration;
+      if (!classDeclaration.name) {
+        return false;
+      }
+      child = classDeclaration.name;
+      break;
     default:
-    throw new SchematicsException(`compareNameForKind: not prepared for this [${node.kind}] ts.SyntaxKind`);
+      throw new SchematicsException(`compareNameForKind: not prepared for this [${node.kind}] ts.SyntaxKind`);
   }
   return child.getText() === searchParam.name;
 }
