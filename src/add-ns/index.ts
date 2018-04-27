@@ -21,22 +21,18 @@ import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { Schema as MigrationOptions } from './schema';
 import { Schema as NpmInstallOptions } from '../npm-install/schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
-import { Extensions, getJsonFile } from '../utils';
+import { Extensions, getJsonFile, getPackageJson } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
 import { getAngularSemver, getAngularCLISemver } from '../node-utils';
 
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
-let cliV1 = true;
 
 export default function (options: MigrationOptions): Rule {
   extensions = {
     ns: (options.nsExtension.length > 0) ? '.' + options.nsExtension : '',
     web: (options.webExtension.length > 0) ? '.' + options.webExtension : ''
   };
-
-  //TODO: Might need a more elegant way to determine if ng 1.7 or 6.0+ is used.
-  cliV1 = options.cliV1;
 
   return chain([
     validateOptions(options),
@@ -47,6 +43,7 @@ export default function (options: MigrationOptions): Rule {
     addAppResources(),
     addNativeScriptProjectId,
 
+    addNativeScriptSchematicsNpmModule,
     installNpmModules(),
 
     addWebpackConfigIfRequired(),
@@ -73,7 +70,6 @@ const getProjectSettings = (tree: Tree, context: SchematicContext) => {
   context.logger.info(`Project settings:
 ${JSON.stringify(projectSettings)}`);
 };
-
 
 const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
@@ -125,6 +121,18 @@ const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
 }
 
+const addNativeScriptSchematicsNpmModule = (tree: Tree) => {
+  const packageJson = getPackageJson(tree);
+
+  if (packageJson.dependencies['@nativescript/schematics']) {
+    delete packageJson.dependencies['@nativescript/schematics'];
+  }
+
+  packageJson.devDependencies['@nativescript/schematics'] = '^0.0.10';
+
+  tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
+}
+
 let npmInstallTaskId: TaskId;
 const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Installing npm modules');
@@ -162,8 +170,6 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
     context.logger.warn('@angular/cli v6+ detected');
   }
 
-
-  // if (cliV1) {
   if (getAngularCLISemver(tree).major === '1') {
     Object.assign(dependeciesToAdd.devDependencies, {
       "@ngtools/webpack": "1.10.2",
@@ -214,7 +220,7 @@ const updateDevWebpack = () => (tree: Tree, context: SchematicContext) => {
     main: projectSettings.mainName
   }
 
-  if (cliV1) {
+  if (getAngularCLISemver(tree).major === '1') {
     return schematic('update-dev-webpack', options)(tree, context);
   } else {
     context.addTask(new RunSchematicTask('', 'update-dev-webpack', options), [npmInstallTaskId]);
