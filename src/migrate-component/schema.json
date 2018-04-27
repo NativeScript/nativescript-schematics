@@ -21,6 +21,12 @@
     },
     "skipModule": {
       "type": "boolean"
+    },
+    "nsext": {
+      "type": "string"
+    },
+    "webext": {
+      "type": "string"
     }
   },
   "required": [

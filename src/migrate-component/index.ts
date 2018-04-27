@@ -16,15 +16,22 @@ import { dirname } from 'path';
 
 import { Schema as MigrateComponentSchema } from './schema';
 
-import { getSourceFile, addExtension, findRelativeImportPath } from '../utils';
+import { getSourceFile, addExtension, findRelativeImportPath, getNsConfigExtension, Extensions } from '../utils';
 import { insertModuleId } from '../ast-utils';
 import { ComponentInfo, parseComponentInfo } from './component-info-utils';
 
-// let extensions: Extensions;
+let extensions: Extensions;
 
 export default function(options: MigrateComponentSchema): Rule {
   let componentInfo: ComponentInfo;
   return chain([
+    (tree: Tree) => {
+      const nsconfigExtensions = getNsConfigExtension(tree);
+      extensions = {
+        ns: options.nsext || nsconfigExtensions.ns,
+        web: options.webext || nsconfigExtensions.web
+      }
+    },
     (tree: Tree, context: SchematicContext) => {
       componentInfo = parseComponentInfo(options)(tree, context);
     },
@@ -44,14 +51,11 @@ const updateComponentClass = (componentInfo: ComponentInfo) => (tree: Tree) => {
 }
 
 const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
-  const nsext = '.tns';
-  // const nsext = '.android';
-
   context.logger.info('Adding {N} files');
   const templateOptions = {
     dir: dirname(componentInfo.componentHtmlPath),
     
-    addNsExtension: (path: string) => addExtension(path, nsext),
+    addNsExtension: (path: string) => addExtension(path, extensions.ns),
 
     htmlFileName: componentInfo.componentHtmlPath,
 
@@ -68,8 +72,7 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
     return;
   }
   
-  const nsext = '.tns';
-  const nsModulePath = addExtension(componentInfo.modulePath, nsext);
+  const nsModulePath = addExtension(componentInfo.modulePath, extensions.ns);
   
   // Get the changes required to update the @NgModule
   const changes = addProviderToModule(

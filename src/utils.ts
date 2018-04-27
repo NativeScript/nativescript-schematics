@@ -136,7 +136,23 @@ export const getExtensions = (tree: Tree, options: any): Extensions => {
 
   assignOrder.push(passedExtensions);
   return Object.assign({}, ...assignOrder);
-};
+}
+
+export const getNsConfigExtension = (tree: Tree): Extensions => {
+  if (!tree.exists('nsconfig.json')) {
+    console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
+    return {
+      ns: '.tns',
+      web: ''
+    };
+  }
+
+  const nsconfig = getJsonFile<any>(tree, `nsconfig.json`);  
+  return {
+    ns: nsconfig.nsext || '.tns',
+    web: nsconfig.webext || ''
+  }
+}
 
 export const addDependency = (tree: Tree, dependency: NodeDependency, packageJsonDir?: string) => {
   const path = packageJsonDir ?

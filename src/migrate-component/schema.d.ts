@@ -19,5 +19,8 @@ export interface Schema {
      * Notifies us that the component doesn't belong to any module.
      */
     skipModule?: boolean;
+
+    nsext?: string;
+    webext?: string;
     
 }
