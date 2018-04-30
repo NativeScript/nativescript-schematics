@@ -39,6 +39,8 @@ export default function (options: MigrationOptions): Rule {
     validatePrerequisits,
     getProjectSettings,
 
+    addNativeScriptSchematics,
+
     addNsFiles(),
     addAppResources(),
     addNativeScriptProjectId,
@@ -48,6 +50,7 @@ export default function (options: MigrationOptions): Rule {
 
     addWebpackConfigIfRequired(),
     updateDevWebpack(),
+
   ]);
 }
 
@@ -68,8 +71,35 @@ const getProjectSettings = (tree: Tree, context: SchematicContext) => {
   projectSettings = getAngularProjectSettings(tree, context);
 
   context.logger.info(`Project settings:
-${JSON.stringify(projectSettings)}`);
+${JSON.stringify(projectSettings, null, 2)}`);
 };
+
+const addNativeScriptSchematics = (tree: Tree, context: SchematicContext) => {
+  context.logger.info('Adding @nativescript/schematics to angular.json');
+
+  const ngVersion = getAngularSemver(tree);
+
+  if (ngVersion.major === 1) {
+    return;
+  }
+
+  const angularJson: any = getJsonFile(tree, 'angular.json');
+
+  const defaultCollection = '@nativescript/schematics';
+
+  if (angularJson.cli && angularJson.cli.defaultCollection !== defaultCollection) {
+    context.logger.warn(`Changing default schematics collection
+${JSON.stringify(angularJson.cli, null, 2)}
+  to:
+${JSON.stringify(angularJson.cli, null, 2)}`);
+  }
+
+  angularJson.cli = {
+    'defaultCollection' : defaultCollection
+  }
+
+  tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
+}
 
 const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
@@ -158,19 +188,19 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
 
   const ngVersion = getAngularSemver(tree);
 
-  if (ngVersion.major === '6') {
-    dependeciesToAdd.dependencies["nativescript-angular"] = 'file:nativescript-angular-6.0.0-rc.0.tgz'
+  if (ngVersion.major >= 6) {
+    dependeciesToAdd.dependencies["nativescript-angular"] = '6.0.0-rc.0'
   } else {
     dependeciesToAdd.dependencies["nativescript-angular"] = "5.3.0";
   }
 
-  if (getAngularCLISemver(tree).major === '1') {
+  if (getAngularCLISemver(tree).major === 1) {
     console.log('@angular/cli v1 detected');
   } else {
     context.logger.warn('@angular/cli v6+ detected');
   }
 
-  if (getAngularCLISemver(tree).major === '1') {
+  if (getAngularCLISemver(tree).major === 1) {
     Object.assign(dependeciesToAdd.devDependencies, {
       "@ngtools/webpack": "1.10.2",
       "clean-webpack-plugin": "~0.1.19",
@@ -220,7 +250,7 @@ const updateDevWebpack = () => (tree: Tree, context: SchematicContext) => {
     main: projectSettings.mainName
   }
 
-  if (getAngularCLISemver(tree).major === '1') {
+  if (getAngularCLISemver(tree).major === 1) {
     return schematic('update-dev-webpack', options)(tree, context);
   } else {
     context.addTask(new RunSchematicTask('', 'update-dev-webpack', options), [npmInstallTaskId]);
