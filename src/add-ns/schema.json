@@ -13,11 +13,6 @@
       "type": "string",
       "description": "Allows specification of the used extension for web",
       "default": ""
-    },
-    "cliV1": {
-      "type": "boolean",
-      "description": "Used to specify if using ng cli v1, true by default",
-      "default": true
     }
   },
   "required": [
