@@ -110,6 +110,11 @@
       "description": "Converts a component into a code sharing component",
       "factory": "./migrate-component",
       "schema": "./migrate-component/schema.json"
+    },
+    "nativescript-module": {
+      "description": "Generates a NativeScript Module",
+      "factory": "./nativescript-module",
+      "schema": "./nativescript-module/schema.json"
     }
   }
 }
