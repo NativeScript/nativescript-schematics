@@ -39,7 +39,6 @@
         "description": "Create .angular-cli.json",
         "schema": "./ng-cli-config/schema.json"
     },
-
     "add-web": {
       "factory": "./add-web",
       "description": "Migrates {N} to a code sharing project structure",
@@ -48,6 +47,11 @@
     "add-ns": {
       "factory": "./add-ns",
       "description": "Migrates an ng web project to a code sharing project structure, by adding {N}",
+      "schema": "./add-ns/schema.json"
+    },
+    "ng-add": {
+      "factory": "./add-ns",
+      "description": "Adds NativeScript to a web project, turning it into a code sharing project with build targets for Web, Androind and iOS",
       "schema": "./add-ns/schema.json"
     },
     "npm-install": {
