@@ -3,9 +3,10 @@ import { getPackageJson } from "./utils";
 
 export class Semver {
   constructor(
-    public major: string,
-    public minor: string,
-    public patch: string
+    public major: number,
+    public minor: number,
+    public patch: number,
+    public tag: string | null = null
   ) {}
 }
 
@@ -37,6 +38,22 @@ const parseSemver = (moduleVersion: string): Semver | null => {
     return null;
   }
 
-  const ver = match[0].split('.');
-  return new Semver(ver[0], ver[1], ver[2]);
+  const parts = match[0].split('.');
+
+  if (parts[2].indexOf('-')) {
+    const patchTag = parts[2].split('-');
+
+    return new Semver(
+      Number.parseInt(parts[0]),
+      Number.parseInt(parts[1]),
+      Number.parseInt(patchTag[0]),
+      patchTag[1]
+    );
+  }
+
+  return new Semver(
+    Number.parseInt(parts[0]),
+    Number.parseInt(parts[1]),
+    Number.parseInt(parts[2])
+  );
 }
