@@ -8,11 +8,12 @@ import {
   template,
   branchAndMerge,
   mergeWith,
+  SchematicsException,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 
-import { dirname } from 'path';
+import { dirname, basename } from 'path';
 
 import { Schema as MigrateComponentSchema } from './schema';
 
@@ -53,11 +54,10 @@ const updateComponentClass = (componentInfo: ComponentInfo) => (tree: Tree) => {
 const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
   const templateOptions = {
-    dir: dirname(componentInfo.componentHtmlPath),
+    path: dirname(componentInfo.componentHtmlPath),
+    htmlFileName: basename(componentInfo.componentHtmlPath),
     
     addNsExtension: (path: string) => addExtension(path, extensions.ns),
-
-    htmlFileName: componentInfo.componentHtmlPath,
 
     componentName: options.name
   };
@@ -74,6 +74,13 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
   
   const nsModulePath = addExtension(componentInfo.modulePath, extensions.ns);
   
+  // check if the {N} version of the @NgModule exists
+  if (!tree.exists(nsModulePath)) {
+    throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
+Create it if you want the schematic to add ${componentInfo.className} to its' module providers,
+or if you just want to update the component without updating its' module, then rerun this command with --skip-module flag`);
+  }
+
   // Get the changes required to update the @NgModule
   const changes = addProviderToModule(
     getSourceFile(tree, nsModulePath),

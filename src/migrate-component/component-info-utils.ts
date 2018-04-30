@@ -21,10 +21,11 @@ let projectSettings: AngularProjectSettings;
 
 export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
   projectSettings = getAngularProjectSettings(tree, context);
-  const hasModule: boolean = !options.skipModule;
 
   const className = classify(`${options.name}Component`);
-  const modulePath = (hasModule) ? findModulePath(options, tree) : '';
+  // if no module provided and skipModule flag is on, then don't search for module path
+  const modulePath = (!options.module && options.skipModule) ? '' : findModulePath(options, tree);
+
   const componentPath = findComponentPath(className, modulePath, options, tree);
   const componentHtmlPath = findTemplateUrl(componentPath, className, tree);
 
@@ -61,7 +62,7 @@ const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => 
     options.module.toLowerCase() === projectSettings.entryModuleClassName.toLowerCase()
   ) {
     modulePath = projectSettings.entryModulePath;
-  } 
+  }
   // When a specified Module has been provided
   else {
     modulePath = join(
@@ -94,7 +95,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
   Expecting something like: component-name/component-name.component.ts`);
     }
 
-    // TODO: add a check to see if componentClassName is the class used in componentPath file content
+    // Check to see if componentClassName is the class used in componentPath file content
     const source = getSourceFile(tree, componentPath);
     const matchingNodes = findMatchingNodes<ts.ClassDeclaration>(source, [
       { kind: ts.SyntaxKind.ClassDeclaration, name: componentClassName}
@@ -110,7 +111,8 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
   }
   
   // When we have the module that imports the component
-  else if (!options.skipModule) {
+  // else if (!options.skipModule) {
+  else if (modulePath) {
     const source = getSourceFile(tree, modulePath);
     const componentImportPath = findImportPath(source, componentClassName);
     console.log(`${componentClassName} import found in its module at: ${componentImportPath}`);
@@ -138,7 +140,10 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     else if (tree.exists(join(app, dasherize(options.name), fileName))) {
       componentPath = join(app, dasherize(options.name), fileName);
     } else {
-      console.log(`Couldn't find the component .ts file`);
+      throw new SchematicsException(`Couldn't find component's .ts file.
+  You can use --component-path parameter to provide the path to the component.
+  Hint. don't include src/app with --component-path`);
+      // console.log(`Couldn't find component's .ts file`);
     }
   }
 
