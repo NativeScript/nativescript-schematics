@@ -11,7 +11,7 @@ import {
   SchematicsException,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
+import { addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
 
 import { dirname, basename } from 'path';
 
@@ -77,12 +77,12 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
     throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
-Create it if you want the schematic to add ${componentInfo.className} to its' module providers,
+Create it if you want the schematic to add ${componentInfo.className} to its' module declarations,
 or if you just want to update the component without updating its' module, then rerun this command with --skip-module flag`);
   }
 
   // Get the changes required to update the @NgModule
-  const changes = addProviderToModule(
+  const changes = addDeclarationToModule(
     getSourceFile(tree, nsModulePath),
     nsModulePath, // <- this doesn't look like it is in use
     componentInfo.className,

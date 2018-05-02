@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "SchematicsAppResources",
+  "id": "SchematicsMigrateComponent",
   "title": "App Resources Options Schema",
   "type": "object",
   "properties": {
