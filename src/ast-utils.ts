@@ -598,6 +598,12 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
       }
       child = classDeclaration.name;
       break;
+    case ts.SyntaxKind.Decorator:
+      const decorator = node as ts.Decorator;
+      const decoratorCallExpression = decorator.expression as ts.CallExpression;
+      
+      child = decoratorCallExpression.expression
+      break;
     default:
       throw new SchematicsException(`compareNameForKind: not prepared for this [${node.kind}] ts.SyntaxKind`);
   }
@@ -619,9 +625,9 @@ export function findImportPath(source: ts.Node, name) {
   const node = findNode<ts.ImportDeclaration>(source, [
     { kind: ts.SyntaxKind.ImportDeclaration, name },
   ]);
-  let path = node.moduleSpecifier.getText();
-  path = path.replace(/["']/g, '');
-  return path;
+
+  const moduleSpecifier = node.moduleSpecifier as ts.StringLiteral;
+  return moduleSpecifier.text;
 }
 
 export const insertModuleId = (component: string) => (tree: Tree) => {
@@ -636,23 +642,3 @@ export const insertModuleId = (component: string) => (tree: Tree) => {
   );
   tree.commitUpdate(recorder);
 };
-
-/**
- * Can be used to retrieve the metada from @Component, @NgModule etc. decorators
- * @param source source node, use => getSourceFile(tree, filePath)
- * @param name name of the decorator
- */
-export const findDecoratorNode = (source: ts.Node, name: string): ts.CallExpression => {
-  // Remove @ in case @Component or @NgModule provided
-  const safeName = name.replace('@', '');
-
-  const node = findNode<ts.CallExpression>(source, [
-    { kind: ts.SyntaxKind.CallExpression, name: safeName}
-  ]);
-
-  if (!node) {
-    throw new SchematicsException(`Couldn't find ${name} Decorator in ${source.getSourceFile().fileName}`);
-  }
-
-  return node;
-}
