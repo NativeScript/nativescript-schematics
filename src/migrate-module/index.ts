@@ -1,0 +1,114 @@
+import {
+  Rule,
+  SchematicContext,
+  Tree,
+  chain,
+  schematic,
+  TaskId,
+  SchematicsException
+} from '@angular-devkit/schematics';
+
+import { getNsConfigExtension, addExtension, getSourceFile } from '../utils';
+
+import { Schema as MigrateModuleSchema } from './schema';
+import { Schema as NativeScriptModuleSchema } from '../nativescript-module/schema';
+import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
+
+// import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
+// import { join } from 'path';
+import { parseModuleInfo, ModuleInfo } from './module-info-utils';
+import { RunSchematicTask } from '@angular-devkit/schematics/tasks';
+import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
+import { InsertChange } from '@schematics/angular/utility/change';
+
+let nsext: string;
+let moduleInfo: ModuleInfo;
+
+export default function(options: MigrateModuleSchema): Rule {
+  return chain([
+    (tree: Tree) => {
+      const nsconfigExtensions = getNsConfigExtension(tree);
+      nsext = options.nsext || nsconfigExtensions.ns;
+
+      if (!nsext.startsWith('.')) {
+        nsext = '.' + nsext;
+      }
+    },
+    (tree: Tree, context: SchematicContext) => {
+      moduleInfo = parseModuleInfo(options)(tree, context);
+    },
+
+    addModuleFile(options),
+
+    migrateComponents(),
+    migrateProviders()
+  ]);
+}
+
+const addModuleFile = (options: MigrateModuleSchema) => (tree: Tree, context: SchematicContext) => {
+
+  const moduleOptions: NativeScriptModuleSchema = {
+    name: options.name,
+    nsext: nsext,
+    flat: false
+  }
+  return schematic('nativescript-module', moduleOptions)(tree, context);
+}
+
+const migrateComponents = () => (_tree: Tree, context: SchematicContext) => {
+  let taskId: TaskId;
+
+  const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
+
+  // TODO: Add Handling for other types of Declarations, such as Pipes
+  // const other = moduleInfo.declarations.filter(d => !d.endsWith('Component'));
+
+  components.forEach(component => {
+    const ids = (taskId)? [taskId] : [];
+
+    const convertComponentOptions: MigrateComponentSchema = {
+      name: component.name,
+      modulePath: moduleInfo.modulePath,
+      nsext: nsext
+    }
+
+    taskId = context.addTask(
+      new RunSchematicTask<MigrateComponentSchema>('@nativescript/schematics', 'migrate-component', convertComponentOptions),
+      ids
+    );
+  });
+}
+
+const migrateProviders = () => (tree: Tree) => {
+  moduleInfo.providers.forEach(provider => {
+    addProvider(provider.name, provider.importPath)(tree);
+  })
+}
+
+const addProvider = (providerClassName: string, providerPath: string) => (tree: Tree) => {
+  const nsModulePath = addExtension(moduleInfo.modulePath, nsext);
+  
+  // check if the {N} version of the @NgModule exists
+  if (!tree.exists(nsModulePath)) {
+    throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
+Create it if you want the schematic to add ${moduleInfo.className} to its' module providers,
+or if you just want to update the component without updating its' module, then rerun this command with --skip-module flag`);
+  }
+
+  // Get the changes required to update the @NgModule
+  const changes = addProviderToModule(
+    getSourceFile(tree, nsModulePath),
+    // nsModulePath, // <- this doesn't look like it is in use
+    '',
+    providerClassName,
+    providerPath
+    // findRelativeImportPath(nsModulePath, providerPath)
+  );
+    
+  // Save changes
+  const recorder = tree.beginUpdate(nsModulePath);
+  changes.forEach((change: InsertChange) =>
+    recorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(recorder);
+}

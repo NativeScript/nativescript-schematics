@@ -111,6 +111,12 @@
       "factory": "./migrate-component",
       "schema": "./migrate-component/schema.json"
     },
+    "migrate-module": {
+      "aliases": [ "mg"],
+      "description": "Converts a module into a code sharing module",
+      "factory": "./migrate-module",
+      "schema": "./migrate-module/schema.json"
+    },
     "nativescript-module": {
       "description": "Generates a NativeScript Module",
       "factory": "./nativescript-module",
