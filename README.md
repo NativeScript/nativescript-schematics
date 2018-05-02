@@ -60,8 +60,8 @@ Some of these generators are overwritten in NativeScript Schematics to suite the
 
 ### Migrating ng Project to a shared project
 
-### Migrating web Components to shared components
-You can use the `ng generate migrate-component` to convert a web Component to a shared component.
+### Migrating Web Components to a Shared Components
+You can use `ng generate migrate-component` to convert a web Component to a shared component.
 This includes the following steps:
 
  * add `component-name`.component.tns.html
@@ -76,19 +76,10 @@ Params:
  * modulePath - `optional` - the location of the parent module file, do not include `src/app`, i.e. `home/home.module.ts` - use if the module is not located at the `root/app` (by default: `src/app`)
  * skipModule - `optional` - use if you don't want the module to be used for finding the component, and if you don't want to add the Component to Modules providers
 
-    /**
-     * Specifies the location of the component.
-     */
-    componentPath?: string;
-    /**
-     * Specifies the module providing the component.
-     */
-    module?: string;
-    /**
-     * Specifies the module path providing the component.
-     */
-    modulePath?: string;
-    /**
-     * Notifies us that the component doesn't belong to any module.
-     */
-    skipModule?: boolean;
+### Migrating Web Modules to Shared Modules
+You can use `ng generate migrate-module` to convert a Web Module to a Shared Module and also convert all of its Components.
+This includes the following steps:
+
+ * add `module-name`.component.tns.ts
+ * convert all of modules' components, by using `migrate-component` schematic
+ * copy over all providers from the web module
