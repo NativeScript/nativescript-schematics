@@ -8,5 +8,5 @@ export interface Schema {
      */
     nsext?: string;
 
-    flat: boolean;
+    flat?: boolean;
 }

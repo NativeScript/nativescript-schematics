@@ -17,9 +17,6 @@ import { join } from 'path';
 import { AngularProjectSettings, getAngularProjectSettings } from '../angular-project-parser';
 
 let nsext: string;
-
-
-
 let projectSettings: AngularProjectSettings;
 
 export default function(options: NativeScriptModuleSchema): Rule {
