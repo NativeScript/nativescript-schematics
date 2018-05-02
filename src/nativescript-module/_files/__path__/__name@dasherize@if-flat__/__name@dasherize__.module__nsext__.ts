@@ -5,11 +5,12 @@ import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
 @NgModule({
-  declarations: [],
-  exports: [
+  imports: [
     NativeScriptCommonModule,
     NativeScriptFormsModule,
     NativeScriptRouterModule
+  ],
+  declarations: [
   ],
   schemas: [ NO_ERRORS_SCHEMA ]
 })
