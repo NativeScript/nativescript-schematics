@@ -12,9 +12,9 @@
     }
   },
   "exclude": [
+    "**/*.ns.ts",
     "**/*<%= nsext %>.ts",
     "**/*.android.ts",
-    "**/*.ios.ts",
-    "app/main.aot.ts"
+    "**/*.ios.ts"
   ]
 }
