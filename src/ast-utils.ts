@@ -642,3 +642,18 @@ export const insertModuleId = (component: string) => (tree: Tree) => {
   );
   tree.commitUpdate(recorder);
 };
+
+export const updateNodeText = (tree: Tree, node: ts.Node, newText: string) => {
+  const recorder = tree.beginUpdate(node.getSourceFile().fileName);
+  recorder.remove(node.getStart(), node.getText().length);
+  recorder.insertLeft(node.getStart(), newText);
+  tree.commitUpdate(recorder);
+}
+
+export const replaceTextInNode = (tree: Tree, node: ts.Node, oldText: string, newText: string) => {
+  const index = node.getStart() + node.getText().indexOf(oldText);
+  const recorder = tree.beginUpdate(node.getSourceFile().fileName);
+  recorder.remove(index, oldText.length);
+  recorder.insertLeft(index, newText);
+  tree.commitUpdate(recorder);
+}
