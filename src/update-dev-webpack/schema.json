@@ -4,32 +4,12 @@
   "title": "NativeScript Angular npm-install Options Schema",
   "type": "object",
   "properties": {
-    "sourceDir": {
-      "type": "string",
-      "description": "The path of the source directory"
-    },
     "nsext": {
       "type": "string",
       "description": "Extension used for NativeScript files",
       "default": ".tns"
-    },
-    "main": {
-      "type": "string",
-      "description": "The name of the main file",
-      "default": "main"
-    },
-    "entryModulePath": {
-      "type": "string",
-      "description": "Path to the entry module"
-    },
-    "entryModuleClassName": {
-      "type": "string",
-      "description": "The name of the entry Module class",
-      "default": "AppModule"
     }
   },
   "required": [
-    "sourceDir",
-    "entryModulePath"
   ]
 }
