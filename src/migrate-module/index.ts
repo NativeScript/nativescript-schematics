@@ -4,7 +4,6 @@ import {
   Tree,
   chain,
   schematic,
-  TaskId,
   SchematicsException
 } from '@angular-devkit/schematics';
 
@@ -17,7 +16,6 @@ import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
 // import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 // import { join } from 'path';
 import { parseModuleInfo, ModuleInfo } from './module-info-utils';
-import { RunSchematicTask } from '@angular-devkit/schematics/tasks';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 
@@ -40,7 +38,7 @@ export default function(options: MigrateModuleSchema): Rule {
 
     addModuleFile(options),
 
-    migrateComponents(),
+    (tree, context) => migrateComponents(moduleInfo)(tree, context),
     migrateProviders()
   ]);
 }
@@ -55,29 +53,21 @@ const addModuleFile = (options: MigrateModuleSchema) => (tree: Tree, context: Sc
   return schematic('nativescript-module', moduleOptions)(tree, context);
 }
 
-const migrateComponents = () => (_tree: Tree, context: SchematicContext) => {
-  let taskId: TaskId;
-
+const migrateComponents = (moduleInfo: ModuleInfo) => {
   const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
 
-  // TODO: Add Handling for other types of Declarations, such as Pipes
-  // const other = moduleInfo.declarations.filter(d => !d.endsWith('Component'));
-
-  components.forEach(component => {
-    const ids = (taskId)? [taskId] : [];
-
-    const convertComponentOptions: MigrateComponentSchema = {
-      name: component.name,
-      modulePath: moduleInfo.modulePath,
-      nsext: nsext
-    }
-
-    taskId = context.addTask(
-      new RunSchematicTask<MigrateComponentSchema>('@nativescript/schematics', 'migrate-component', convertComponentOptions),
-      ids
-    );
-  });
+  return chain(
+    components.map(component => {
+      const convertComponentOptions: MigrateComponentSchema = {
+        name: component.name,
+        modulePath: moduleInfo.modulePath,
+        nsext: nsext
+      }
+      return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
+    }),
+  );
 }
+
 
 const migrateProviders = () => (tree: Tree) => {
   moduleInfo.providers.forEach(provider => {
