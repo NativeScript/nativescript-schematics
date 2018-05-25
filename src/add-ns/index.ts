@@ -34,7 +34,7 @@ export default function (options: MigrationOptions): Rule {
   return chain([
     validateOptions(options),
 
-    getProjectSettings,
+    getProjectSettings(options.projectName),
     validateProjectSettings,
 
     addNativeScriptSchematics,
@@ -69,9 +69,9 @@ const validateProjectSettings = (_tree: Tree) => {
   }
 }
 
-const getProjectSettings = (tree: Tree, context: SchematicContext) => {
+const getProjectSettings = (projectName: string) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Reading Project Settings');
-  projectSettings = getAngularProjectSettings(tree, context);
+  projectSettings = getAngularProjectSettings(tree, projectName);
 
   context.logger.info(`Project settings:
 ${JSON.stringify(projectSettings, null, 2)}`);
@@ -184,7 +184,8 @@ const addWebpackConfig = () => (tree:Tree, context: SchematicContext) => {
   const templateOptions = {
     entryModuleClassName: projectSettings.entryModuleClassName,
     entryModuleImportPath: projectSettings.entryModuleImportPath,
-    nsext: extensions.ns
+    nsext: extensions.ns,
+    shortExt: extensions.ns.replace('.', '')
   }
 
   // This is always going to be the case for ng cli before 6.0

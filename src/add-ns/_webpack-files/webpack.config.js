@@ -23,7 +23,7 @@ module.exports = env => {
         throw new Error("You need to provide a target platform!");
     }
 
-    const extensions = ["tns", platform];
+    const extensions = ["<%= shortExt %>", platform];
     const platformHost = new PlatformReplacementHost(extensions);
 
     const projectRoot = __dirname;
