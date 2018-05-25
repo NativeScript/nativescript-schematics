@@ -4,8 +4,14 @@ import { Tree, SchematicContext } from '@angular-devkit/schematics';
 
 import { getSourceFile, getJsonFile, getFileContents } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
+import { SemVer, getAngularSemver, getAngularCLISemver } from './node-utils';
 
 export interface AngularProjectSettings {
+  /** ng cli Npm Version */
+  ngCliSemVer: SemVer,
+  /** ng Npm Version */
+  ngSemVer: SemVer,
+
   /** default: "src" */
   appRoot: string,
   
@@ -38,6 +44,9 @@ export interface AngularProjectSettings {
 
 export function getAngularProjectSettings(tree: Tree, context: SchematicContext): AngularProjectSettings {
     const settings: AngularProjectSettings = {
+      ngCliSemVer: getAngularCLISemver(tree),
+      ngSemVer: getAngularSemver(tree),
+
       appRoot: '---',
 
       // main.ts
@@ -87,6 +96,7 @@ function parseAngularCli(tree: Tree, _context: SchematicContext, settings: Angul
   } else {
     // for Angular 6.0 and after
     // const angularJson = getJsonFile(tree, 'angular.json');
+    // TODO: Implement the above
     settings.appRoot = 'src';
     settings.mainName = 'main';
     settings.mainPath = 'src/main.ts';
