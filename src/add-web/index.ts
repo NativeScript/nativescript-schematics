@@ -62,8 +62,8 @@ const validateOptions = (options: MigrationOptions) => () => {
     throw new SchematicsException(`nsExtension "${options.nsExtension}" and webExtension "${options.webExtension}" should have different values`);
   }
 };
-const getProjectSettings = (tree, context) => {
-  projectSettings = getAngularProjectSettings(tree, context);
+const getProjectSettings = (tree: Tree) => {
+  projectSettings = getAngularProjectSettings(tree);
 };
 /**
 * rename: app.module.ts -> app.module.tns.ts

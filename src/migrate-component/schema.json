@@ -27,6 +27,11 @@
     },
     "webext": {
       "type": "string"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Allows specification of the project to be updated",
+      "default": ""
     }
   },
   "required": [

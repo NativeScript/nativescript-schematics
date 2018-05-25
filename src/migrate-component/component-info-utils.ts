@@ -21,7 +21,7 @@ export interface ComponentInfo {
 let projectSettings: AngularProjectSettings;
 
 export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
-  projectSettings = getAngularProjectSettings(tree, context);
+  projectSettings = getAngularProjectSettings(tree, options.projectName);
 
   const className = (options.name.endsWith('Component'))
     ? options.name
@@ -40,7 +40,7 @@ export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tr
     componentHtmlPath
   }
 
-  console.log(`ComponentInfo
+  context.logger.info(`ComponentInfo
 ${JSON.stringify(componentInfo, null, 2)}`);
 
   return componentInfo;

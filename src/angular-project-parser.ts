@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
-import { join, dirname } from 'path';
-import { Tree, SchematicContext } from '@angular-devkit/schematics';
+import { join, dirname, basename } from 'path';
+import { Tree, SchematicsException } from '@angular-devkit/schematics';
 
 import { getSourceFile, getJsonFile, getFileContents } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
@@ -42,7 +42,7 @@ export interface AngularProjectSettings {
   indexAppRootTag: string,
 }
 
-export function getAngularProjectSettings(tree: Tree, context: SchematicContext): AngularProjectSettings {
+export function getAngularProjectSettings(tree: Tree, projectName: string = ''): AngularProjectSettings {
     const settings: AngularProjectSettings = {
       ngCliSemVer: getAngularCLISemver(tree),
       ngSemVer: getAngularSemver(tree),
@@ -69,38 +69,59 @@ export function getAngularProjectSettings(tree: Tree, context: SchematicContext)
       indexAppRootTag: '---',
     }
 
-    parseAngularCli(tree, context, settings);
-    parseMain(tree, context, settings);
-    parseEntryModule(tree, context, settings);
-    parseEntryComponent(tree, context, settings);
+    parseAngularCli(tree, settings, projectName);
+    parseMain(tree, settings);
+    parseEntryModule(tree, settings);
+    parseEntryComponent(tree, settings);
 
     return settings;
   }
 
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
-function parseAngularCli(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
-  // For Angular before 6.0
-  if (tree.exists('.angular-cli.json')) {
-    const angularCliJson = getJsonFile<any>(tree, '.angular-cli.json');
+function parseAngularCli(tree: Tree, settings: AngularProjectSettings, projectName: string) {
+  // TODO: this might go away
+  if (settings.ngCliSemVer.major >= 6) {
+    const angularJson = getJsonFile<any>(tree, 'angular.json');
+
+    projectName = (projectName !== '') ? projectName : angularJson.defaultProject;
+    if (projectName === '') {
+      throw new SchematicsException(`--projectName not provided, and the DefaultProject property is not configured in angular.json.
+      Please, provide --projectName and try again`);
+    }
     
-    const app = angularCliJson.apps[0];
-    settings.appRoot = app.root;
+    const project = angularJson.projects[projectName];
+    if (!project) {
+      throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
+    }
+
+    const mainPath: string = project.architect.build.options.main;
+
+    // this by default is src/main.ts
+    // settings.mainPath = 'src/main.ts';
+    settings.mainPath = mainPath;
+
+    // this by default is src
+    // settings.appRoot = 'src';
+    settings.appRoot = dirname(mainPath);
     
-    if (app.main) {
-      settings.mainName = app.main.replace('.ts', '');
-    } else {
-      // if you are in a {N} project, then get main from package.json
-      settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
-    } 
-    settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
+    // this by default is main
+    // settings.mainName = 'main';
+    settings.mainName = basename(mainPath).replace('.ts', '');
   } else {
-    // for Angular 6.0 and after
-    // const angularJson = getJsonFile(tree, 'angular.json');
-    // TODO: Implement the above
-    settings.appRoot = 'src';
-    settings.mainName = 'main';
-    settings.mainPath = 'src/main.ts';
-    // angularJson.projects
+    if (tree.exists('.angular-cli.json')) {
+      const angularCliJson = getJsonFile<any>(tree, '.angular-cli.json');
+      
+      const app = angularCliJson.apps[0];
+      settings.appRoot = app.root;
+      
+      if (app.main) {
+        settings.mainName = app.main.replace('.ts', '');
+      } else {
+        // if you are in a {N} project, then get main from package.json
+        settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
+      } 
+      settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
+    }
   }
 }
 
@@ -114,7 +135,7 @@ function getMainFromNativeScriptPackageJson(tree: Tree, appRoot: string) {
 // Step 2 - get entryModule and entryModulePath   => open ${appRoot}/${main}.ts 
 // - get entryModule from .bootstrapModule(__value__)
 // - get entryModulePath from import { ${entryModule} } from "__value__" -- might need to remove ./
-function parseMain(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
+function parseMain(tree: Tree, settings: AngularProjectSettings) {
   // const path = `${settings.appRoot}/${settings.main}.ts`;
   const source = getSourceFile(tree, settings.mainPath);
 
@@ -134,7 +155,7 @@ function parseMain(tree: Tree, _context: SchematicContext, settings: AngularProj
 // Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
 // - get appComponent from bootstrap: [ __value__ ]
 // - get appComponentPath from import { ${appComponent} } from "__value__"
-function parseEntryModule(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
+function parseEntryModule(tree: Tree, settings: AngularProjectSettings) {
   const source = getSourceFile(tree, settings.entryModulePath);
   
   // find -> bootstrap -> array -> array value
@@ -159,7 +180,7 @@ function parseEntryModule(tree: Tree, _context: SchematicContext, settings: Angu
 }
 
 // Step 4 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: "__value__"
-function parseEntryComponent(tree: Tree, _context: SchematicContext, settings: AngularProjectSettings) {
+function parseEntryComponent(tree: Tree, settings: AngularProjectSettings) {
   const source = getSourceFile(tree, settings.entryComponentPath);
 
   const node = findNode<ts.StringLiteral>(source, [

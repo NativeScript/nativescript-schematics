@@ -17,7 +17,7 @@ export interface ModuleInfo {
 let projectSettings: AngularProjectSettings;
 
 export const parseModuleInfo = (options: MigrateModuleSchema) => (tree: Tree, context: SchematicContext): ModuleInfo => {
-  projectSettings = getAngularProjectSettings(tree, context);
+  projectSettings = getAngularProjectSettings(tree, options.projectName);
 
   const className = classify(`${options.name}Module`);
   const modulePath = findModulePath(options, tree);
@@ -32,7 +32,7 @@ export const parseModuleInfo = (options: MigrateModuleSchema) => (tree: Tree, co
     declarations
   }
 
-  console.log(`ModuleInfo
+  context.logger.info(`ModuleInfo
   ${JSON.stringify(moduleInfo, null, 2)}`);
 
   return moduleInfo;
