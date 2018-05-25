@@ -97,11 +97,7 @@ const applyNsExtensionToCoreFiles = (tree: Tree) => {
 const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
   //TODO: need to test this
   const options: UpdateDevWebpackOptions = {
-    sourceDir: projectSettings.appRoot,
-    nsext: extensions.ns,
-    entryModulePath: projectSettings.entryModulePath.replace('.ts',''),
-    entryModuleClassName: projectSettings.entryModuleClassName,
-    main: projectSettings.mainName
+    nsext: extensions.ns
   }
 
   return schematic('update-dev-webpack', options)(tree, context);
