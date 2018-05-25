@@ -37,7 +37,7 @@ export default function(options: NativeScriptModuleSchema): Rule {
 
 const getProjectSettings = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Reading Project Settings');
-  projectSettings = getAngularProjectSettings(tree, context);
+  projectSettings = getAngularProjectSettings(tree);
 };
 
 const addNsFiles = (options: NativeScriptModuleSchema) => (tree: Tree, context: SchematicContext) => {

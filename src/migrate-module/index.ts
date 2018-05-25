@@ -13,8 +13,6 @@ import { Schema as MigrateModuleSchema } from './schema';
 import { Schema as NativeScriptModuleSchema } from '../nativescript-module/schema';
 import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
 
-// import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
-// import { join } from 'path';
 import { parseModuleInfo, ModuleInfo } from './module-info-utils';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
