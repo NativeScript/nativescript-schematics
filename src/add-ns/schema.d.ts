@@ -8,7 +8,7 @@ export interface Schema {
    */
   webExtension: string;
   /**
-   * Used to specify if using ng cli v1, true by default
+   * Allows specification of the project to be updated
    */
-  cliV1: boolean;
+  projectName: string
 }

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsMigrateComponent",
+  "title": "App Resources Options Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "alias": "n"
+    },
+    "componentPath": {
+      "type": "string",
+      "alias": "p"
+    },
+    "module": {
+      "type": "string",
+      "alias": "m"
+    },
+    "modulePath": {
+      "type": "string"
+    },
+    "skipModule": {
+      "type": "boolean"
+    },
+    "nsext": {
+      "type": "string"
+    },
+    "webext": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Allows specification of the project to be updated",
+      "default": ""
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

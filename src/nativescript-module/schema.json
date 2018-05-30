@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNativeScriptModule",
+  "title": "NativeScript Module Options Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "alias": "n"
+    },
+    "nsext": {
+      "type": "string"
+    },
+    "flat": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

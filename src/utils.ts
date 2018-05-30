@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, relative } from 'path';
 
 import {
   SchematicsException,
@@ -136,7 +136,23 @@ export const getExtensions = (tree: Tree, options: any): Extensions => {
 
   assignOrder.push(passedExtensions);
   return Object.assign({}, ...assignOrder);
-};
+}
+
+export const getNsConfigExtension = (tree: Tree): Extensions => {
+  if (!tree.exists('nsconfig.json')) {
+    console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
+    return {
+      ns: '.tns',
+      web: ''
+    };
+  }
+
+  const nsconfig = getJsonFile<any>(tree, `nsconfig.json`);  
+  return {
+    ns: nsconfig.nsext || '.tns',
+    web: nsconfig.webext || ''
+  }
+}
 
 export const addDependency = (tree: Tree, dependency: NodeDependency, packageJsonDir?: string) => {
   const path = packageJsonDir ?
@@ -270,4 +286,30 @@ export const findMissingJsonProperties = (to: Object, from: Object, resolveConfl
 export const insertTextWhere = (source: string, text: string, where: string) => {
   const index = source.indexOf(where);
   return source.substring(0, index) + text + source.substring(index);
+}
+
+export const addExtension = (path: string, extension: string) => {
+  const index = path.lastIndexOf('.');
+  const newPath = path.slice(0, index) + extension + path.slice(index);
+  return newPath;
+}
+
+/**
+ * Find relative path, and remove .tns (to make it an import path)
+ * @param from path to the importing file
+ * @param to path to the imported file
+ */
+export const findRelativeImportPath = (from, to): string => {
+  let relativePath = relative(from, to);
+
+  // if starts with ../../ then relative is going to skip one folder too many
+  if(relativePath.startsWith('../../')) {
+    relativePath = relativePath.replace('../../', '../');
+  } else if(relativePath.startsWith('../')) {
+    relativePath = relativePath.replace('../', './');
+  } else if (relativePath === '') {
+    relativePath = './';
+  }
+
+  return relativePath.replace(/.ts$/, '');
 }

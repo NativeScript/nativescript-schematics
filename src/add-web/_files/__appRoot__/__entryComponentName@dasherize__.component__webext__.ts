@@ -4,6 +4,6 @@ import { Component } from '@angular/core';
   selector: '<%= indexAppRootTag %>',
   templateUrl: '<%= entryComponentImportPath %>.html'
 })
-export class <%= entryComponentName %> {
+export class <%= entryComponentClassName %> {
   title = 'app';
 }

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsMigrateModule",
+  "title": "Migrate Module Options Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "alias": "n"
+    },
+    "modulePath": {
+      "type": "string",
+      "alias": "p"
+    },
+    "nsext": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Allows specification of the project to be updated",
+      "default": ""
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

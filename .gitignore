@@ -2,6 +2,9 @@
 src/**/*.js
 src/**/*.js.map
 
+# Schematics template files
+!src/**/_*/**/*.js
+
 # IDEs
 .idea/
 jsconfig.json
@@ -18,6 +21,3 @@ yarn-error.log*
 .DS_Store
 
 **/*.tgz
-
-!src/add-ns/_ns-files/**/*.js
-!src/add-ns/_webpack-files/**/*.js

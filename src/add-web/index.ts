@@ -1,7 +1,7 @@
 import { Schema as MigrationOptions } from './schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 
-import { Extensions, getSourceFile } from '../utils';
+import { Extensions, getSourceFile, addExtension } from '../utils';
 import {
   Rule,
   chain,
@@ -62,8 +62,8 @@ const validateOptions = (options: MigrationOptions) => () => {
     throw new SchematicsException(`nsExtension "${options.nsExtension}" and webExtension "${options.webExtension}" should have different values`);
   }
 };
-const getProjectSettings = (tree, context) => {
-  projectSettings = getAngularProjectSettings(tree, context);
+const getProjectSettings = (tree: Tree) => {
+  projectSettings = getAngularProjectSettings(tree);
 };
 /**
 * rename: app.module.ts -> app.module.tns.ts
@@ -87,11 +87,7 @@ const applyNsExtensionToCoreFiles = (tree: Tree) => {
   });
   renameFilesForce(paths)(tree);
 };
-function addExtension(path: string, extension: string) {
-  const index = path.lastIndexOf('.');
-  const newPath = path.slice(0, index) + extension + path.slice(index);
-  return newPath;
-}
+
 /**
 * update webpack.config referenes:
 * - main.ts -> bundle: "./main.tns.ts",
@@ -101,11 +97,7 @@ function addExtension(path: string, extension: string) {
 const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
   //TODO: need to test this
   const options: UpdateDevWebpackOptions = {
-    sourceDir: projectSettings.appRoot,
-    nsext: extensions.ns,
-    entryModulePath: projectSettings.entryModulePath.replace('.ts',''),
-    entryModuleName: projectSettings.entryModuleName,
-    main: projectSettings.mainName
+    nsext: extensions.ns
   }
 
   return schematic('update-dev-webpack', options)(tree, context);
@@ -169,7 +161,7 @@ const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
 // function updateEntryModuleExtension(tree: Tree) {
 //     const source = getSourceFile(tree, webpackConfigPath);
 //     // const propertyText = 'module#AppModule';
-//     const propertyText = `module#${projectSettings.entryModuleName}`;
+//     const propertyText = `module#${projectSettings.entryModuleClassName}`;
 
 //     const node = findNode(source, [
 //         { kind: ts.SyntaxKind.NewExpression, name: 'nsWebpack.NativeScriptAngularCompilerPlugin' },
@@ -177,7 +169,7 @@ const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
 //     ], propertyText);
 
 //     // const updatedFilePath = insertTextWhere(fileToUpdate, extensions.ns, '#AppModule');
-//     const updatedFilePath = insertTextWhere(propertyText, extensions.ns, `#${projectSettings.entryModuleName}`);
+//     const updatedFilePath = insertTextWhere(propertyText, extensions.ns, `#${projectSettings.entryModuleClassName}`);
 //     replaceTextInNode(tree, node, propertyText, updatedFilePath);
 // }
 
@@ -360,7 +352,7 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
       const importPath = projectSettings.entryModuleImportPath;
       
       const node = findNode<ts.ImportDeclaration>(source, [
-        { kind: ts.SyntaxKind.ImportDeclaration, name: projectSettings.entryModuleName },
+        { kind: ts.SyntaxKind.ImportDeclaration, name: projectSettings.entryModuleClassName },
       ]);
       replaceTextInNode(tree, node, importPath, importPath + extensions.ns);
     };
@@ -386,12 +378,12 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
         webext: extensions.web,
         appRoot: projectSettings.appRoot,
         main: projectSettings.mainName,
-        entryModuleName: projectSettings.entryModuleName,
-        entryModulePrefix: projectSettings.entryModuleName.replace('Module', ''),
+        entryModuleClassName: projectSettings.entryModuleClassName,
+        entryModulePrefix: projectSettings.entryModuleClassName.replace('Module', ''),
         entryModuleImportPath: projectSettings.entryModuleImportPath,
         // entryModulePath: projectSettings.entryModulePath.replace(projectSettings.appRoot, '.'),
-        entryComponentName: projectSettings.entryComponentName,
-        entryComponentPrefix: projectSettings.entryComponentName.replace('Component', ''),
+        entryComponentClassName: projectSettings.entryComponentClassName,
+        entryComponentPrefix: projectSettings.entryComponentClassName.replace('Component', ''),
         entryComponentImportPath: projectSettings.entryComponentImportPath,
         // entryComponentPath: projectSettings.entryComponentPath.replace(projectSettings.appRoot, '.'),
         indexAppRootTag: projectSettings.indexAppRootTag,
