@@ -164,7 +164,9 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
 
       // TODO: This might need to be remove later:
-      "@ngtools/webpack": "git+https://github.com/angular/ngtools-webpack-builds.git",
+      "@ngtools/webpack": "6.1.0-beta.0",
+      "@angular-devkit/core": "0.7.0-beta.0",
+
       "typescript": "2.7.2"
     }
   }
