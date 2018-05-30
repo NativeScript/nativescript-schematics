@@ -36,7 +36,7 @@ export default function(options: MigrateModuleSchema): Rule {
 
     addModuleFile(options),
 
-    (tree, context) => migrateComponents(moduleInfo)(tree, context),
+    (tree, context) => migrateComponents(moduleInfo, options.projectName)(tree, context),
     migrateProviders()
   ]);
 }
@@ -51,7 +51,7 @@ const addModuleFile = (options: MigrateModuleSchema) => (tree: Tree, context: Sc
   return schematic('nativescript-module', moduleOptions)(tree, context);
 }
 
-const migrateComponents = (moduleInfo: ModuleInfo) => {
+const migrateComponents = (moduleInfo: ModuleInfo, projectName: string) => {
   const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
 
   return chain(
@@ -59,7 +59,8 @@ const migrateComponents = (moduleInfo: ModuleInfo) => {
       const convertComponentOptions: MigrateComponentSchema = {
         name: component.name,
         modulePath: moduleInfo.modulePath,
-        nsext: nsext
+        nsext: nsext,
+        projectName: projectName
       }
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),
