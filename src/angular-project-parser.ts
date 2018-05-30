@@ -80,19 +80,8 @@ export function getAngularProjectSettings(tree: Tree, projectName: string = ''):
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
 function parseAngularCli(tree: Tree, settings: AngularProjectSettings, projectName: string) {
   // TODO: this might go away
-  if (settings.ngCliSemVer.major >= 6) {
-    const angularJson = getJsonFile<any>(tree, 'angular.json');
-
-    projectName = (projectName !== '') ? projectName : angularJson.defaultProject;
-    if (projectName === '') {
-      throw new SchematicsException(`--projectName not provided, and the DefaultProject property is not configured in angular.json.
-      Please, provide --projectName and try again`);
-    }
-    
-    const project = angularJson.projects[projectName];
-    if (!project) {
-      throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
-    }
+  if (settings.ngCliSemVer.major >= 6) {  
+    const project = getProjectObject(projectName, tree);
 
     const mainPath: string = project.architect.build.options.main;
 
@@ -123,6 +112,29 @@ function parseAngularCli(tree: Tree, settings: AngularProjectSettings, projectNa
       settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
     }
   }
+}
+
+function getProjectObject(projectName: string, tree: Tree) {
+  const angularJson = getJsonFile<any>(tree, 'angular.json');
+  
+  // return the requested project object
+  if (projectName) {
+    const project = angularJson.projects[projectName];
+    if (!project) {
+      throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
+    }
+
+    return project;
+  }
+
+  // or return the default project
+  if (angularJson.defaultProject) {
+    return angularJson.projects[angularJson.defaultProject];
+  }
+
+  // or return the first project on the list
+  // this is the same behaviour as in ng cli
+  return Object.values(angularJson.projects)[0];
 }
 
 // get main => open ${appRoot}/package.json -> get main - remove '.js'
