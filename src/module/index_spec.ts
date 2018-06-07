@@ -5,7 +5,8 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
-import { DEFAULT_SHARED_EXTENSIONS, createEmptyProject, toNgModuleClassName } from '../utils';
+import { createEmptyProject, toNgModuleClassName } from '../utils';
+import { DEFAULT_SHARED_EXTENSIONS } from '../generate/utils';
 import { isInModuleMetadata } from '../test-utils';
 
 describe('Module Schematic', () => {
@@ -16,7 +17,6 @@ describe('Module Schematic', () => {
   const defaultOptions: ModuleOptions = {
     name,
     path,
-    sourceDir,
     web: false,
     nativescript: true,
   };

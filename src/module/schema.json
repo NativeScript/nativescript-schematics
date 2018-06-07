@@ -6,51 +6,13 @@
   "properties": {
     "web": {
       "type": "boolean",
-      "alias": "w"
+      "alias": "w",
+      "default": true
     },
     "nativescript": {
       "type": "boolean",
-      "alias": "ns"
-    },
-    "name": {
-      "type": "string"
-    },
-    "path": {
-      "type": "string",
-      "default": "app"
-    },
-    "appRoot": {
-      "type": "string"
-    },
-    "sourceDir": {
-      "type": "string",
-      "default": "src"
-    },
-    "routing": {
-      "type": "boolean",
-      "default": false
-    },
-    "routingScope": {
-      "enum": ["Child", "Root"],
-      "type": "string",
-      "default": "Child"
-    },
-    "spec": {
-      "type": "boolean",
+      "alias": "ns",
       "default": true
-    },
-    "flat": {
-      "type": "boolean",
-      "default": false
-    },
-    "commonModule": {
-      "type": "boolean",
-      "default": true
-    },
-    "module":  {
-      "type": "string",
-      "description": "Allows specification of the declaring module.",
-      "alias": "m"
     },
     "nsExtension": {
       "type": "string",
@@ -59,9 +21,62 @@
     "webExtension": {
       "type": "string",
       "description": "Allows specification of the used extension for web"
+    },
+
+    "name": {
+      "type": "string",
+      "description": "The name of the module.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "path": {
+      "type": "string",
+      "format": "path",
+      "description": "The path to create the module.",
+      "visible": false
+    },
+    "project": {
+      "type": "string",
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "routing": {
+      "type": "boolean",
+      "description": "Generates a routing module.",
+      "default": false
+    },
+    "routingScope": {
+      "enum": ["Child", "Root"],
+      "type": "string",
+      "description": "The scope for the generated routing.",
+      "default": "Child"
+    },
+    "spec": {
+      "type": "boolean",
+      "description": "Specifies if a spec file is generated.",
+      "default": true
+    },
+    "flat": {
+      "type": "boolean",
+      "description": "Flag to indicate if a dir is created.",
+      "default": false
+    },
+    "commonModule": {
+      "type": "boolean",
+      "description": "Flag to control whether the CommonModule is imported.",
+      "default": true,
+      "visible": false
+    },
+    "module":  {
+      "type": "string",
+      "description": "Allows specification of the declaring module.",
+      "alias": "m"
     }
   },
-  "required": [
-    "name"
-  ]
+  "required": [],
+  "additionalProperties": false
 }
