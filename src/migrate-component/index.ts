@@ -17,9 +17,10 @@ import { dirname, basename } from 'path';
 
 import { Schema as MigrateComponentSchema } from './schema';
 
-import { getSourceFile, addExtension, findRelativeImportPath, getNsConfigExtension, Extensions } from '../utils';
+import { getSourceFile, addExtension, findRelativeImportPath } from '../utils';
 import { insertModuleId } from '../ast-utils';
 import { ComponentInfo, parseComponentInfo } from './component-info-utils';
+import { getNsConfigExtension, Extensions } from '../generate/utils';
 
 let extensions: Extensions;
 
