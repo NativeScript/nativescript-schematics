@@ -19,8 +19,9 @@ import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MigrationOptions } from './schema';
 import { Schema as NpmInstallOptions } from '../npm-install/schema';
-import { Extensions, getJsonFile } from '../utils';
+import { getJsonFile } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
+import { Extensions } from '../generate/utils';
 
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
@@ -34,7 +35,7 @@ export default function (options: MigrationOptions): Rule {
   return chain([
     validateOptions(options),
 
-    getProjectSettings(options.projectName),
+    getProjectSettings(options.project),
     validateProjectSettings,
 
     addNativeScriptSchematics,
@@ -104,7 +105,8 @@ const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
     dasherize: dasherize,
 
     nsext: extensions.ns,
-    sourceDir: projectSettings.appRoot,
+    webext: extensions.web,
+    sourceDir: projectSettings.sourceRoot,
 
     main: projectSettings.mainName,
 
