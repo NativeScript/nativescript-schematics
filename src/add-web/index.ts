@@ -1,7 +1,7 @@
 import { Schema as MigrationOptions } from './schema';
 import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 
-import { Extensions, getSourceFile, addExtension } from '../utils';
+import { getSourceFile, addExtension } from '../utils';
 import {
   Rule,
   chain,
@@ -21,6 +21,7 @@ import { findNode } from '../ast-utils';
 
 import * as ts from 'typescript';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
+import { Extensions } from '../generate/utils';
 
 const webpackConfigPath = 'webpack.config.js';
 let extensions: Extensions;
@@ -184,7 +185,7 @@ const createNgProject = () => (tree: Tree, context: SchematicContext) => {
   const options = {
     name: 'tmp-name',
     directory: 'tmp',
-    sourceDir: projectSettings.appRoot,
+    sourceDir: projectSettings.sourceRoot,
     skipInstall: true
   };
   // return externalSchematic('@schematics/angular', 'application', options);
@@ -216,7 +217,7 @@ function mergeGitIgnore(tree: Tree) {
     const gitignoreContent = `node_modules/
     platforms/
     hooks/
-    ${projectSettings.appRoot}/**/*.js`;
+    ${projectSettings.sourceRoot}/**/*.js`;
     
     tree.create('.gitignore', gitignoreContent);
   }
@@ -376,16 +377,16 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
         dasherize: dasherize,
         // webext: '.www',
         webext: extensions.web,
-        appRoot: projectSettings.appRoot,
+        sourceRoot: projectSettings.sourceRoot,
         main: projectSettings.mainName,
         entryModuleClassName: projectSettings.entryModuleClassName,
         entryModulePrefix: projectSettings.entryModuleClassName.replace('Module', ''),
         entryModuleImportPath: projectSettings.entryModuleImportPath,
-        // entryModulePath: projectSettings.entryModulePath.replace(projectSettings.appRoot, '.'),
+        // entryModulePath: projectSettings.entryModulePath.replace(projectSettings.sourceRoot, '.'),
         entryComponentClassName: projectSettings.entryComponentClassName,
         entryComponentPrefix: projectSettings.entryComponentClassName.replace('Component', ''),
         entryComponentImportPath: projectSettings.entryComponentImportPath,
-        // entryComponentPath: projectSettings.entryComponentPath.replace(projectSettings.appRoot, '.'),
+        // entryComponentPath: projectSettings.entryComponentPath.replace(projectSettings.sourceRoot, '.'),
         indexAppRootTag: projectSettings.indexAppRootTag,
       };
       const templateSource = apply(url('./_files'), [
