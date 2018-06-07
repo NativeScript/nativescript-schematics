@@ -1,121 +1,163 @@
 import * as ts from 'typescript';
 import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
+// import { getWorkspace, WorkspaceProject } from '@schematics/angular/utility/config';
 
-import { getSourceFile, getJsonFile, getFileContents } from './utils';
+import { getSourceFile, getAngularJson } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
 import { SemVer, getAngularSemver, getAngularCLISemver } from './node-utils';
 
 export interface AngularProjectSettings {
   /** ng cli Npm Version */
-  ngCliSemVer: SemVer,
+  ngCliSemVer: SemVer;
   /** ng Npm Version */
-  ngSemVer: SemVer,
+  ngSemVer: SemVer;
+
+  /** default: "" */
+  root: string;
 
   /** default: "src" */
-  appRoot: string,
+  sourceRoot: string;
   
   /** default: "main"*/
-  mainName: string,
+  mainName: string;
   /** default: "src/main.ts"*/
   mainPath: string;
 
   /** default: "AppModule"*/
-  entryModuleClassName: string,
+  entryModuleClassName: string;
   /** default: "App"*/
-  entryModuleName: string,
+  entryModuleName: string;
   /** default: "src/app/app.module.ts"*/
-  entryModulePath: string,
+  entryModulePath: string;
   /** default: "./app/app.module"*/
-  entryModuleImportPath: string,
+  entryModuleImportPath: string;
 
   /** default: "AppComponent" */
-  entryComponentClassName: string,
+  entryComponentClassName: string;
   /** default: "App" */
   entryComponentName: string;
   /** default: "src/app/app.component.ts" */
-  entryComponentPath: string,
+  entryComponentPath: string;
   /** default: "./app.component" */
-  entryComponentImportPath: string,
+  entryComponentImportPath: string;
 
   /** default: "app-root"*/
-  indexAppRootTag: string,
+  indexAppRootTag: string;
+}
+
+export interface CoreProjectSettings {
+  root: string;
+  sourceRoot: string;
+  mainName: string;
+  mainPath: string;
+
+  ngCliSemVer: SemVer;
+  ngSemVer: SemVer;
+}
+
+/**
+ * Metadata for a component or module class
+ */
+export interface ClassMetadata {
+  /** 
+   * Full Class name
+   * For Example: 'HomeComponent'
+   */
+  className: string,
+
+  /** The name of the class without the Class
+   * For Example: 'Home'
+   */
+  name: string,
+
+  /**
+   * Relative import path:
+   * For Example: './home/home.component'
+   */
+  importPath: string,
+
+  /**
+   * Full path to the file:
+   * For Example: 'src/home/home.component.ts
+   */
+  path: string
 }
 
 export function getAngularProjectSettings(tree: Tree, projectName: string = ''): AngularProjectSettings {
-    const settings: AngularProjectSettings = {
-      ngCliSemVer: getAngularCLISemver(tree),
-      ngSemVer: getAngularSemver(tree),
+  const projectSettings = getCoreProjectSettings(tree, projectName);
+  const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath);
 
-      appRoot: '---',
+  const entryComponent = getEntryComponentMetadata(tree, entryModule.path);
+  const indexAppRootTag = getAppRootTag(tree, entryComponent.path);
 
-      // main.ts
-      mainName: '---',
-      mainPath: '---',
+  return {
+    ngCliSemVer: projectSettings.ngCliSemVer,
+    ngSemVer: projectSettings.ngSemVer,
 
-      // app.module.ts
-      entryModuleClassName: '---',
-      entryModuleName: '---',
-      entryModulePath: '---',
-      entryModuleImportPath: '---',
+    root: projectSettings.root,
+    sourceRoot: projectSettings.sourceRoot,
+    mainName: projectSettings.mainName,
+    mainPath: projectSettings.mainPath,
 
-      // app.componet.ts
-      entryComponentClassName: '---',
-      entryComponentName: '---',
-      entryComponentPath: '---',
-      entryComponentImportPath: '---',
+    entryModuleClassName: entryModule.className,
+    entryModuleImportPath: entryModule.importPath,
+    entryModuleName: entryModule.name,
+    entryModulePath: entryModule.path,
 
-      // index.html
-      indexAppRootTag: '---',
-    }
+    entryComponentClassName: entryComponent.className,
+    entryComponentImportPath: entryComponent.importPath,
+    entryComponentName: entryComponent.name,
+    entryComponentPath: entryComponent.path,
 
-    parseAngularCli(tree, settings, projectName);
-    parseMain(tree, settings);
-    parseEntryModule(tree, settings);
-    parseEntryComponent(tree, settings);
-
-    return settings;
-  }
+    indexAppRootTag
+  };
+}
 
 // Step 1 - get appRoot => open .angular-cli.json -> get apps.root
-function parseAngularCli(tree: Tree, settings: AngularProjectSettings, projectName: string) {
+export function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
+  const ngCliSemVer = getAngularCLISemver(tree);
+  const ngSemVer = getAngularSemver(tree);
+  
   // TODO: this might go away
-  if (settings.ngCliSemVer.major >= 6) {  
+  if (ngCliSemVer.major >= 6) {
     const project = getProjectObject(projectName, tree);
 
-    const mainPath: string = project.architect.build.options.main;
-
+    const root = project.root;
+    
+    // this by default is src
+    // const sourceRoot = dirname(mainPath);
+    const sourceRoot = project.sourceRoot;
+    
     // this by default is src/main.ts
     // settings.mainPath = 'src/main.ts';
-    settings.mainPath = mainPath;
+    const mainPath: string = project.architect.build.options.main;
 
-    // this by default is src
-    // settings.appRoot = 'src';
-    settings.appRoot = dirname(mainPath);
-    
     // this by default is main
     // settings.mainName = 'main';
-    settings.mainName = basename(mainPath).replace('.ts', '');
+    const mainName = basename(mainPath).replace('.ts', '');
+
+    return {
+      ngCliSemVer,
+      ngSemVer,
+
+      root,
+      sourceRoot,
+      mainName,
+      mainPath,
+    };
   } else {
-    if (tree.exists('.angular-cli.json')) {
-      const angularCliJson = getJsonFile<any>(tree, '.angular-cli.json');
-      
-      const app = angularCliJson.apps[0];
-      settings.appRoot = app.root;
-      
-      if (app.main) {
-        settings.mainName = app.main.replace('.ts', '');
-      } else {
-        // if you are in a {N} project, then get main from package.json
-        settings.mainName = getMainFromNativeScriptPackageJson(tree, settings.appRoot);
-      } 
-      settings.mainPath = `${settings.appRoot}/${settings.mainName}.ts`;
-    }
+    throw new SchematicsException(`This schematic is not compatible with @angular/cli 1.x, use 6.x or newer`);
   }
 }
 
+// export function getProject(tree: Tree, projectName: string): WorkspaceProject {
+//   const workspace = getWorkspace(tree);
+//   return workspace.projects[projectName];
+// }
+
 function getProjectObject(projectName: string, tree: Tree) {
-  const angularJson = getJsonFile<any>(tree, 'angular.json');
+  const angularJson = getAngularJson(tree);
   
   // return the requested project object
   if (projectName) {
@@ -137,38 +179,35 @@ function getProjectObject(projectName: string, tree: Tree) {
   return Object.values(angularJson.projects)[0];
 }
 
-// get main => open ${appRoot}/package.json -> get main - remove '.js'
-function getMainFromNativeScriptPackageJson(tree: Tree, appRoot: string) {
-  const path = `${appRoot}/package.json`;
-  const appPackageJson = JSON.parse(getFileContents(tree, path));
-  return appPackageJson.main.replace('.js', '');
-}
-
-// Step 2 - get entryModule and entryModulePath   => open ${appRoot}/${main}.ts 
+// Step 2 - get entryModule and entryModulePath   => open ${sourceRoot}/${main}.ts 
 // - get entryModule from .bootstrapModule(__value__)
 // - get entryModulePath from import { ${entryModule} } from "__value__" -- might need to remove ./
-function parseMain(tree: Tree, settings: AngularProjectSettings) {
-  // const path = `${settings.appRoot}/${settings.main}.ts`;
-  const source = getSourceFile(tree, settings.mainPath);
+function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
+  const source = getSourceFile(tree, mainPath);
 
   const params = getFunctionParams(source, 'bootstrapModule');
-  const entryModuleClassName = params[0];
-  settings.entryModuleClassName = entryModuleClassName;
-  settings.entryModuleName = entryModuleClassName.replace('Module', '');
+  const className = params[0];
 
-  const importPath: string = findImportPath(source, entryModuleClassName);
+  const name = className.replace('Module', '');
 
-  settings.entryModuleImportPath = importPath;
-  
-  const mainDir = dirname(settings.mainPath);
-  settings.entryModulePath = join(mainDir, importPath) + '.ts';
+  const importPath: string = findImportPath(source, className);
+
+  const mainDir = dirname(mainPath);
+  const path = join(mainDir, importPath) + '.ts';
+
+  return {
+    className,
+    name,
+    importPath,
+    path
+  }
 }
 
 // Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
 // - get appComponent from bootstrap: [ __value__ ]
 // - get appComponentPath from import { ${appComponent} } from "__value__"
-function parseEntryModule(tree: Tree, settings: AngularProjectSettings) {
-  const source = getSourceFile(tree, settings.entryModulePath);
+function getEntryComponentMetadata(tree: Tree, entryModulePath: string): ClassMetadata {
+  const source = getSourceFile(tree, entryModulePath);
   
   // find -> bootstrap -> array -> array value
   // bootstrap: [
@@ -177,30 +216,34 @@ function parseEntryModule(tree: Tree, settings: AngularProjectSettings) {
   const node = findNode<ts.ArrayLiteralExpression>(source, [
     { kind: ts.SyntaxKind.PropertyAssignment, name: 'bootstrap'},
     { kind: ts.SyntaxKind.ArrayLiteralExpression }
-    // { kind: ts.SyntaxKind.Identifier }
   ]);
 
-  const componentName = node.elements[0].getText();
-  settings.entryComponentClassName = componentName;
-  settings.entryComponentName = componentName.replace('Component', '');
+  const className = node.elements[0].getText();
 
-  const importPath = findImportPath(source, componentName);
-  settings.entryComponentImportPath = importPath;
+  const name = className.replace('Component', '');
 
-  const entryModuleDir = dirname(settings.entryModulePath);
-  settings.entryComponentPath = join(entryModuleDir, importPath) + '.ts';
+  const importPath = findImportPath(source, className);
+
+  const entryModuleDir = dirname(entryModulePath);
+  const path = join(entryModuleDir, importPath) + '.ts';
+
+  return {
+    className,
+    name,
+    importPath,
+    path
+  };
 }
 
 // Step 4 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: "__value__"
-function parseEntryComponent(tree: Tree, settings: AngularProjectSettings) {
-  const source = getSourceFile(tree, settings.entryComponentPath);
+function getAppRootTag(tree: Tree, entryComponentPath: string): string {
+  const source = getSourceFile(tree, entryComponentPath);
 
   const node = findNode<ts.StringLiteral>(source, [
     { kind: ts.SyntaxKind.PropertyAssignment, name: 'selector'},
     { kind: ts.SyntaxKind.StringLiteral }
-    // { kind: ts.SyntaxKind.Identifier }
   ]);
 
   const indexAppRootTag = node.text;
-  settings.indexAppRootTag = indexAppRootTag;
+  return indexAppRootTag;
 }

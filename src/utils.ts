@@ -1,12 +1,12 @@
-import { join, relative } from 'path';
+import { relative } from 'path';
 
 import {
   SchematicsException,
   Tree,
 } from '@angular-devkit/schematics';
-import { configPath, CliConfig } from '@schematics/angular/utility/config';
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
+import { NsConfig } from './models/nsconfig';
 
 export interface Node {
     getStart();
@@ -32,26 +32,7 @@ export interface NodeDependency {
   type: 'dependency' | 'devDependency'
 }
 
-export interface Extensions {
-  web: string,
-  ns: string,
-};
 
-export const DEFAULT_SHARED_EXTENSIONS: Extensions = {
-  web: '',
-  ns: '.tns'
-};
-
-export const getDefaultExtensions = (web: boolean, ns: boolean) => {
-  if (web && ns) {
-    return DEFAULT_SHARED_EXTENSIONS;
-  } else {
-    return {
-      web: '',
-      ns: '',
-    };
-  }
-};
 
 export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
   const buffer = host.read(path);
@@ -80,78 +61,6 @@ export const copy = (tree: Tree, from: string, to: string) => {
   }
 
   tree.create(to, file.content);
-}
-
-export const ns = (tree: Tree, options: any) => {
-  if (options.nativescript !== undefined) {
-    return options.nativescript;
-  }
-
-  try {
-    const config = getPackageJson(tree) as any;
-    return config.nativescript.id;
-  } catch(e) {
-    return false;
-  }
-};
-
-export const web = (tree: Tree, options: any) => {
-  if (options.web !== undefined) {
-    return options.web;
-  }
-
-  const configRelativePath = join('.', configPath);
-
-  try {
-    const config = getJsonFile<CliConfig>(tree, configRelativePath);
-
-    const apps = config.apps || [];
-    return apps.some(app => !!app.index);
-  } catch(e) {
-    return false;
-  }
-};
-
-export const getExtensions = (tree: Tree, options: any): Extensions => {
-  const passedExtensions: any = {};
-  if (options.nsExtension !== undefined) {
-    passedExtensions.ns = options.nsExtension;
-  }
-  if (options.webExtension !== undefined) {
-    passedExtensions.web = options.webExtension;
-  }
-  
-  const isWeb = web(tree, options);
-  const isNs = ns(tree, options);
-
-  const assignOrder = [getDefaultExtensions(isWeb, isNs)];
-  try {
-    const config = getPackageJson(tree) as any;
-    assignOrder.push(config.extensions);
-  } catch (e) {
-    if (!(e instanceof FileNotFoundException)) {
-      throw e;
-    }
-  }
-
-  assignOrder.push(passedExtensions);
-  return Object.assign({}, ...assignOrder);
-}
-
-export const getNsConfigExtension = (tree: Tree): Extensions => {
-  if (!tree.exists('nsconfig.json')) {
-    console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
-    return {
-      ns: '.tns',
-      web: ''
-    };
-  }
-
-  const nsconfig = getJsonFile<any>(tree, `nsconfig.json`);  
-  return {
-    ns: nsconfig.nsext || '.tns',
-    web: nsconfig.webext || ''
-  }
 }
 
 export const addDependency = (tree: Tree, dependency: NodeDependency, packageJsonDir?: string) => {
@@ -187,9 +96,10 @@ export interface PackageJson {
   version?: string;
   license?: string;
   scripts?: Object;
+  nativescript?: string
 }
 
-export const getJsonFile = <T>(tree: Tree, path: string) => {
+export const getJsonFile = <T>(tree: Tree, path: string): T => {
   const file = tree.get(path);
   if (!file) {
     throw new FileNotFoundException(path);
@@ -202,6 +112,14 @@ export const getJsonFile = <T>(tree: Tree, path: string) => {
     throw new SchematicsException(`File ${path} could not be parsed!`);
   }
 };
+
+export const getNsConfig = (tree: Tree): NsConfig => {
+  return getJsonFile<NsConfig>(tree, '/nsconfig.json');
+}
+
+export const getAngularJson = (tree: Tree): any => {
+  return getJsonFile<any>(tree, '/angular.json');
+}
 
 export const getFileContents = (tree: Tree, filePath: string): string => {
   const buffer = tree.read(filePath) || '';
@@ -218,16 +136,6 @@ export const renameFilesForce = (paths: FromTo[]) =>
 
     tree.delete(from);
 });
-
-export const removeNsSchemaOptions = (options: any) => {
-  const duplicate = { ...options };
-  delete duplicate['web'];
-  delete duplicate['nativescript'];
-  delete duplicate['nsExtension'];
-  delete duplicate['webExtension'];
-
-  return duplicate;
-};
 
 export const createEmptyProject = (tree: Tree): Tree => {
   tree.create('/.angular-cli.json', JSON.stringify({}));

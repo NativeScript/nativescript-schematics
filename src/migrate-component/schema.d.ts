@@ -25,5 +25,5 @@ export interface Schema {
   /**
   * Allows specification of the project to be updated
   */
-  projectName?: string
+  project?: string
 }

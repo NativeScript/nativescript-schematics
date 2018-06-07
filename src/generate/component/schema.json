@@ -6,61 +6,84 @@
   "properties": {
     "web": {
       "type": "boolean",
-      "alias": "w"
+      "alias": "w",
+      "default": true
     },
     "nativescript": {
       "type": "boolean",
-      "alias": "ns"
+      "alias": "ns",
+      "default": true
     },
+    "nsExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for {N}",
+      "alias": "nsext"
+    },
+    "webExtension": {
+      "type": "string",
+      "description": "Allows specification of the used extension for web",
+      "alias": "webext"
+    },
+
     "path": {
       "type": "string",
-      "default": "app"
+      "format": "path",
+      "description": "The path to create the component.",
+      "visible": false
     },
-    "appRoot": {
-      "type": "string"
-    },
-    "sourceDir": {
+    "project": {
       "type": "string",
-      "default": "src",
-      "alias": "sd"
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "The name of the component.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
     },
     "inlineStyle": {
       "description": "Specifies if the style will be in the ts file.",
       "type": "boolean",
       "default": false,
-      "alias": "is"
+      "alias": "s"
     },
     "inlineTemplate": {
       "description": "Specifies if the template will be in the ts file.",
       "type": "boolean",
       "default": false,
-      "alias": "it"
+      "alias": "t"
     },
     "viewEncapsulation": {
       "description": "Specifies the view encapsulation strategy.",
       "enum": ["Emulated", "Native", "None"],
       "type": "string",
-      "alias": "ve"
+      "alias": "v"
     },
     "changeDetection": {
       "description": "Specifies the change detection strategy.",
       "enum": ["Default", "OnPush"],
       "type": "string",
       "default": "Default",
-      "alias": "cd"
-    },
-    "routing": {
-      "type": "boolean",
-      "default": false
+      "alias": "c"
     },
     "prefix": {
       "type": "string",
       "description": "The prefix to apply to generated selectors.",
-      "default": "app",
-      "alias": "p"
+      "alias": "p",
+      "oneOf": [
+        {
+          "maxLength": 0
+        },
+        {
+          "minLength": 1,
+          "format": "html-selector"
+        }
+      ]
     },
     "styleext": {
       "description": "The file extension to be used for style files.",
@@ -69,6 +92,7 @@
     },
     "spec": {
       "type": "boolean",
+      "description": "Specifies if a spec file is generated.",
       "default": true
     },
     "flat": {
@@ -76,15 +100,15 @@
       "description": "Flag to indicate if a dir is created.",
       "default": false
     },
-    "htmlTemplate": {
-      "type": "string"
-    },
     "skipImport": {
       "type": "boolean",
+      "description": "Flag to skip the module import.",
       "default": false
     },
     "selector": {
-      "type": "string"
+      "type": "string",
+      "format": "html-selector",
+      "description": "The selector to use for the component."
     },
     "module":  {
       "type": "string",
@@ -96,16 +120,12 @@
       "default": false,
       "description": "Specifies if declaring module exports the component."
     },
-    "nsExtension": {
-      "type": "string",
-      "description": "Allows specification of the used extension for {N}"
-    },
-    "webExtension": {
-      "type": "string",
-      "description": "Allows specification of the used extension for web"
+    "entryComponent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Specifies if the component is an entry component of declaring module."
     }
   },
-  "required": [
-    "name"
-  ]
+  "required": [],
+  "additionalProperties": false
 }
