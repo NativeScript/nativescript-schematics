@@ -4,7 +4,8 @@ import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
 import { VirtualTree } from '@angular-devkit/schematics';
 
-import { createEmptyProject, toComponentClassName, DEFAULT_SHARED_EXTENSIONS } from '../utils';
+import { createEmptyProject, toComponentClassName } from '../utils';
+import { DEFAULT_SHARED_EXTENSIONS } from '../generate/utils';
 import { isInComponentMetadata } from '../test-utils';
 import { Schema as ComponentOptions } from './schema';
 
@@ -12,8 +13,9 @@ describe('Component Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
+  const project = 'needs-a-name-for-angular-json';
   const componentClassName = toComponentClassName(name);
-  const defaultOptions: ComponentOptions = { name, path, sourceDir };
+  const defaultOptions: ComponentOptions = { name, path, project };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
