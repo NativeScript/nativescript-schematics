@@ -12,13 +12,13 @@ import { Schema as ModuleOptions } from './schema';
 import {
   getSourceFile,
   copy,
-} from '../utils';
+} from '../../utils';
 import {
   removeImport,
   removeMetadataArrayValue,
-} from '../ast-utils';
+} from '../../ast-utils';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../generate/utils';
+import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
 class ModuleInfo {

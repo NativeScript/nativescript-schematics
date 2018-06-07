@@ -14,11 +14,11 @@ import {
   filter,
 } from '@angular-devkit/schematics';
 
-import { insertModuleId } from '../ast-utils';
+import { insertModuleId } from '../../ast-utils';
 import { Schema as ComponentOptions } from './schema';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { parseName } from '@schematics/angular/utility/parse-name';
-import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse } from '../generate/utils';
+import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse } from '../utils';
 import { Path } from '@angular-devkit/core';
 
 class ComponentInfo {
