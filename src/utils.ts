@@ -138,7 +138,7 @@ export const renameFilesForce = (paths: FromTo[]) =>
 });
 
 export const createEmptyProject = (tree: Tree): Tree => {
-  tree.create('/.angular-cli.json', JSON.stringify({}));
+  tree.create('/angular.json', JSON.stringify({}));
   tree.create('/package.json', JSON.stringify({}));
 
   return tree;
