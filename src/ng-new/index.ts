@@ -1,6 +1,5 @@
 import { 
   Rule,
-  SchematicContext,
   Tree,
   chain,
   schematic

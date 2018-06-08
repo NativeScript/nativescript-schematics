@@ -8,7 +8,6 @@ import {
   externalSchematic,
   template,
   url,
-  branchAndMerge,
   mergeWith,
   TemplateOptions,
   filter,
