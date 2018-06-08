@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNgCliConfig",
+  "title": "NG CLI Config Options Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Specifies the name of the project."
+    },
+    "path": {
+      "type": "string",
+      "description": "Specifies the destination path.",
+      "default": "."
+    },
+    "prefix": {
+      "type": "string",
+      "description": "The prefix to apply to generated selectors.",
+      "default": "app"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
