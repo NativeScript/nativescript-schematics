@@ -4,26 +4,22 @@
   "title": "NG CLI Config Options Schema",
   "type": "object",
   "properties": {
+    "name": {
+      "type": "string",
+      "description": "Specifies the name of the project."
+    },
     "path": {
       "type": "string",
       "description": "Specifies the destination path.",
       "default": "."
-    },
-    "style": {
-      "type": "string",
-      "description": "The file extension to be used for style files.",
-      "default": "css"
-    },
-    "sourceDir": {
-      "type": "string",
-      "description": "The path of the source directory.",
-      "default": "app",
-      "alias": "sd"
     },
     "prefix": {
       "type": "string",
       "description": "The prefix to apply to generated selectors.",
       "default": "app"
     }
-  }
+  },
+  "required": [
+    "name"
+  ]
 }

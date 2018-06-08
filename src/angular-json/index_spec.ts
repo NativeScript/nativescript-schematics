@@ -4,43 +4,26 @@ import * as path from 'path';
 
 import { Schema as NgCliConfigOptions } from './schema';
 
-describe('Ng CLI Config Schematic', () => {
+describe('Angular JSON Config Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     path.join(__dirname, '../collection.json'),
   );
   const appPath = 'foo';
   const defaultOptions: NgCliConfigOptions = {
-    path: appPath,
-    sourceDir: 'app',
-    style: 'css',
+    name: 'test', // TODO: make sure it is a correct name
+    path: '.',
     prefix: 'app',
   };
-  const configPath = `/${appPath}/.angular-cli.json`;
+  const configPath = `/${appPath}/angular.json`;
 
   it('should create all files of an application', () => {
     const options = { ...defaultOptions };
 
-    const tree = schematicRunner.runSchematic('ng-cli-config', options);
+    const tree = schematicRunner.runSchematic('angular-json', options);
     const files = tree.files;
     expect(files.indexOf(configPath)).toBeGreaterThanOrEqual(0);
   }); 
-
-  it('should handle the style extension option', () => {
-    const style = 'scss';
-    const options = { ...defaultOptions, style };
-
-    const tree = schematicRunner.runSchematic('ng-cli-config', options);
-    expect(getFileContent(tree, configPath)).toContain(`"styleExt": "${style}"`);
-  });
-
-  it('should handle the source directory option', () => {
-    const sourceDir = 'src/app';
-    const options = { ...defaultOptions, sourceDir };
-
-    const tree = schematicRunner.runSchematic('ng-cli-config', options);
-    expect(getFileContent(tree, configPath)).toContain(`"root": "${sourceDir}"`);
-  });
 
   it('should handle the prefix option', () => {
     const prefix = 'my-app-prefix';

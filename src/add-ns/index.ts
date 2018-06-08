@@ -7,7 +7,6 @@ import {
   apply,
   url,
   template,
-  branchAndMerge,
   mergeWith,
   schematic,
 } from '@angular-devkit/schematics';
@@ -125,7 +124,7 @@ const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
   ]);
   // TODO: test this tonight
   // return mergeWith(templateSource)(tree, context);
-  return branchAndMerge(mergeWith(templateSource))(tree, context);
+  return mergeWith(templateSource)(tree, context);
 };
 
 const addAppResources = () => (tree: Tree, context: SchematicContext) => {
@@ -197,7 +196,7 @@ const addWebpackConfig = () => (tree:Tree, context: SchematicContext) => {
     const templateSource = apply(url('./_webpack-files'), [
       template(templateOptions)
     ]);
-    return branchAndMerge(mergeWith(templateSource))(tree, context);
+    return mergeWith(templateSource)(tree, context);
   } else {
     throw new SchematicsException('Failed at addWebpackConfig step. webpack.config.js already exists.');
   }

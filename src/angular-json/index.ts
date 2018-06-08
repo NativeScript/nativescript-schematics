@@ -14,10 +14,10 @@ export default function (options: NgCliConfigSchema) {
   return branchAndMerge(mergeWith(
     apply(url('./_files'), [
       template(<TemplateOptions>{
-        dot: ".",
-        ...options,
+        prefix: options.prefix,
+        name: options.name
       }),
-      move(options.path),
+      move(options.path)
     ])
-  ))
+  ));
 }
