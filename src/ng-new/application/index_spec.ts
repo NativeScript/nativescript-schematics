@@ -3,7 +3,7 @@ import { getFileContent } from '@schematics/angular/utility/test';
 import * as path from 'path';
 
 import { Schema as ApplicationOptions } from './schema';
-import { isInModuleMetadata } from '../test-utils';
+import { isInModuleMetadata } from '../../test-utils';
 
 describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
@@ -17,6 +17,7 @@ describe('Application Schematic', () => {
     routing: false,
     style: 'css',
     minimal: false,
+    theme: true
   };
 
   it('should create all files of an application', () => {

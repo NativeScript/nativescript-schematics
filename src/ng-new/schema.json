@@ -1,9 +1,15 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "SchematicsNativeScriptAngularApplication",
-  "title": "NativeScript Angular Application Options Schema",
+  "id": "SchematicsNativeScriptAngularNgNew",
+  "title": "NativeScript Angular ng-new Options Schema",
   "type": "object",
   "properties": {
+    "shared": {
+      "type": "boolean",
+      "description": "Specifies whether to generate a shared project or a {N} only",
+      "default": false
+    },
+
     "name": {
       "type": "string",
       "description": "The name of the app.",

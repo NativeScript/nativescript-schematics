@@ -37,7 +37,6 @@ export default function (options: ComponentOptions): Rule {
 
   return chain([
     (tree: Tree) => {
-      console.log('Get Platform again');
       platformUse = getPlatformUse(tree, options);
     },
 
@@ -73,7 +72,7 @@ export default function (options: ComponentOptions): Rule {
 
     (tree: Tree, context: SchematicContext) => {
       if (platformUse.nsOnly) {
-        tree.overwrite(componentInfo.templatePath, `<Button text="${componentInfo.name} works!"></Button>`);
+        tree.overwrite(componentInfo.templatePath, `<Button text="${componentInfo.name} works!" class="btn btn-primary"></Button>`);
         return tree;
       }
 
@@ -166,8 +165,7 @@ const addNativeScriptFiles = (component: ComponentInfo) => {
     }),
   ]);
 
-  return branchAndMerge(
-    mergeWith(templateSource),
-  );
+  return mergeWith(templateSource);
+
 };
 

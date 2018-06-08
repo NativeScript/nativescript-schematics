@@ -2,10 +2,25 @@
   "$schema": "./node_modules/@angular-devkit/schematics/collection-schema.json",
 
   "schematics": {
+    "ng-new": {
+      "factory": "./ng-new",
+      "description": "Create a new NativeScript Angular application.",
+      "schema": "./ng-new/schema.json"
+    },
     "application": {
-      "factory": "./application",
-      "description": "Create a NativeScript Angular application.",
-      "schema": "./application/schema.json"
+      "factory": "./ng-new/application",
+      "description": "Create a new NativeScript Angular application.",
+      "schema": "./ng-new/application/schema.json"
+    },
+    "shared": {
+      "factory": "./ng-new/shared",
+      "description": "Create a shared mobile-web Angular NativeScript application.",
+      "schema": "./ng-new/shared/schema.json"
+    },
+    "angular-json": {
+      "description": "Adds angular.json to a {N} project.",
+      "factory": "./angular-json",
+      "schema": "./angular-json/schema.json"
     },
 
     "component": {
@@ -34,11 +49,6 @@
         "schema": "./styling/schema.json"
     },
 
-    "ng-cli-config": {
-        "factory": "./ng-cli-config",
-        "description": "Create .angular-cli.json",
-        "schema": "./ng-cli-config/schema.json"
-    },
     "add-web": {
       "factory": "./add-web",
       "description": "Migrates {N} to a code sharing project structure",
