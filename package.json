@@ -12,9 +12,9 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "~0.6.0",
-    "@angular-devkit/schematics": "~0.6.0",
-    "@schematics/angular": "~0.6.0"
+    "@angular-devkit/core": "~0.7.0-beta.2",
+    "@angular-devkit/schematics": "~0.7.0-beta.2",
+    "@schematics/angular": "~0.7.0-beta.2"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
@@ -41,7 +41,8 @@
     "name": "NativeScript Team"
   },
   "contributors": [
-    "Stanimira Vlaeva <Stanimira.Vlaeva@progress.com>"
+    "Stanimira Vlaeva <Stanimira.Vlaeva@progress.com>",
+    "Sebastian Witalec <Sebastian.Witalec@progress.com>"
   ],
   "license": "Apache-2.0"
 }

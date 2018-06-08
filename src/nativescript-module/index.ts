@@ -9,7 +9,7 @@ import {
   branchAndMerge,
   mergeWith
 } from '@angular-devkit/schematics';
-import { getNsConfigExtension } from '../utils';
+import { getNsConfigExtension } from '../generate/utils';
 
 import { Schema as NativeScriptModuleSchema } from './schema';
 import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
@@ -43,7 +43,7 @@ const getProjectSettings = (tree: Tree, context: SchematicContext) => {
 const addNsFiles = (options: NativeScriptModuleSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding Module {N} file');
   const templateOptions = {
-    path: join(projectSettings.appRoot, 'app'),
+    path: join(projectSettings.sourceRoot, 'app'),
     name: options.name,
 
     'if-flat': (s: string) => options.flat ? '' : s,

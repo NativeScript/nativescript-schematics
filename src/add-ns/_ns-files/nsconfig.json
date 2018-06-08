@@ -1,5 +1,7 @@
 {
   "appResourcesPath": "App_Resources",
   "appPath": "<%= sourceDir %>",
-  "nsext": "<%= nsext %>"
+  "nsext": "<%= nsext %>",
+  "webext": "<%= webext %>",
+  "shared": true
 }

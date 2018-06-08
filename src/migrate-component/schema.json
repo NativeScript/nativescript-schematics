@@ -28,10 +28,12 @@
     "webext": {
       "type": "string"
     },
-    "projectName": {
+    "project": {
       "type": "string",
-      "description": "Allows specification of the project to be updated",
-      "default": ""
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
     }
   },
   "required": [

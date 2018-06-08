@@ -10,16 +10,16 @@
 
     "component": {
       "aliases": [ "c" ],
-      "factory": "./component",
+      "factory": "./generate/component",
       "description": "Create an Angular component.",
-      "schema": "./component/schema.json"
+      "schema": "./generate/component/schema.json"
     },
 
     "module": {
         "aliases": ["m"],
-        "factory": "./module",
+        "factory": "./generate/module",
         "description": "Create an Angular module",
-        "schema": "./module/schema.json"
+        "schema": "./generate/module/schema.json"
     },
 
     "app-resources": {

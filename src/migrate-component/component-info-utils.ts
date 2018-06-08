@@ -21,7 +21,7 @@ export interface ComponentInfo {
 let projectSettings: AngularProjectSettings;
 
 export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
-  projectSettings = getAngularProjectSettings(tree, options.projectName);
+  projectSettings = getAngularProjectSettings(tree, options.project);
 
   const className = (options.name.endsWith('Component'))
     ? options.name
@@ -55,7 +55,7 @@ const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => 
     }
 
     // or maybe we need to add src/app/
-    const modulePath = join(projectSettings.appRoot, 'app', options.modulePath);
+    const modulePath = join(projectSettings.sourceRoot, 'app', options.modulePath);
     if (!tree.exists(modulePath)) {
       throw new SchematicsException(`Invalid --modulePath: ${options.modulePath}
   File cannot be found at ${options.modulePath} or ${modulePath}`);
@@ -74,7 +74,7 @@ const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => 
   // When a specified Module has been provided
   else {
     const modulePath = join(
-      projectSettings.appRoot,                  // src/
+      projectSettings.sourceRoot,               // src/
       'app',                                    // app/
       dasherize(options.module),                // some-name/
       dasherize(options.module) + '.module.ts'  // some-name.module.ts
@@ -93,7 +93,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
 
   // When the path is provided, then there is no need to look anywhere else
   if (options.componentPath) {
-    componentPath = join(projectSettings.appRoot, 'app', options.componentPath);
+    componentPath = join(projectSettings.sourceRoot, 'app', options.componentPath);
 
     if (!tree.exists(componentPath)) {
       throw new SchematicsException(`Invalid --path value ${options.componentPath}
@@ -136,7 +136,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     console.log(`Trying to deduct ${componentClassName} location following Angular best practices`);
 
     const fileName = `${dasherize(options.name)}.component.ts`;
-    const app = join(projectSettings.appRoot, 'app');
+    const app = join(projectSettings.sourceRoot, 'app');
 
     // search at src/app/file-name
     if (tree.exists(join(app, fileName))) {

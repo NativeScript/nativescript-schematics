@@ -7,7 +7,7 @@ import {
   SchematicsException
 } from '@angular-devkit/schematics';
 
-import { getNsConfigExtension, addExtension, getSourceFile } from '../utils';
+import { addExtension, getSourceFile } from '../utils';
 
 import { Schema as MigrateModuleSchema } from './schema';
 import { Schema as NativeScriptModuleSchema } from '../nativescript-module/schema';
@@ -16,6 +16,7 @@ import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
 import { parseModuleInfo, ModuleInfo } from './module-info-utils';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
+import { getNsConfigExtension } from '../generate/utils';
 
 let nsext: string;
 let moduleInfo: ModuleInfo;
@@ -36,7 +37,7 @@ export default function(options: MigrateModuleSchema): Rule {
 
     addModuleFile(options),
 
-    (tree, context) => migrateComponents(moduleInfo, options.projectName)(tree, context),
+    (tree, context) => migrateComponents(moduleInfo, options.project)(tree, context),
     migrateProviders()
   ]);
 }
@@ -51,7 +52,7 @@ const addModuleFile = (options: MigrateModuleSchema) => (tree: Tree, context: Sc
   return schematic('nativescript-module', moduleOptions)(tree, context);
 }
 
-const migrateComponents = (moduleInfo: ModuleInfo, projectName: string) => {
+const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
   const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
 
   return chain(
@@ -60,7 +61,7 @@ const migrateComponents = (moduleInfo: ModuleInfo, projectName: string) => {
         name: component.name,
         modulePath: moduleInfo.modulePath,
         nsext: nsext,
-        projectName: projectName
+        project: project
       }
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),

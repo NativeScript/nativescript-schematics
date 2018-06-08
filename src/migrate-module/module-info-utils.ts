@@ -17,7 +17,7 @@ export interface ModuleInfo {
 let projectSettings: AngularProjectSettings;
 
 export const parseModuleInfo = (options: MigrateModuleSchema) => (tree: Tree, context: SchematicContext): ModuleInfo => {
-  projectSettings = getAngularProjectSettings(tree, options.projectName);
+  projectSettings = getAngularProjectSettings(tree, options.project);
 
   const className = classify(`${options.name}Module`);
   const modulePath = findModulePath(options, tree);
@@ -43,7 +43,7 @@ const findModulePath = (options: MigrateModuleSchema, tree: Tree): string => {
 
   // When module Path provided, check if it is correct
   if (options.modulePath) {
-    modulePath = join(projectSettings.appRoot, 'app', options.modulePath);
+    modulePath = join(projectSettings.sourceRoot, 'app', options.modulePath);
 
     if (!tree.exists(modulePath)) {
       throw new SchematicsException(`Invalid --modulePath: ${options.modulePath}
@@ -54,7 +54,7 @@ const findModulePath = (options: MigrateModuleSchema, tree: Tree): string => {
   // When a specified Module has been provided
   else {
     modulePath = join(
-      projectSettings.appRoot,                // src/
+      projectSettings.sourceRoot,             // src/
       'app',                                  // app/
       dasherize(options.name),                // some-name/
       dasherize(options.name) + '.module.ts'  // some-name.module.ts

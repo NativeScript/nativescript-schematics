@@ -8,7 +8,7 @@ export interface Schema {
    */
   webExtension: string;
   /**
-   * Allows specification of the project to be updated
+   * The name of the project to be converted to a code sharing structure
    */
-  projectName: string
+  project: string;
 }
