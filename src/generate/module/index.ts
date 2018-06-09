@@ -20,6 +20,8 @@ import {
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
+import { getProjectObject } from '../../angular-project-parser';
+import { normalize } from 'path';
 
 class ModuleInfo {
   name: string;
@@ -46,8 +48,13 @@ export default function (options: ModuleOptions): Rule {
   return chain([
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
-    },
-    () => {
+
+      // TODO: Remove after @angular/cli@6.1.0 is complete
+      if (!options.path) {
+        const settings = getProjectObject(tree, options.project);
+        options.path = normalize(settings.sourceRoot + '/app');
+      }
+
       validateOptions(platformUse, options);
     },
 
