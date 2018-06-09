@@ -98,7 +98,7 @@ ${JSON.stringify(angularJson.cli, null, 2)}`);
   tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
 }
 
-const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
+const addNsFiles = () => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
   const templateOptions = {
     dasherize: dasherize,
@@ -122,16 +122,14 @@ const addNsFiles = () => (tree: Tree, context: SchematicContext) => {
   const templateSource = apply(url('./_ns-files'), [
       template(templateOptions)
   ]);
-  // TODO: test this tonight
-  // return mergeWith(templateSource)(tree, context);
-  return mergeWith(templateSource)(tree, context);
+  return mergeWith(templateSource);
 };
 
-const addAppResources = () => (tree: Tree, context: SchematicContext) => {
+const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding App_Resources');
   return schematic('app-resources', {
     path: ''
-  })(tree, context);
+  });
 }
 
 const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
@@ -156,7 +154,7 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       "nativescript-angular": '6.0.0-rc.0',
       "nativescript-theme-core": "~1.0.4",
       "reflect-metadata": "~0.1.8",
-      "tns-core-modules": "~4.0.0"
+      "tns-core-modules": "~4.1.0"
     },
     devDependencies: {
       "nativescript-dev-typescript": "~0.7.0",
@@ -165,8 +163,11 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
 
       // TODO: This might need to be remove later:
-      "@ngtools/webpack": "6.1.0-beta.0",
-      "@angular-devkit/core": "0.7.0-beta.0",
+      // "@ngtools/webpack": "6.1.0-beta.0",
+      "@angular/cli": "6.1.0-beta.0",
+
+      "@angular-devkit/build-angular": "0.7.0-beta.2",
+      "@angular-devkit/core": "0.7.0-beta.2",
 
       "typescript": "2.7.2"
     }
@@ -183,7 +184,7 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
 
 }
 
-const addWebpackConfig = () => (tree:Tree, context: SchematicContext) => {
+const addWebpackConfig = () => (tree:Tree) => {
   const templateOptions = {
     entryModuleClassName: projectSettings.entryModuleClassName,
     entryModuleImportPath: projectSettings.entryModuleImportPath,
@@ -196,7 +197,7 @@ const addWebpackConfig = () => (tree:Tree, context: SchematicContext) => {
     const templateSource = apply(url('./_webpack-files'), [
       template(templateOptions)
     ]);
-    return mergeWith(templateSource)(tree, context);
+    return mergeWith(templateSource);
   } else {
     throw new SchematicsException('Failed at addWebpackConfig step. webpack.config.js already exists.');
   }
