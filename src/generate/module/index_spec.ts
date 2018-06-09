@@ -13,8 +13,10 @@ describe('Module Schematic', () => {
   const path = 'app';
   const sourceDir = 'app';
   const name = 'foo';
+  const project = 'test';
   const moduleClassName = toNgModuleClassName(name);
   const defaultOptions: ModuleOptions = {
+    project,
     name,
     path,
     web: false,
