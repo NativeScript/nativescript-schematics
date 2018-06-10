@@ -10,7 +10,7 @@ export interface Schema {
     /**
      * The path of the source directory.
      */
-    sourceDir: string;
+    sourceDir?: string;
     /**
      * Create a minimal app (empty template, no theme or routing).
      */
