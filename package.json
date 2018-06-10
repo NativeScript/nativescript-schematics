@@ -7,9 +7,9 @@
     "watch": "tsc -w -p tsconfig.json",
     "test": "npm run build && jasmine **/*_spec.js",
     "prepare": "npm run build",
-    "debug": "node --debug-brk ./node_modules/@angular/cli/bin/ng g command",
-    "debug-v8": "node --inspect-brk ./node_modules/@angular/cli/bin/ng g command",
-    "debug-ng-new": "node --inspect-brk ../nativescript-schematics/node_modules/@angular/cli/bin/ng new -c=@nativescript/schematics --name=t1"
+    "debug": "node --debug-brk $(which ng) g command",
+    "debug-v8": "node --inspect-brk $(which ng) g command",
+    "debug-ng-new": "node --inspect-brk $(which ng) new -c=@nativescript/schematics --name=projectName"
   },
   "schematics": "./src/collection.json",
   "dependencies": {
