@@ -8,6 +8,18 @@
       "type": "string",
       "description": "The name of the app.",
       "alias": "n"
+    },
+    "sourceDir": {
+      "type": "string",
+      "description": "The name of the source directory.",
+      "alias": "sd",
+      "default": "src"
+    },
+    "prefix": {
+      "type": "string",
+      "description": "The prefix to apply to generated selectors.",
+      "default": "app",
+      "alias": "p"
     }
   },
   "required": [
