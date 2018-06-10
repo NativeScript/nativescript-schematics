@@ -25,7 +25,9 @@ export default function(options: NgNewOptions): Rule {
 
 const parseToSharedOptions = (options: NgNewOptions): SharedOptions => {
   return {
-    name: options.name
+    name: options.name,
+    sourceDir: options.sourceDir || 'src',
+    prefix: options.prefix,
   };
 }
 
@@ -36,7 +38,7 @@ const parseToApplicationOptions = (options: NgNewOptions): ApplicationOptions =>
     minimal: options.minimal,
     prefix: options.prefix,
     routing: options.routing,
-    sourceDir: options.sourceDir,
+    sourceDir: options.sourceDir || 'app',
     style: options.style,
     theme: options.theme
   };

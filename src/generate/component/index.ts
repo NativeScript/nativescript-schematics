@@ -18,7 +18,8 @@ import { Schema as ComponentOptions } from './schema';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { parseName } from '@schematics/angular/utility/parse-name';
 import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse } from '../utils';
-import { Path } from '@angular-devkit/core';
+import { Path, normalize } from '@angular-devkit/core';
+import { getProjectObject } from '../../angular-project-parser';
 
 class ComponentInfo {
   classPath: string;
@@ -37,13 +38,21 @@ export default function (options: ComponentOptions): Rule {
   return chain([
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
+
+      // TODO: Remove after @angular/cli@6.1.0 is complete
+      if (!options.path) {
+        const settings = getProjectObject(tree, options.project);
+        options.path = normalize(settings.sourceRoot + '/app');
+      }
+
+      validateOptions(platformUse, options);
+
+      return tree;
     },
 
     () => {
-      validateOptions(platformUse, options);
+      return externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options));
     },
-
-    externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options)),
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);

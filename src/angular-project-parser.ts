@@ -121,7 +121,7 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
   
   // TODO: this might go away
   if (ngCliSemVer.major >= 6) {
-    const project = getProjectObject(projectName, tree);
+    const project = getProjectObject(tree, projectName);
 
     const root = project.root;
     
@@ -156,7 +156,7 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
 //   return workspace.projects[projectName];
 // }
 
-function getProjectObject(projectName: string, tree: Tree) {
+export function getProjectObject(tree: Tree, projectName: string) {
   const angularJson = getAngularJson(tree);
   
   // return the requested project object

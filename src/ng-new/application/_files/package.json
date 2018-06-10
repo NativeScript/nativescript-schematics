@@ -22,11 +22,11 @@
 		"tns-core-modules": "~4.1.0",
     "zone.js": "^0.8.26"
 	},
-	"devDependencies": {
-		"@angular/cli": "6.1.0-beta.2",
+  "devDependencies": {
+    "@angular/cli": "6.1.0-beta.0",
     "@angular/compiler-cli": "~6.0.0",
-		"@angular-devkit/build-angular": "0.7.0-beta.0",
-		"@angular-devkit/core": "0.7.0-beta.0",
+    "@angular-devkit/build-angular": "0.7.0-beta.2",
+    "@angular-devkit/core": "0.7.0-beta.2",
     "babel-traverse": "6.26.0",
     "babel-types": "6.26.0",
     "babylon": "6.18.0",
@@ -36,7 +36,7 @@
     "extract-text-webpack-plugin": "~3.0.2",
     "lazy": "1.0.11",
     "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
-		"nativescript-dev-typescript": "~0.7.0",
+    "nativescript-dev-typescript": "~0.7.0",
     "nativescript-worker-loader": "~0.9.0",
     "raw-loader": "~0.5.1",
     "resolve-url-loader": "~2.3.0",

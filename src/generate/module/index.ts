@@ -4,6 +4,11 @@ import {
   chain,
   externalSchematic,
   SchematicsException,
+  mergeWith,
+  apply,
+  url,
+  template,
+  move,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
@@ -20,9 +25,13 @@ import {
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
+import { getProjectObject } from '../../angular-project-parser';
+import { normalize } from 'path';
 
 class ModuleInfo {
   name: string;
+  path: string;
+
   moduleFilePath: string;
   routingFilePath: string;
 
@@ -46,8 +55,13 @@ export default function (options: ModuleOptions): Rule {
   return chain([
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
-    },
-    () => {
+
+      // TODO: Remove after @angular/cli@6.1.0 is complete
+      if (!options.path) {
+        const settings = getProjectObject(tree, options.project);
+        options.path = normalize(settings.sourceRoot + '/app');
+      }
+
       validateOptions(platformUse, options);
     },
 
@@ -82,10 +96,26 @@ export default function (options: ModuleOptions): Rule {
       if (platformUse.useNs) {
         performNsModifications(moduleInfo, options)(tree);
       }
+    },
+
+    () => {
+      return addCommonFile(moduleInfo);
     }
   ]);
 };
 
+const addCommonFile = (moduleInfo: ModuleInfo) => {
+  console.log(moduleInfo.path);
+  return mergeWith(
+    apply(url('./_files'), [
+      template({
+        name: moduleInfo.name
+      }),
+      move(moduleInfo.path)
+    ]),
+  )
+}
+  
 const validateOptions = (platformUse: PlatformUse, options: ModuleOptions) =>
   () => {
     if (!options.nativescript && !options.web) {
@@ -102,7 +132,6 @@ const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   const moduleInfo = new ModuleInfo();
   
   const parsedPath = parseName(options.path || '', options.name);
-
   moduleInfo.name = dasherize(parsedPath.name);
   const className = `/${moduleInfo.name}.module.ts`; 
   const routingName = `/${moduleInfo.name}-routing.module.ts`;
@@ -126,6 +155,8 @@ const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   if (!moduleInfo.moduleFilePath) {
     throw new SchematicsException(`Failed to find generated module files from @schematics/angular. Please contact the @nativescript/schematics author.`);
   }
+
+  moduleInfo.path = parseName('', moduleInfo.moduleFilePath).path;
 
   return moduleInfo;
 }

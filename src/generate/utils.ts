@@ -44,7 +44,7 @@ const isWeb = (tree: Tree) => {
   }
 
   const config = getNsConfig(tree);
-  return config.webext !== null;
+  return config.webext != null;
 }
 
 export interface PlatformUse {
