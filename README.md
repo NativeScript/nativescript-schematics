@@ -9,6 +9,12 @@ This repository contains schematics for generating components in NativeScript An
 npm i -g @angular/cli
 ```
 
+Ideally you should be using version `6.1.0-beta.0`. Do not use `6.1.0-beta.2`, as `beta.2` introduced a bug that makes `@nativescript/schematics` generate only as subset of the required files.
+
+```bash
+npm i -g @angular/cli@6.1.0-beta.0
+```
+
 ### Install NativeScript Schematics
 ```bash
 npm i -g @nativescript/schematics
@@ -19,44 +25,91 @@ npm i -g @nativescript/schematics
 ### Creating a new project
 To generate new NativeScript Angular project, you can use `ng new` with `@nativescript/schematics` specified as the schematics collection.
 
+#### NativeScript Only
+
 ```bash
-ng new --collection=@nativescript/schematics my-mobile-app
+ng new --collection=@nativescript/schematics --name=my-mobile-app
 ```
 
 You can specify the following options when generating new applications:
 
-| Option | Description
-| --- | ---
-| routing | Generates a routing module and master-detail navigation.
-| prefix | The prefix to apply to generated selectors.
-| theme | Specifies whether the {N} css theme should be included.
-| style | Specifies whether the app should use 'css' or 'scss' files for styling.
-| minimal | Generates a minimal app (empty template, no theme).
+| Option | Description | Default
+| --- | --- | ---
+| routing | Generates a routing module and master-detail navigation. | `false`
+| prefix | The prefix to apply to generated selectors. | `false`
+| theme | Specifies whether the {N} css theme should be included. | `true`
+| style | Specifies whether the app should use 'css' or 'scss' files for styling. | `css`
+| minimal | Generates a minimal app (empty template, no theme). | `false`
 
-### Prerequisites for using in existing project
-You need to add an `.angular-cli.json` configuration file to your NativeScript project root directory. That will allow you to use Angular CLI for generating components.
+#### Web + Mobile Code Sharing project
+
+```bash
+ng new --collection=@nativescript/schematics --name=my-shared-app --shared
+```
+
+You can specify the following options when generating new applications:
+
+| Option | Description | Default
+| --- | --- | ---
+| sourceDir | The name of the source directory. | `src`
+| prefix | The prefix to apply to generated selectors. | `app`
+
+### Prerequisites for using `@nativescript/schematics` in an existing project
+You need to add an `angular.json` configuration file to your NativeScript project root directory. That will allow you to use Angular CLI for generating components.
 ```json
 {
-    "apps": [
-        {
-            "root": ".",
-            "prefix": "your-app-prefix"
-        }
-    ],
-    "defaults": {
-        "styleExt": "css",
-        "schematics": {
-            "collection": "@nativescript/schematics"
-        }
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "cli": {
+    "defaultCollection": "@nativescript/schematics"
+  },
+  "projects": {
+    "project-name": {
+      "root": "",
+      "sourceRoot": ".",
+      "projectType": "application",
+      "prefix": "app"
     }
+  },
+  "defaultProject": "project-name"
 }
 ```
 
-> **Note:** If you created your project with `ng new`, your project already has `.angular-cli.json`.
+> **Note:** If you created your project with `ng new`, your project already has `angular.json`.
+
+#### Generate angular.json
+
+You can generate it the configuration using `Schematics`. Install `Schematics globally`
+
+```bash
+npm i -g schematics
+```
+
+From inside your project call:
+
+```bash
+schematics @nativescript/schematics:angular-json --name=project-name
+```
 
 ### Generating Components, Modules, Directives, etc.
 You can use the `ng generate` (or just `ng g`) command to generate pretty much any Angular building unit - components, modules, directives, classes and so on. For the full list, check out the Angular CLI [repo](https://github.com/angular/angular-cli#generating-components-directives-pipes-and-services).
 Some of these generators are overwritten in NativeScript Schematics to suite the needs of a NativeScript Angular application. 
+
+To generate a component, call:
+```bash
+ng g c component-name
+```
+
+To generate a module, call:
+```bash
+ng g m module-name
+```
+
+To generate a component in an existing module folder, call:
+```bash
+ng g c module-name/component-name
+```
 
 ### Migrating ng Project to a shared project
 
