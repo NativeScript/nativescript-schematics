@@ -151,25 +151,20 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
   // @UPGRADE: Update all versions whenever {N} version updates
   const dependeciesToAdd = {
     dependencies: {
-      "nativescript-angular": '6.0.0-rc.0',
-      "nativescript-theme-core": "~1.0.4",
-      "reflect-metadata": "~0.1.8",
-      "tns-core-modules": "~4.1.0"
+      'nativescript-angular': '^6.0.0',
+      'nativescript-theme-core': '~1.0.4',
+      'reflect-metadata': '~0.1.8',
+      'tns-core-modules': '~4.1.0'
     },
     devDependencies: {
-      "nativescript-dev-typescript": "~0.7.0",
+      'nativescript-dev-typescript': '~0.7.0',
+      'nativescript-dev-webpack': '^0.13.0',
+      '@angular/cli': '6.1.0-beta.0',
 
-      // TODO: Change this to a specific version
-      "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
+      '@angular-devkit/build-angular': '0.7.0-beta.2',
+      '@angular-devkit/core': '0.7.0-beta.2',
 
-      // TODO: This might need to be remove later:
-      // "@ngtools/webpack": "6.1.0-beta.0",
-      "@angular/cli": "6.1.0-beta.0",
-
-      "@angular-devkit/build-angular": "0.7.0-beta.2",
-      "@angular-devkit/core": "0.7.0-beta.2",
-
-      "typescript": "2.7.2"
+      'typescript': '2.7.2'
     }
   }
 
