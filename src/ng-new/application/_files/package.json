@@ -35,7 +35,7 @@
     "css-loader": "~0.28.11",
     "extract-text-webpack-plugin": "~3.0.2",
     "lazy": "1.0.11",
-    "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
+    "nativescript-dev-webpack": "^0.13.0",
     "nativescript-dev-typescript": "~0.7.0",
     "nativescript-worker-loader": "~0.9.0",
     "raw-loader": "~0.5.1",

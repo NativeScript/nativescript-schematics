@@ -158,12 +158,7 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
     },
     devDependencies: {
       "nativescript-dev-typescript": "~0.7.0",
-
-      // TODO: Change this to a specific version
-      "nativescript-dev-webpack": "github:nativescript/nativescript-dev-webpack#sis0k0/platform-host",
-
-      // TODO: This might need to be remove later:
-      // "@ngtools/webpack": "6.1.0-beta.0",
+      "nativescript-dev-webpack": "^0.13.0",
       "@angular/cli": "6.1.0-beta.0",
 
       "@angular-devkit/build-angular": "0.7.0-beta.2",
