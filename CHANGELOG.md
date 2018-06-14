@@ -1,5 +1,14 @@
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/nativescript/nativescript-schematics/compare/0.1.1...0.1.3) (2018-06-11)
+
+
+### Bug Fixes
+
+* fix: target official {N} webpack version ([a7a36c3](https://github.com/nativescript/nativescript-schematics/commit/a7a36c3))
+
+
 <a name="0.1.1"></a>
-## [0.1.1](https://github.com/nativescript/nativescript-schematics/compare/0.0.9...v0.1.1) (2018-06-11)
+## [0.1.1](https://github.com/nativescript/nativescript-schematics/compare/0.0.9...0.1.1) (2018-06-11)
 
 
 ### Bug Fixes
