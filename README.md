@@ -83,7 +83,7 @@ You need to add an `angular.json` configuration file to your NativeScript projec
 You can generate it the configuration using `Schematics`. Install `Schematics globally`
 
 ```bash
-npm i -g schematics
+npm install -g @angular-devkit/schematics-cli
 ```
 
 From inside your project call:
