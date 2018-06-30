@@ -34,10 +34,8 @@
   "devDependencies": {
     "@angular/compiler-cli": "^6.0.3",
     "@angular-devkit/build-angular": "0.7.0-beta.0",
-    "@angular-devkit/core": "0.7.0-beta.0",
     "typescript": "2.7.2",
     "@angular/cli": "6.1.0-beta.0",
-    "@ngtools/webpack": "6.1.0-beta.0",
     "@angular/language-service": "^6.0.3",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
@@ -54,18 +52,6 @@
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
     "nativescript-dev-typescript": "~0.7.0",
-    "nativescript-dev-webpack": "^0.13.0",
-    "webpack": "~4.6.0",
-    "webpack-cli": "~2.1.3",
-    "webpack-bundle-analyzer": "~2.13.0",
-    "webpack-sources": "~1.1.0",
-    "clean-webpack-plugin": "~0.1.19",
-    "copy-webpack-plugin": "~4.5.1",
-    "raw-loader": "~0.5.1",
-    "css-loader": "~0.28.11",
-    "nativescript-worker-loader": "~0.9.0",
-    "extract-text-webpack-plugin": "~3.0.2",
-    "uglifyjs-webpack-plugin": "~1.2.5",
-    "resolve-url-loader": "~2.3.0"
+    "nativescript-dev-webpack": "^0.14.0"
   }
 }

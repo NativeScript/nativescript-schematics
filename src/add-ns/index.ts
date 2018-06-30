@@ -157,26 +157,15 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       'tns-core-modules': '~4.1.0'
     },
     devDependencies: {
-      'nativescript-dev-typescript': '~0.7.0',
-      'nativescript-dev-webpack': '^0.13.0',
-      '@angular/cli': '6.1.0-beta.0',
-
-      '@angular-devkit/build-angular': '0.7.0-beta.2',
-      '@angular-devkit/core': '0.7.0-beta.2',
-
-      'typescript': '2.7.2'
+      'nativescript-dev-webpack': '^0.14.0'
     }
   }
 
   const options: NpmInstallOptions = {
     json: JSON.stringify(dependeciesToAdd)
   }
-  const taskId = context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
 
-  // run for the second time, to npm install modules added by nativescript-dev-webpack
-  // npmInstallTaskId = context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', {}), [taskId]);
-  context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', {}), [taskId]);
-
+  context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
 }
 
 const addWebpackConfig = () => (tree:Tree) => {
