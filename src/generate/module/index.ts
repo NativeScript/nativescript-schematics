@@ -62,10 +62,15 @@ export default function (options: ModuleOptions): Rule {
         options.path = normalize(settings.sourceRoot + '/app');
       }
 
+      if (platformUse.nsOnly && options.spec !== true) {
+        options.spec = false;
+      }
+
       validateOptions(platformUse, options);
     },
 
-    externalSchematic('@schematics/angular', 'module', removeNsSchemaOptions(options)),
+    () => 
+      externalSchematic('@schematics/angular', 'module', removeNsSchemaOptions(options)),
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
@@ -78,7 +83,7 @@ export default function (options: ModuleOptions): Rule {
     (tree: Tree) => {
       if (platformUse.nsOnly || !platformUse.useNs) {
         // no need to move / rename module files
-        return;
+        return tree;
       } else {
         const updates = prepareFileUpdates(moduleInfo);
         
@@ -98,14 +103,12 @@ export default function (options: ModuleOptions): Rule {
       }
     },
 
-    () => {
-      return addCommonFile(moduleInfo);
-    }
+    (tree: Tree) => (platformUse.nsOnly) ?
+      tree : addCommonFile(moduleInfo)
   ]);
 };
 
 const addCommonFile = (moduleInfo: ModuleInfo) => {
-  console.log(moduleInfo.path);
   return mergeWith(
     apply(url('./_files'), [
       template({
