@@ -1,7 +1,6 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": ".",
         "outDir": "./dist/out-tsc",
         "declaration": false,
         "moduleResolution": "node",
@@ -13,18 +12,7 @@
         ],
         "lib": [
             "es2017",
-            "dom",
-            "es6",
-            "es2015.iterable"
-        ],
-        "paths": {
-            "~/*": [
-                "app/*"
-            ],
-            "*": [
-                "./node_modules/tns-core-modules/*",
-                "./node_modules/*"
-            ]
-        }
+            "dom"
+        ]
     }
 }
