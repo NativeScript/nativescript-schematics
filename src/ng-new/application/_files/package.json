@@ -1,38 +1,38 @@
 {
-  "name": "<%= utils.classify(name) %>",
-  "license": "SEE LICENSE IN <your-license-filename>",
-  "version": "0.0.0",
-  "nativescript": {
-    "id": "org.nativescript.<%= utils.sanitize(name) %>"
-  },
-	"dependencies": {
-		"@angular/animations": "~6.0.0",
-		"@angular/common": "~6.0.0",
-		"@angular/compiler": "~6.0.0",
-		"@angular/core": "~6.0.0",
-		"@angular/forms": "~6.0.0",
-		"@angular/http": "~6.0.0",
-		"@angular/platform-browser": "~6.0.0",
-		"@angular/platform-browser-dynamic": "~6.0.0",
-		"@angular/router": "~6.0.0",
-		"nativescript-angular": "~6.0.0",
-		"nativescript-theme-core": "~1.0.4",
-		"reflect-metadata": "~0.1.8",
-		"rxjs": "~6.1.0",
-		"tns-core-modules": "~4.1.0",
-    "zone.js": "^0.8.26"
-	},
-  "devDependencies": {
-    "@angular/cli": "6.1.0-beta.0",
-    "@angular/compiler-cli": "~6.0.0",
-    "@angular-devkit/build-angular": "0.7.0-beta.2",
-    "@angular-devkit/core": "0.7.0-beta.2",
-    "babel-traverse": "6.26.0",
-    "babel-types": "6.26.0",
-    "babylon": "6.18.0",
-    "lazy": "1.0.11",
-    "nativescript-dev-webpack": "^0.14.0",
-    "nativescript-dev-typescript": "~0.7.0",
-    "typescript": "~2.7.2"
-  }
+    "name": "<%= utils.classify(name) %>",
+    "license": "SEE LICENSE IN <your-license-filename>",
+    "version": "0.0.0",
+    "nativescript": {
+        "id": "org.nativescript.<%= utils.sanitize(name) %>"
+    },
+    "dependencies": {
+        "@angular/animations": "~6.0.0",
+        "@angular/common": "~6.0.0",
+        "@angular/compiler": "~6.0.0",
+        "@angular/core": "~6.0.0",
+        "@angular/forms": "~6.0.0",
+        "@angular/http": "~6.0.0",
+        "@angular/platform-browser": "~6.0.0",
+        "@angular/platform-browser-dynamic": "~6.0.0",
+        "@angular/router": "~6.0.0",
+        "nativescript-angular": "~6.0.0",
+        "nativescript-theme-core": "~1.0.4",
+        "reflect-metadata": "~0.1.8",
+        "rxjs": "~6.1.0",
+        "tns-core-modules": "~4.1.0",
+        "zone.js": "^0.8.26"
+    },
+    "devDependencies": {
+        "@angular/cli": "6.1.0-beta.0",
+        "@angular/compiler-cli": "~6.0.0",
+        "@ngtools/webpack": "~6.1.0-rc.0",
+        "@angular-devkit/core": "0.7.0-beta.2",
+        "babel-traverse": "6.26.0",
+        "babel-types": "6.26.0",
+        "babylon": "6.18.0",
+        "lazy": "1.0.11",
+        "nativescript-dev-webpack": "^0.14.0",
+        "nativescript-dev-typescript": "~0.7.0",
+        "typescript": "~2.7.2"
+    }
 }
