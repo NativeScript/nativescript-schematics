@@ -630,7 +630,7 @@ export function findImportPath(source: ts.Node, name) {
   return moduleSpecifier.text;
 }
 
-export const insertModuleId = (component: string) => (tree: Tree) => {
+export const insertModuleId = (tree: Tree, component: string) => {
   const componentSource = getSourceFile(tree, component);
   const recorder = tree.beginUpdate(component);
 
