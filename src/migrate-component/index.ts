@@ -38,7 +38,7 @@ export default function(options: MigrateComponentSchema): Rule {
       componentInfo = parseComponentInfo(options)(tree, context);
     },
     (tree: Tree) => 
-      updateComponentClass(componentInfo)(tree),
+      updateComponentClass(tree, componentInfo),
     
     (tree: Tree, context: SchematicContext) =>
       addNsFiles(componentInfo, options)(tree, context),
@@ -48,9 +48,8 @@ export default function(options: MigrateComponentSchema): Rule {
   ]);
 }
 
-const updateComponentClass = (componentInfo: ComponentInfo) => (tree: Tree) => {
-  insertModuleId(componentInfo.componentPath)(tree);
-}
+const updateComponentClass = (tree: Tree, componentInfo: ComponentInfo) => 
+  insertModuleId(tree, componentInfo.componentPath)
 
 const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');

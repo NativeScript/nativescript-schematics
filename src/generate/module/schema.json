@@ -57,8 +57,7 @@
     },
     "spec": {
       "type": "boolean",
-      "description": "Specifies if a spec file is generated.",
-      "default": true
+      "description": "Specifies if a spec file is generated."
     },
     "flat": {
       "type": "boolean",

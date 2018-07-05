@@ -44,6 +44,10 @@ export default function (options: ComponentOptions): Rule {
         const settings = getProjectObject(tree, options.project);
         options.path = normalize(settings.sourceRoot + '/app');
       }
+      
+      if (platformUse.nsOnly && options.spec !== true) {
+        options.spec = false;
+      }
 
       validateOptions(platformUse, options);
 
@@ -72,9 +76,9 @@ export default function (options: ComponentOptions): Rule {
       }
     },
 
-    () => {
+    (tree: Tree) => {
       if (platformUse.useNs) {
-        return insertModuleId(componentInfo.classPath);
+        insertModuleId(tree, componentInfo.classPath);
       }
     },
 

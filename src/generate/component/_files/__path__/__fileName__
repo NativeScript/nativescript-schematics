@@ -1,2 +1,1 @@
-<!-- Show me -->
 <Button text="<%= name %> works!" class="btn btn-primary"></Button>

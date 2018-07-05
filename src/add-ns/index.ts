@@ -18,7 +18,7 @@ import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MigrationOptions } from './schema';
 import { Schema as NpmInstallOptions } from '../npm-install/schema';
-import { getJsonFile } from '../utils';
+import { getJsonFile, getFileContents } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
 import { Extensions } from '../generate/utils';
 
@@ -41,6 +41,8 @@ export default function (options: MigrationOptions): Rule {
 
     addNsFiles(),
     addAppResources(),
+    mergeGitIgnore,
+    addRunScriptsToPackageJson,
     addNativeScriptProjectId,
 
     addWebpackConfig(),
@@ -130,6 +132,61 @@ const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
   return schematic('app-resources', {
     path: ''
   });
+}
+
+/**
+ * Adds NativeScript specific ignores to .gitignore
+ */
+const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
+  context.logger.info('Adding NativeScript specific exclusions to .gitignore');
+  
+  if (!tree.exists('.gitignore')) {
+    tree.create('.gitignore', '');
+  }
+  const gitignore = getFileContents(tree, '/.gitignore').split('\n');
+
+  // Prepare NativeScript .gitignore lines
+  let nsGitignoreContent = [
+    'node_modules/',
+    'platforms/',
+    'hooks/',
+    `${projectSettings.sourceRoot}/**/*.js`,
+  ];
+  
+  // Remove any lines that are already in the .gitignore
+  nsGitignoreContent = nsGitignoreContent.filter(
+    nsLine => !gitignore.includes(nsLine)
+  );
+
+  // Prepare content to add to .gitignore
+  const content = `# NativeScript
+${nsGitignoreContent.join('\n')}
+
+`;
+
+  // Add content to .gitignore
+  const recorder = tree.beginUpdate('.gitignore');
+  recorder.insertLeft(0, content);
+
+  tree.commitUpdate(recorder);
+}
+
+/**
+ * Adds {N} npm run scripts to package.json
+ * npm run ios => tns run ios --bundle
+ * npm run android => tns run android --bundle
+ */
+const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
+  context.logger.info('Adding NativeScript run scripts to package.json');
+  const packageJson: any = getJsonFile(tree, 'package.json');
+
+  packageJson.scripts = packageJson.scripts || {};
+  packageJson.scripts = Object.assign({
+    android: 'tns run android --bundle',
+    ios: 'tns run ios --bundle'
+  }, packageJson.scripts);
+
+  tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
 }
 
 const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
