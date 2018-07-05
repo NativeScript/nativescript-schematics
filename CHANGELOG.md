@@ -1,3 +1,12 @@
+<a name="0.1.4"></a>
+## [0.1.4](https://github.com/nativescript/nativescript-schematics/compare/0.1.3...0.1.4) (2018-07-05)
+
+### Bug Fixes
+
+* Add NativeScriptFormsModule and NativeScriptHttpClientModule to app.module for {N}
+* tsconfig issues
+
+
 <a name="0.1.3"></a>
 ## [0.1.3](https://github.com/nativescript/nativescript-schematics/compare/0.1.1...0.1.3) (2018-06-11)
 
