@@ -1,3 +1,13 @@
+<a name="0.1.5"></a>
+## [0.1.5](https://github.com/nativescript/nativescript-schematics/compare/0.1.4...0.1.5) (2018-07-06)
+
+
+### Bug Fixes
+
+* **ng-new:** add nativescript-dev-sass to dependencies ([#32](https://github.com/nativescript/nativescript-schematics/issues/32)) ([1f3ec65](https://github.com/nativescript/nativescript-schematics/commit/1f3ec65)), closes [#30](https://github.com/nativescript/nativescript-schematics/issues/30)
+
+
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://github.com/nativescript/nativescript-schematics/compare/0.1.3...0.1.4) (2018-07-05)
 
