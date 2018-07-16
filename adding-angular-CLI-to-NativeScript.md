@@ -30,7 +30,7 @@ You can update `my-project-name` to the actual name of your project, but that is
 npm i --save-dev @angular/cli@6.1.0-rc.2
 ```
 
-> For now, use `beta.0`.
+> For now, please use `6.1.0-rc.2`.
 
 3. Install NativeScript Schematics
 
