@@ -40,7 +40,8 @@ const createProject = (options: SharedOptions) =>
         sourcedir: options.sourceDir,
         prefix: options.prefix,
         dot: '.',
-        style: options.style
+        theme: options.theme,
+        style: options.style,
       }),
       move(options.name),
     ]),
