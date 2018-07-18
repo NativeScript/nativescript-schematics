@@ -20,6 +20,20 @@
       "description": "The prefix to apply to generated selectors.",
       "default": "app",
       "alias": "p"
+    },
+    "style": {
+      "type": "string",
+      "enum": [
+        "css",
+        "scss"
+      ],
+      "description": "The file extension to be used for style files. Supported are css and scss",
+      "default": "css"
+    },
+    "theme": {
+      "type": "boolean",
+      "description": "Specifies whether the {N} theme for styling should be included.",
+      "default": true
     }
   },
   "required": [
