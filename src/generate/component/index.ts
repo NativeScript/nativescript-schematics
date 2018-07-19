@@ -77,7 +77,7 @@ export default function (options: ComponentOptions): Rule {
     },
 
     (tree: Tree) => {
-      if (platformUse.useNs) {
+      if (platformUse.nsOnly) {
         insertModuleId(tree, componentInfo.classPath);
       }
     },

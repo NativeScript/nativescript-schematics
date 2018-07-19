@@ -6,7 +6,6 @@ import { PlayerService } from '../player.service';
 
 @Component({
   selector: 'ns-details',
-  moduleId: module.id,
   templateUrl: './player-detail.component.html',
 })
 export class PlayerDetailComponent implements OnInit {
