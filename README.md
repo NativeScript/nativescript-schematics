@@ -28,7 +28,7 @@ To generate new NativeScript Angular project, you can use `ng new` with `@native
 #### NativeScript Only
 
 ```bash
-ng new --collection=@nativescript/schematics --name=my-mobile-app
+ng new --collection=@nativescript/schematics my-mobile-app
 ```
 
 You can specify the following options when generating new applications:
@@ -44,7 +44,7 @@ You can specify the following options when generating new applications:
 #### Web + Mobile Code Sharing project
 
 ```bash
-ng new --collection=@nativescript/schematics --name=my-shared-app --shared
+ng new --collection=@nativescript/schematics my-shared-app --shared
 ```
 
 You can specify the following options when generating new applications:
@@ -53,6 +53,8 @@ You can specify the following options when generating new applications:
 | --- | --- | ---
 | sourceDir | The name of the source directory. | `src`
 | prefix | The prefix to apply to generated selectors. | `app`
+| theme | Specifies whether the {N} css theme should be included. | `true`
+| style | Specifies whether the app should use 'css' or 'scss' files for styling. | `css`
 
 ### Prerequisites for using `@nativescript/schematics` in an existing project
 You need to add an `angular.json` configuration file to your NativeScript project root directory. That will allow you to use Angular CLI for generating components.
