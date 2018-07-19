@@ -18,7 +18,6 @@ import { dirname, basename } from 'path';
 import { Schema as MigrateComponentSchema } from './schema';
 
 import { getSourceFile, addExtension, findRelativeImportPath } from '../utils';
-import { insertModuleId } from '../ast-utils';
 import { ComponentInfo, parseComponentInfo } from './component-info-utils';
 import { getNsConfigExtension, Extensions } from '../generate/utils';
 
@@ -37,8 +36,6 @@ export default function(options: MigrateComponentSchema): Rule {
     (tree: Tree, context: SchematicContext) => {
       componentInfo = parseComponentInfo(options)(tree, context);
     },
-    (tree: Tree) => 
-      updateComponentClass(tree, componentInfo),
     
     (tree: Tree, context: SchematicContext) =>
       addNsFiles(componentInfo, options)(tree, context),
@@ -47,9 +44,6 @@ export default function(options: MigrateComponentSchema): Rule {
       addComponentToNsModuleProviders(componentInfo, options)(tree)
   ]);
 }
-
-const updateComponentClass = (tree: Tree, componentInfo: ComponentInfo) => 
-  insertModuleId(tree, componentInfo.componentPath)
 
 const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
