@@ -9,7 +9,7 @@
     "prepare": "npm run build",
     "debug": "node --debug-brk $(which ng) g command",
     "debug-v8": "node --inspect-brk $(which ng) g command",
-    "debug-ng-new": "node --inspect-brk $(which ng) new -c=@nativescript/schematics --name=projectName",
+    "debug-ng-new": "node --inspect-brk $(which ng) new -c=@nativescript/schematics projectName",
     "version": "rm package-lock.json && conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "schematics": "./src/collection.json",
