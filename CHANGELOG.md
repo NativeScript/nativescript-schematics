@@ -1,3 +1,13 @@
+<a name="0.1.6"></a>
+## [0.1.6](https://github.com/nativescript/nativescript-schematics/compare/0.1.5...0.1.6) (2018-07-19)
+
+
+### Features
+
+* **ng-new:** support --style=scss option 
+* **ng-new:** support --no-theme flag 
+
+
 <a name="0.1.5"></a>
 ## [0.1.5](https://github.com/nativescript/nativescript-schematics/compare/0.1.4...0.1.5) (2018-07-06)
 
