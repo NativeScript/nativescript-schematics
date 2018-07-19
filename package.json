@@ -9,7 +9,8 @@
     "prepare": "npm run build",
     "debug": "node --debug-brk $(which ng) g command",
     "debug-v8": "node --inspect-brk $(which ng) g command",
-    "debug-ng-new": "node --inspect-brk $(which ng) new -c=@nativescript/schematics --name=projectName"
+    "debug-ng-new": "node --inspect-brk $(which ng) new -c=@nativescript/schematics projectName",
+    "version": "rm package-lock.json && conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "schematics": "./src/collection.json",
   "dependencies": {
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
+    "conventional-changelog-cli": "^2.0.1",
     "jasmine": "^2.8.0",
     "typescript": "2.7.2"
   },
