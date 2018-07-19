@@ -52,7 +52,6 @@ module.exports = env => {
     const entryModule = aot ?
         nsWebpack.getAotEntryModule(appFullPath) : 
         `${nsWebpack.getEntryModule(appFullPath)}.ts`;
-    console.log(entryModule)
     const entryPath = `.${sep}${entryModule}`;
 
     const config = {
