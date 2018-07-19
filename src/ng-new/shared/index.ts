@@ -1,7 +1,5 @@
 import {
   Rule,
-  // SchematicContext,
-  // Tree,
   chain,
   mergeWith,
   apply,
@@ -14,6 +12,7 @@ import {
 
 import { Schema as SharedOptions } from './schema';
 import { Schema as AppResourcesOptions } from '../../app-resources/schema';
+import { Schema as StylingOptions } from '../../styling/schema';
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -23,6 +22,13 @@ export default function(options: SharedOptions): Rule {
     runAppResourcesSchematic({
       path: options.name
     }),
+
+    runStylingSchematic({
+      appPath: options.name,
+      sourceDir: options.sourceDir,
+      extension: options.style,
+      theme: options.theme,
+    })
   ])
 }
 
@@ -34,6 +40,8 @@ const createProject = (options: SharedOptions) =>
         sourcedir: options.sourceDir,
         prefix: options.prefix,
         dot: '.',
+        theme: options.theme,
+        style: options.style,
       }),
       move(options.name),
     ]),
@@ -42,3 +50,5 @@ const createProject = (options: SharedOptions) =>
 const runAppResourcesSchematic = (options: AppResourcesOptions): Rule =>
   schematic('app-resources', options)
 
+const runStylingSchematic = (options: StylingOptions): Rule =>
+  schematic('styling', options)

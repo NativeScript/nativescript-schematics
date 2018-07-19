@@ -11,7 +11,11 @@
       "sourceRoot": "<%= sourcedir %>",
       "projectType": "application",
       "prefix": "<%= prefix %>",
-      "schematics": {},
+      "schematics": {<% if(style === 'scss') { %>
+        "@nativescript/schematics:component": {
+          "styleext": "scss"
+        }
+      <% } %>},
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -26,7 +30,7 @@
               "<%= sourcedir %>/assets"
             ],
             "styles": [
-              "<%= sourcedir %>/styles.css"
+              "<%= sourcedir %>/styles.<%= style %>"
             ],
             "scripts": []
           },
@@ -75,7 +79,7 @@
             "tsConfig": "<%= sourcedir %>/tsconfig.spec.json",
             "karmaConfig": "<%= sourcedir %>/karma.conf.js",
             "styles": [
-              "<%= sourcedir %>/styles.css"
+              "<%= sourcedir %>/styles.<%= style %>"
             ],
             "scripts": [],
             "assets": [

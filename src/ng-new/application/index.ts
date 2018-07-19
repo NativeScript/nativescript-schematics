@@ -32,6 +32,7 @@ export default function (options: ApplicationOptions) {
           routing,
           sourcedir,
           dot: '.',
+          theme: options.theme,
         }),
         move(appPath),
       ]),

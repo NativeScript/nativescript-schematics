@@ -28,6 +28,8 @@ const parseToSharedOptions = (options: NgNewOptions): SharedOptions => {
     name: options.name,
     sourceDir: options.sourceDir || 'src',
     prefix: options.prefix,
+    style: options.style,
+    theme: options.theme
   };
 }
 
