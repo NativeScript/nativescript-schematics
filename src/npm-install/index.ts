@@ -9,7 +9,7 @@ import {
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import { Schema as NpmInstallOptions } from './schema';
-import { PackageJson, getPackageJson } from '../utils';
+import { PackageJson, getPackageJson, overwritePackageJson } from '../utils';
 
 interface Dependencies {
   dependencies: NpmPackageInfo[],
@@ -31,7 +31,7 @@ export default function(options: NpmInstallOptions): Rule {
     },
     validateInput(options),
     updatePackageJson(options),
-    installNpmModules
+    installNpmModules(options.workingDirectory)
   ]);
 }
 
@@ -42,8 +42,10 @@ const validateInput = (options: NpmInstallOptions) => () => {
 }
 
 const updatePackageJson = (options: NpmInstallOptions) => (tree: Tree) => {
-  // const packageJson: any = getJsonFile(tree, 'package.json');
-  const packageJson: PackageJson = getPackageJson(tree);
+  if (!options.dependencies && !options.devDependencies && !options.json)
+    return;
+
+  const packageJson: PackageJson = getPackageJson(tree, options.workingDirectory);
 
   let newDependencies = parseDependencies(options);
 
@@ -52,7 +54,7 @@ const updatePackageJson = (options: NpmInstallOptions) => (tree: Tree) => {
   
   checkForDuplicatePackages(packageJson, newDependencies);
 
-  tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
+  overwritePackageJson(tree, packageJson, options.workingDirectory);
 }
 
 function parseDependencies(options: NpmInstallOptions): Dependencies {
@@ -146,6 +148,6 @@ function checkForDuplicatePackages(packageJson: PackageJson, newDependencies: De
   })
 }
 
-const installNpmModules = (_tree: Tree, context: SchematicContext) => {
-  context.addTask(new NodePackageInstallTask());
+const installNpmModules = (workingDirectory:string) => (_tree: Tree, context: SchematicContext) => {
+  context.addTask(new NodePackageInstallTask(workingDirectory));
 }

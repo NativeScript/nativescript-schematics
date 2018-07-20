@@ -18,4 +18,9 @@ export interface Schema {
    * } 
    */
   json?: string;
+
+  /**
+   * The folder where npm install should be performed
+   */
+  workingDirectory: string;
 }

@@ -1,4 +1,4 @@
-import { relative } from 'path';
+import { relative, join } from 'path';
 
 import {
   SchematicsException,
@@ -86,8 +86,17 @@ const setDependency = (
   { name, version }: NodeDependency
 ) => Object.assign(dependenciesMap, { [name]: version });
 
-export const getPackageJson = (tree: Tree): PackageJson =>
-  getJsonFile(tree, 'package.json');
+export const getPackageJson = (tree: Tree, workingDirectory: string = ''): PackageJson => {
+  const url = join(workingDirectory, 'package.json');
+
+  return getJsonFile(tree, url);
+}
+
+export const overwritePackageJson = (tree: Tree, content: PackageJson, workingDirectory: string = '') => {
+  const url = join(workingDirectory, 'package.json');
+  
+  tree.overwrite(url, JSON.stringify(content, null, 2));
+}
 
 export interface PackageJson {
   dependencies: Object;

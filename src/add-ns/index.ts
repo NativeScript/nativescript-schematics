@@ -219,7 +219,8 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
   }
 
   const options: NpmInstallOptions = {
-    json: JSON.stringify(dependeciesToAdd)
+    json: JSON.stringify(dependeciesToAdd),
+    workingDirectory: ''
   }
 
   context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
