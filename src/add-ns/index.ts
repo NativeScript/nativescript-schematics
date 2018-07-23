@@ -208,13 +208,13 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
   // @UPGRADE: Update all versions whenever {N} version updates
   const dependeciesToAdd = {
     dependencies: {
-      'nativescript-angular': '^6.0.0',
+      'nativescript-angular': 'next',
       'nativescript-theme-core': '~1.0.4',
       'reflect-metadata': '~0.1.8',
       'tns-core-modules': '~4.1.0'
     },
     devDependencies: {
-      'nativescript-dev-webpack': '^0.14.0'
+      'nativescript-dev-webpack': '^0.15.0'
     }
   }
 
