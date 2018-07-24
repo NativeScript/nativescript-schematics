@@ -10,6 +10,8 @@ import {
   schematic
 } from '@angular-devkit/schematics';
 
+import { stringUtils } from '../../utils';
+
 import { Schema as SharedOptions } from './schema';
 import { Schema as AppResourcesOptions } from '../../app-resources/schema';
 import { Schema as StylingOptions } from '../../styling/schema';
@@ -36,6 +38,7 @@ const createProject = (options: SharedOptions) =>
   mergeWith(
     apply(url('./_files'), [
       template(<TemplateOptions>{
+        utils: stringUtils,
         name: options.name,
         sourcedir: options.sourceDir,
         prefix: options.prefix,

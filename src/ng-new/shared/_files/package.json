@@ -1,7 +1,7 @@
 {
   "name": "<%= name %>",
   "nativescript": {
-    "id": "org.nativescript.<%= name %>"
+    "id": "org.nativescript.<%= utils.sanitize(name) %>"
   },
   "version": "0.0.0",
   "scripts": {
