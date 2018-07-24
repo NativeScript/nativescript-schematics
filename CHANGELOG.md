@@ -1,3 +1,13 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/nativescript/nativescript-schematics/compare/0.1.5...0.2.0) (2018-07-24)
+
+
+### Bug Fixes
+
+* module.id issue in code sharing projects ([#43](https://github.com/nativescript/nativescript-schematics/issues/43)) ([9325ff3](https://github.com/nativescript/nativescript-schematics/commit/9325ff3)), closes [#40](https://github.com/nativescript/nativescript-schematics/issues/40)
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/nativescript/nativescript-schematics/compare/0.1.5...0.1.7) (2018-07-19)
 
