@@ -26,7 +26,7 @@
         "@angular/cli": "6.1.0-rc.3",
         "@angular/compiler-cli": "~6.1.0-rc.3",
         "@angular-devkit/core": "0.7.0-rc.3",
-        "@nativescript/schematics": "~0.1.0",
+        "@nativescript/schematics": "~0.2.0",
         "babel-traverse": "6.26.0",
         "babel-types": "6.26.0",
         "babylon": "6.18.0",
