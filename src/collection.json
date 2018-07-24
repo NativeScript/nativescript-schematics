@@ -122,7 +122,7 @@
       "schema": "./migrate-component/schema.json"
     },
     "migrate-module": {
-      "aliases": [ "mg"],
+      "aliases": [ "mg" ],
       "description": "Converts a module into a code sharing module",
       "factory": "./migrate-module",
       "schema": "./migrate-module/schema.json"
@@ -131,6 +131,13 @@
       "description": "Generates a NativeScript Module",
       "factory": "./nativescript-module",
       "schema": "./nativescript-module/schema.json"
+    },
+
+    "master-detail": {
+      "aliases": [ "md" ],
+      "description": "A master-detail template.",
+      "factory": "./generate-template/master-detail",
+      "schema": "./generate-template/master-detail/schema.json"
     }
   }
 }
