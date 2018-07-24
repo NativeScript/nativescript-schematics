@@ -10,7 +10,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "android": "tns run android --bundle",
+    "ios": "tns run ios --bundle"
   },
   "private": true,
   "dependencies": {
