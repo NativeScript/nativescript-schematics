@@ -149,4 +149,27 @@ In a code sharing project to build:
  * a `web` app call: `ng serve`,
  * an `iOS` app call: `tns run ios --bundle`,
  * an `Android` app call: `tns run android --bundle`
- 
+
+## Templates
+
+### Master Detail template
+
+To generate a Master Detail module, you can use the following command
+`ng g master-detail --master=dogs --detail=dog`
+
+The above command will generate the following file structure
+
+ * dogs
+  * dog-detail
+    * dog-detail component files
+  * dogs
+    * dogs component files
+  * data.service.ts
+  * dogs.module.ts
+
+#### Options
+
+| Option | Description 
+| --- | --- 
+| master | The name of the master component and the name of the module.
+| detail | The name of the detail component

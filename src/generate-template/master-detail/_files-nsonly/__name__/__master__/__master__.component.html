@@ -1,0 +1,11 @@
+<ActionBar title="<%= masterClassName %>" class="action-bar">
+</ActionBar>
+
+<StackLayout class="page">
+  <ListView [items]="numbers" class="list-group">
+    <ng-template let-number="item">
+      <Label [nsRouterLink]="['/<%= detail %>', number.id]" [text]="number.text"
+      class="list-group-item"></Label>
+    </ng-template>
+  </ListView>
+</StackLayout>
