@@ -15,6 +15,11 @@
     "json": {
       "type": "string",
       "description": "Stringified object with dependencies and devDependencies, just like in package.json format"
+    },
+    "workingDirectory": {
+      "type": "string",
+      "description": "The folder where npm install should be performed",
+      "default": ""
     }
   },
   "required": [

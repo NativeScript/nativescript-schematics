@@ -8,6 +8,7 @@ import {
 import { Schema as ApplicationOptions } from './application/schema';
 import { Schema as SharedOptions } from './shared/schema';
 import { Schema as NgNewOptions } from './schema';
+import { Schema as NpmIstallOptions } from '../npm-install/schema';
 
 export default function(options: NgNewOptions): Rule {
   return chain([
@@ -19,6 +20,13 @@ export default function(options: NgNewOptions): Rule {
         const applicationOptions: ApplicationOptions = parseToApplicationOptions(options);
         return schematic('application', applicationOptions)
       }
+    },
+    () => {
+      const npmInstallOptions: NpmIstallOptions = {
+        workingDirectory: options.name
+      };
+
+      return schematic('npm-install', npmInstallOptions)
     }
   ]);
 }

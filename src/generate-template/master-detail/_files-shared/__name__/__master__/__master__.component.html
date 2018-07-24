@@ -1,0 +1,5 @@
+<h1><%= masterClassName %></h1>
+
+<div *ngFor="let number of numbers" [routerLink]="['/<%= detail %>', number.id]">
+  <h3>{{ number.text }}</h3>
+</div>

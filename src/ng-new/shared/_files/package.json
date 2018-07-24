@@ -1,7 +1,7 @@
 {
   "name": "<%= name %>",
   "nativescript": {
-    "id": "org.nativescript.<%= name %>"
+    "id": "org.nativescript.<%= utils.sanitize(name) %>"
   },
   "version": "0.0.0",
   "scripts": {
@@ -10,33 +10,34 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "android": "tns run android --bundle",
+    "ios": "tns run ios --bundle"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^6.0.3",
-    "@angular/common": "^6.0.3",
-    "@angular/compiler": "^6.0.3",
-    "@angular/core": "^6.0.3",
-    "@angular/forms": "^6.0.3",
-    "@angular/http": "^6.0.3",
-    "@angular/platform-browser": "^6.0.3",
-    "@angular/platform-browser-dynamic": "^6.0.3",
-    "@angular/router": "^6.0.3",
+    "@angular/animations": "~6.1.0-rc.3",
+    "@angular/common": "~6.1.0-rc.3",
+    "@angular/compiler": "~6.1.0-rc.3",
+    "@angular/core": "~6.1.0-rc.3",
+    "@angular/forms": "~6.1.0-rc.3",
+    "@angular/http": "~6.1.0-rc.3",
+    "@angular/platform-browser": "~6.1.0-rc.3",
+    "@angular/platform-browser-dynamic": "~6.1.0-rc.3",
+    "@angular/router": "~6.1.0-rc.3",
     "core-js": "^2.5.4",
-    "nativescript-angular": "^6.0.0",<% if(theme) { %>
+    "nativescript-angular": "next",<% if(theme) { %>
     "nativescript-theme-core": "~1.0.4",
     <% } %>"reflect-metadata": "~0.1.8",
     "rxjs": "^6.0.0",
-    "tns-core-modules": "~4.0.0",
+    "tns-core-modules": "~4.1.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^6.0.3",
-    "@angular-devkit/build-angular": "0.7.0-beta.0",
-    "typescript": "2.7.2",
-    "@angular/cli": "6.1.0-beta.0",
-    "@angular/language-service": "^6.0.3",
+    "@angular/cli": "~6.1.0-rc.3",
+    "@angular/compiler-cli": "~6.0.3-rc.3",
+    "@angular-devkit/build-angular": "~0.7.0-rc.3",
+    "@nativescript/schematics": "~0.1.0",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
@@ -48,10 +49,11 @@
     "karma-coverage-istanbul-reporter": "~2.0.0",
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "nativescript-dev-typescript": "~0.7.0",
+    "nativescript-dev-webpack": "^0.15.0",
     "protractor": "~5.3.0",
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
-    "nativescript-dev-typescript": "~0.7.0",
-    "nativescript-dev-webpack": "^0.14.0"
+    "typescript": "2.7.2"
   }
 }

@@ -9,10 +9,12 @@ This repository contains schematics for generating components in NativeScript An
 npm i -g @angular/cli
 ```
 
-Ideally you should be using version `6.1.0-beta.0`. Do not use `6.1.0-beta.2`, as `beta.2` introduced a bug that makes `@nativescript/schematics` generate only as subset of the required files.
+Ideally you should be using version `@angular/cli@6.1.0-rc.3`, `@nativescript/schematics` also works with `6.1.0-beta.0`.
+
+ > You can upgrade to `@angular/cli@6.1.0` as soon as it gets released.
 
 ```bash
-npm i -g @angular/cli@6.1.0-beta.0
+npm i -g @angular/cli@6.1.0-rc.3
 ```
 
 ### Install NativeScript Schematics
@@ -138,3 +140,36 @@ This includes the following steps:
  * add `module-name`.component.tns.ts
  * convert all of modules' components, by using `migrate-component` schematic
  * copy over all providers from the web module
+
+
+## Code sharing: Build
+
+In a code sharing project to build:
+
+ * a `web` app call: `ng serve`,
+ * an `iOS` app call: `tns run ios --bundle`,
+ * an `Android` app call: `tns run android --bundle`
+
+## Templates
+
+### Master Detail template
+
+To generate a Master Detail module, you can use the following command
+`ng g master-detail --master=dogs --detail=dog`
+
+The above command will generate the following file structure
+
+ * dogs
+  * dog-detail
+    * dog-detail component files
+  * dogs
+    * dogs component files
+  * data.service.ts
+  * dogs.module.ts
+
+#### Options
+
+| Option | Description 
+| --- | --- 
+| master | The name of the master component and the name of the module.
+| detail | The name of the detail component

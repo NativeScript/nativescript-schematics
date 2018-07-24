@@ -6,16 +6,16 @@
         "id": "org.nativescript.<%= utils.sanitize(name) %>"
     },
     "dependencies": {
-        "@angular/animations": "~6.0.0",
-        "@angular/common": "~6.0.0",
-        "@angular/compiler": "~6.0.0",
-        "@angular/core": "~6.0.0",
-        "@angular/forms": "~6.0.0",
-        "@angular/http": "~6.0.0",
-        "@angular/platform-browser": "~6.0.0",
-        "@angular/platform-browser-dynamic": "~6.0.0",
-        "@angular/router": "~6.0.0",
-        "nativescript-angular": "~6.0.0",<% if(theme) { %>
+        "@angular/animations": "~6.1.0-rc.3",
+        "@angular/common": "~6.1.0-rc.3",
+        "@angular/compiler": "~6.1.0-rc.3",
+        "@angular/core": "~6.1.0-rc.3",
+        "@angular/forms": "~6.1.0-rc.3",
+        "@angular/http": "~6.1.0-rc.3",
+        "@angular/platform-browser": "~6.1.0-rc.3",
+        "@angular/platform-browser-dynamic": "~6.1.0-rc.3",
+        "@angular/router": "~6.1.0-rc.3",
+        "nativescript-angular": "next",<% if(theme) { %>
         "nativescript-theme-core": "~1.0.4",
         <% } %>"reflect-metadata": "~0.1.8",
         "rxjs": "~6.1.0",
@@ -23,15 +23,14 @@
         "zone.js": "^0.8.26"
     },
     "devDependencies": {
-        "@angular/cli": "6.1.0-beta.0",
-        "@angular/compiler-cli": "~6.0.0",
-        "@ngtools/webpack": "~6.1.0-rc.0",
-        "@angular-devkit/core": "0.7.0-beta.2",
+        "@angular/cli": "6.1.0-rc.3",
+        "@angular/compiler-cli": "~6.1.0-rc.3",
+        "@angular-devkit/core": "0.7.0-rc.3",
+        "@nativescript/schematics": "~0.1.0",
         "babel-traverse": "6.26.0",
         "babel-types": "6.26.0",
         "babylon": "6.18.0",
         "lazy": "1.0.11",
-        "nativescript-dev-webpack": "^0.14.0",
         "nativescript-dev-typescript": "~0.7.0",
         "typescript": "~2.7.2"
     }
