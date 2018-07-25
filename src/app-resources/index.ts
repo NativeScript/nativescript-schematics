@@ -6,10 +6,11 @@ import {
   url,
   mergeWith,
   TemplateOptions,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { Schema as AppResourcesSchema } from './schema';
-import { noop } from '../../node_modules/rxjs';
+
 
 export default function (options: AppResourcesSchema) {
   return branchAndMerge(mergeWith(
