@@ -78,7 +78,8 @@ export default function (options: ModuleOptions): Rule {
     },
 
     (tree: Tree) =>
-      platformUse.useWeb ? renameWebModules(moduleInfo)(tree) : tree,
+      (platformUse.useWeb && extensions.web)
+         ? renameWebModules(moduleInfo)(tree) : tree,
 
     (tree: Tree) => {
       if (platformUse.nsOnly || !platformUse.useNs) {
