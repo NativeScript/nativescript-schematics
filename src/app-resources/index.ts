@@ -9,6 +9,7 @@ import {
 } from '@angular-devkit/schematics';
 
 import { Schema as AppResourcesSchema } from './schema';
+import { noop } from '../../node_modules/rxjs';
 
 export default function (options: AppResourcesSchema) {
   return branchAndMerge(mergeWith(
@@ -16,7 +17,8 @@ export default function (options: AppResourcesSchema) {
       template(<TemplateOptions>{
         name: options.name
       }),
-      move(options.path),
+      // move to path, if one provided, otherwise skip
+      (options.path) ? move(options.path) : noop
     ])
   ))
 }
