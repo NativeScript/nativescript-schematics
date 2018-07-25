@@ -1,5 +1,15 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/nativescript/nativescript-schematics/compare/0.2.0...0.2.1) (2018-07-25)
+
+
+### Bug Fixes
+
+* wrong noop import ([2e956bf](https://github.com/nativescript/nativescript-schematics/commit/2e956bf))
+
+
+
 <a name="0.2.0"></a>
-# [0.2.0](https://github.com/nativescript/nativescript-schematics/compare/0.1.7...v0.2.0) (2018-07-25)
+# [0.2.0](https://github.com/nativescript/nativescript-schematics/compare/0.1.7...0.2.0) (2018-07-25)
 
 
 ### Bug Fixes
