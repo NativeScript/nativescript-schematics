@@ -39,11 +39,6 @@ export const getModuleSemver = (tree: Tree, moduleName: string): SemVer => {
 }
 
 const parseSemver = (moduleVersion: string): SemVer | null => {
-  // TODO: To be removed after @angular/cli beta gets pushed
-  if (moduleVersion.startsWith('git+')) {
-    return new SemVer(6,0,0);
-  }
-
   const match = moduleVersion.match('[0-9]+\.[0-9]+\.[0-9]+');
   if (!match) {
     return null;

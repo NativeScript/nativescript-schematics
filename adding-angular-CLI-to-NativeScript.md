@@ -27,10 +27,10 @@ You can update `my-project-name` to the actual name of your project, but that is
 2. Install Angular CLI
 
 ```bash
-npm i --save-dev @angular/cli@6.1.0-rc.2
+npm i --save-dev @angular/cli@6.1.0-rc.3
 ```
 
-> For now, please use `6.1.0-rc.2`.
+> For now, please use `6.1.0-rc.3`.
 
 3. Install NativeScript Schematics
 
