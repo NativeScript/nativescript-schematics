@@ -1,3 +1,17 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/nativescript/nativescript-schematics/compare/0.1.5...0.2.2) (2018-07-26)
+
+
+### Bug Fixes
+
+* module.id issue in code sharing projects ([#43](https://github.com/nativescript/nativescript-schematics/issues/43)) ([9325ff3](https://github.com/nativescript/nativescript-schematics/commit/9325ff3)), closes [#40](https://github.com/nativescript/nativescript-schematics/issues/40)
+* skip move path is '' ([c06187d](https://github.com/nativescript/nativescript-schematics/commit/c06187d))
+* skip rename when web extension not provided ([3eede03](https://github.com/nativescript/nativescript-schematics/commit/3eede03))
+* webpack missing tns-core-modules resolver ([7b1c5e7](https://github.com/nativescript/nativescript-schematics/commit/7b1c5e7))
+* wrong noop import ([2e956bf](https://github.com/nativescript/nativescript-schematics/commit/2e956bf))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/nativescript/nativescript-schematics/compare/0.2.0...0.2.1) (2018-07-25)
 
