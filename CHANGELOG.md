@@ -1,3 +1,12 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/nativescript/nativescript-schematics/compare/0.2.1...0.2.2) (2018-07-26)
+
+
+### Bug Fixes
+
+* Target official Angular 6.1 versions
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/nativescript/nativescript-schematics/compare/0.2.0...0.2.1) (2018-07-25)
 
