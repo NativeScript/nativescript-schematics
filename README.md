@@ -5,16 +5,11 @@ This repository contains schematics for generating components in NativeScript An
 ## Installation
 
 ### Install Angular CLI
+
+You should be using `@angular/cli@6.1.0` or newer.
+
 ```bash
 npm i -g @angular/cli
-```
-
-Ideally you should be using version `@angular/cli@6.1.0-rc.3`, `@nativescript/schematics` also works with `6.1.0-beta.0`.
-
- > You can upgrade to `@angular/cli@6.1.0` as soon as it gets released.
-
-```bash
-npm i -g @angular/cli@6.1.0-rc.3
 ```
 
 ### Install NativeScript Schematics
