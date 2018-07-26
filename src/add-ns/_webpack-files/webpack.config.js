@@ -222,7 +222,7 @@ module.exports = env => {
             new NativeScriptWorkerPlugin(),
 
             new AngularCompilerPlugin({
-		hostReplacementPaths: [platform, "<%= shortExt %>"],
+                hostReplacementPaths: nsWebpack.getResolver([platform, "<%= shortExt %>"]),
                 entryModule: resolve(appPath, "<%= entryModuleImportPath %>#<%= entryModuleClassName %>"),
                 tsConfigPath: join(__dirname, aot ? "tsconfig.aot.json" : "tsconfig<%= nsext %>.json"),
                 skipCodeGeneration: !aot,
