@@ -34,6 +34,11 @@
       "type": "boolean",
       "description": "Specifies whether the {N} theme for styling should be included.",
       "default": true
+    },
+    "webpack": {
+      "type": "boolean",
+      "description": "Specifies whether the new application has webpack set up.",
+      "default": true
     }
   },
   "required": [

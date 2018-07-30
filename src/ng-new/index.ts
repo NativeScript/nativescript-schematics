@@ -45,10 +45,10 @@ const parseToApplicationOptions = (options: NgNewOptions): ApplicationOptions =>
   return {
     name: options.name,
 
-    minimal: options.minimal,
     prefix: options.prefix,
     sourceDir: options.sourceDir || 'app',
     style: options.style,
-    theme: options.theme
+    theme: options.theme,
+    webpack: options.webpack,
   };
 }

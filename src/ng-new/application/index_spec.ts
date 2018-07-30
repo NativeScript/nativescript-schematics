@@ -15,7 +15,8 @@ fdescribe('Application Schematic', () => {
     prefix: '',
     sourceDir: 'app',
     style: 'css',
-    theme: true
+    theme: true,
+    webpack: true,
   };
 
   it('should create all files of an application', () => {
@@ -27,13 +28,17 @@ fdescribe('Application Schematic', () => {
     expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/webpack.config.js')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.aot.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
+
+    expect(files.indexOf('/foo/app/home/home.component.ts')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/home/home.component.html')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/home/home.component.css')).toBeGreaterThanOrEqual(0);
   });
 
   it('should create root NgModule with bootstrap information', () => {
@@ -80,5 +85,18 @@ fdescribe('Application Schematic', () => {
      expect(getFileContent(tree, appComponent))
       .not
       .toMatch(new RegExp('class="h2 text-center"'));
+  });
+
+  it('should handle the webpack flag', () => {
+    const options = { ...defaultOptions, webpack: false };
+    const tree = schematicRunner.runSchematic('application', options);
+
+    const packageJson = '/foo/package.json';
+    expect(getFileContent(tree, packageJson))
+      .not
+      .toMatch(new RegExp('nativescript-dev-webpack'));
+
+      const files = tree! .files;
+      expect(files.indexOf('/foo/webpack.config.js')).toEqual(-1);
   });
 }); 

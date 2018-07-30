@@ -3,6 +3,7 @@ import {
   chain,
   url,
   move,
+  noop,
   template,
   mergeWith,
   TemplateOptions,
@@ -34,6 +35,20 @@ export default function (options: ApplicationOptions) {
         move(appPath),
       ]),
     ),
+
+    options.webpack ?
+      mergeWith(
+        apply(url('./_webpack_files'), [
+          template(<TemplateOptions>{
+            ...options as any,
+            utils: stringUtils,
+            sourcedir,
+            dot: '.',
+          }),
+          move(appPath),
+        ]),
+      ) :
+      noop(),
 
     runAngularJsonSchematic({
       path: options.name,

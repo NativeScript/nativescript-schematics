@@ -27,7 +27,9 @@
         "@angular/compiler-cli": "~6.1.0",
         "@angular-devkit/core": "~0.7.0",
         "@nativescript/schematics": "~0.2.0",
-        "nativescript-dev-typescript": "~0.7.0",
-        "typescript": "~2.7.2"
+        "nativescript-dev-typescript": "~0.7.0",<% if(webpack) {%>
+        "nativescript-dev-webpack": "^0.15.0",
+        "@ngtools/webpack": "~6.1.0",
+        <% } %>"typescript": "~2.7.2"
     }
 }
