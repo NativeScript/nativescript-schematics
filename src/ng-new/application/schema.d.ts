@@ -8,10 +8,6 @@ export interface Schema {
      */
     sourceDir: string;
     /**
-     * Create a minimal app (empty template, no theme).
-     */
-    minimal: boolean;
-    /**
      * The prefix to apply to generated selectors.
      */
     prefix: string;
