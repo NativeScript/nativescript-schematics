@@ -17,12 +17,7 @@
     },
     "minimal": {
       "type": "boolean",
-      "description": "Create a minimal app (inline styles/templates, no theme or routing).",
-      "default": false
-    },
-    "routing": {
-      "type": "boolean",
-      "description": "Generates a routing module.",
+      "description": "Create a minimal app (inline styles/templates, no theme).",
       "default": false
     },
     "prefix": {

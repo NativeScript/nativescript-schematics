@@ -47,7 +47,6 @@ const parseToApplicationOptions = (options: NgNewOptions): ApplicationOptions =>
 
     minimal: options.minimal,
     prefix: options.prefix,
-    routing: options.routing,
     sourceDir: options.sourceDir || 'app',
     style: options.style,
     theme: options.theme
