@@ -15,11 +15,6 @@
       "default": "app",
       "alias": "sd"
     },
-    "minimal": {
-      "type": "boolean",
-      "description": "Create a minimal app (inline styles/templates, no theme).",
-      "default": false
-    },
     "prefix": {
       "type": "string",
       "description": "The prefix to apply to generated selectors.",
