@@ -8,13 +8,9 @@ export interface Schema {
      */
     sourceDir: string;
     /**
-     * Create a minimal app (empty template, no theme or routing).
+     * Create a minimal app (empty template, no theme).
      */
     minimal: boolean;
-    /**
-     * Generates a routing module.
-     */
-    routing: boolean;
     /**
      * The prefix to apply to generated selectors.
      */

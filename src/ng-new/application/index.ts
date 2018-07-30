@@ -7,7 +7,6 @@ import {
   mergeWith,
   TemplateOptions,
   schematic,
-  noop,
   Rule,
 } from '@angular-devkit/schematics';
 
@@ -21,7 +20,6 @@ import { Schema as StylingOptions } from '../../styling/schema';
 export default function (options: ApplicationOptions) {
   const appPath = options.name;
   const sourcedir = options.sourceDir;
-  const routing = options.routing && !options.minimal;
 
   return chain([
     mergeWith(
@@ -29,7 +27,6 @@ export default function (options: ApplicationOptions) {
         template(<TemplateOptions>{
           ...options as any,
           utils: stringUtils,
-          routing,
           sourcedir,
           dot: '.',
           theme: options.theme,
@@ -37,22 +34,6 @@ export default function (options: ApplicationOptions) {
         move(appPath),
       ]),
     ),
-
-    routing ?
-      mergeWith(
-        apply(url('./_routing-files'), [
-          template(<TemplateOptions>{
-            ...options as any,
-            utils: stringUtils,
-            routing,
-            sourcedir,
-            dot: '.',
-          }),
-          move(appPath),
-        ]),
-      ) :
-      noop(),
-
 
     runAngularJsonSchematic({
       path: options.name,

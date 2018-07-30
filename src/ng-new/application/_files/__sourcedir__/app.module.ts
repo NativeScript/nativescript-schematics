@@ -1,12 +1,9 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-import { NativeScriptModule } from 'nativescript-angular/nativescript.module';<% if (routing) { %>
+import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 import { AppRoutingModule } from './app-routing.module';
 
-import { ItemService } from "./item/item.service";
-import { ItemsComponent } from "./item/items.component";
-import { ItemDetailComponent } from "./item/item-detail.component";<% } %>
-
 import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
 
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
@@ -16,17 +13,13 @@ import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
-      AppComponent,<% if (routing) { %>
-      ItemsComponent,
-      ItemDetailComponent,<% } %>
+      AppComponent,
+      HomeComponent,
   ],
   imports: [
-      NativeScriptModule,<% if (routing) { %>
-      AppRoutingModule,<% } %>
-  ],<% if (routing) { %>
-  providers: [
-      ItemService,
-  ],<% } %>
+      NativeScriptModule,
+      AppRoutingModule,
+  ],
   bootstrap: [AppComponent],
   schemas: [NO_ERRORS_SCHEMA],
 })

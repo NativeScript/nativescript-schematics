@@ -14,7 +14,6 @@ describe('Application Schematic', () => {
     name: 'foo',
     prefix: '',
     sourceDir: 'app',
-    routing: false,
     style: 'css',
     minimal: false,
     theme: true
@@ -25,7 +24,7 @@ describe('Application Schematic', () => {
 
     const tree = schematicRunner.runSchematic('application', options);
     const files = tree.files;
-    expect(files.indexOf('/foo/.angular-cli.json')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/angular.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
@@ -37,9 +36,6 @@ describe('Application Schematic', () => {
     expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/vendor.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/vendor-platform.android.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/vendor-platform.ios.ts')).toBeGreaterThanOrEqual(0);
   });
 
   it('should create root NgModule with bootstrap information', () => {
@@ -99,27 +95,5 @@ describe('Application Schematic', () => {
      expect(getFileContent(tree, appComponent))
       .not
       .toMatch(new RegExp('class="h2 text-center"'));
-  });
-
-  it('should handle the routing flag', () => {
-    const options = { ...defaultOptions, routing: true };
-    const tree = schematicRunner.runSchematic('application', options);
-
-    const appModulePath = '/foo/app/app.module.ts';
-    expect(tree.exists(appModulePath)).toBeTruthy();
-    const appModuleContent = getFileContent(tree, appModulePath);
-    expect(appModuleContent).toMatch(
-      isInModuleMetadata('AppModule', 'imports', 'AppRoutingModule', true)
-    );
-
-    const files = tree.files;
-    expect(files.indexOf('/foo/app/app-routing.module.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/item/item-detail.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/item/item-detail.component.ts')).toBeGreaterThanOrEqual(0);
-
-    expect(files.indexOf('/foo/app/item/items.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/item/items.component.ts')).toBeGreaterThanOrEqual(0);
-
-    expect(files.indexOf('/foo/app/item/item.ts')).toBeGreaterThanOrEqual(0);
   });
 }); 

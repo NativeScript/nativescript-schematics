@@ -18,19 +18,15 @@
         "nativescript-angular": "~6.1.0-rc.0",<% if(theme) { %>
         "nativescript-theme-core": "~1.0.4",
         <% } %>"reflect-metadata": "~0.1.8",
-        "rxjs": "~6.1.0",
+        "rxjs": "~6.2.0",
         "tns-core-modules": "~4.1.0",
         "zone.js": "^0.8.26"
     },
     "devDependencies": {
-        "@angular/cli": "6.1.0",
+        "@angular/cli": "~6.1.0",
         "@angular/compiler-cli": "~6.1.0",
-        "@angular-devkit/core": "0.7.0",
+        "@angular-devkit/core": "~0.7.0",
         "@nativescript/schematics": "~0.2.0",
-        "babel-traverse": "6.26.0",
-        "babel-types": "6.26.0",
-        "babylon": "6.18.0",
-        "lazy": "1.0.11",
         "nativescript-dev-typescript": "~0.7.0",
         "typescript": "~2.7.2"
     }
