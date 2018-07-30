@@ -19,4 +19,8 @@ export interface Schema {
      * Specifies whether the {N} theme for styling should be included.
      */
     theme: boolean;
+    /**
+     * Specifies whether the new application has webpack set up.
+     */
+    webpack: boolean;
 }
