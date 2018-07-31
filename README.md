@@ -32,11 +32,11 @@ You can specify the following options when generating new applications:
 
 | Option | Description | Default
 | --- | --- | ---
-| routing | Generates a routing module and master-detail navigation. | `false`
-| prefix | The prefix to apply to generated selectors. | `false`
+| prefix | The prefix to apply to generated selectors. | `app`
 | theme | Specifies whether the {N} css theme should be included. | `true`
 | style | Specifies whether the app should use 'css' or 'scss' files for styling. | `css`
-| minimal | Generates a minimal app (empty template, no theme). | `false`
+| webpack | Specifies whether the app will be ready for building with webpack. | `true`
+| sample | Generates an eagerly loaded module and master-detail navigation. | `false`
 
 #### Web + Mobile Code Sharing project
 
@@ -52,6 +52,7 @@ You can specify the following options when generating new applications:
 | prefix | The prefix to apply to generated selectors. | `app`
 | theme | Specifies whether the {N} css theme should be included. | `true`
 | style | Specifies whether the app should use 'css' or 'scss' files for styling. | `css`
+| sample | Generates an eagerly loaded module and master-detail navigation. | `false`
 
 ### Prerequisites for using `@nativescript/schematics` in an existing project
 You need to add an `angular.json` configuration file to your NativeScript project root directory. That will allow you to use Angular CLI for generating components.
@@ -118,7 +119,6 @@ This includes the following steps:
 
  * add `component-name`.component.tns.html
  * add the component to its `.tns` parent module - note that the `module-name`.module.tns.ts need to exist before you execute the command, or just use the `--skipModule` flag
- * add `moduleId: module.id` to the `@Component` metadata
 
 Params:
 
