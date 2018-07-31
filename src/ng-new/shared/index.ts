@@ -1,3 +1,4 @@
+import { join } from 'path';
 import {
   Rule,
   chain,
@@ -7,7 +8,8 @@ import {
   template,
   move,
   TemplateOptions,
-  schematic
+  schematic,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { stringUtils } from '../../utils';
@@ -16,11 +18,25 @@ import { Schema as SharedOptions } from './schema';
 import { Schema as AppResourcesOptions } from '../../app-resources/schema';
 import { Schema as StylingOptions } from '../../styling/schema';
 
-// You don't have to export the function as default. You can also have more than one rule factory
-// per file.
 export default function(options: SharedOptions): Rule {
+  const templateOptions = getTemplateOptions(options);
+
   return chain([
-    createProject(options),
+    mergeWith(
+      apply(url('./_files'), [
+        template(templateOptions),
+        move(options.name),
+      ]),
+    ),
+
+    options.sample ? 
+      mergeWith(
+        apply(url('./_sample-files'), [
+          template(templateOptions),
+          move(join(options.name, options.sourceDir, 'app')),
+        ]),
+      ) : noop(),
+
     runAppResourcesSchematic({
       path: options.name
     }),
@@ -34,24 +50,20 @@ export default function(options: SharedOptions): Rule {
   ])
 }
 
-const createProject = (options: SharedOptions) => 
-  mergeWith(
-    apply(url('./_files'), [
-      template(<TemplateOptions>{
-        utils: stringUtils,
-        name: options.name,
-        sourcedir: options.sourceDir,
-        prefix: options.prefix,
-        dot: '.',
-        theme: options.theme,
-        style: options.style,
-      }),
-      move(options.name),
-    ]),
-  )
+const getTemplateOptions = (options: SharedOptions) =>
+  <TemplateOptions>{
+    utils: stringUtils,
+    name: options.name,
+    sourcedir: options.sourceDir,
+    prefix: options.prefix,
+    dot: '.',
+    theme: options.theme,
+    style: options.style,
+    sample: options.sample,
+  };
 
 const runAppResourcesSchematic = (options: AppResourcesOptions): Rule =>
-  schematic('app-resources', options)
+  schematic('app-resources', options);
 
 const runStylingSchematic = (options: StylingOptions): Rule =>
-  schematic('styling', options)
+  schematic('styling', options);

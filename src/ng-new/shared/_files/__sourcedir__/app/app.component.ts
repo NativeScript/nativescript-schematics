@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.<%= style %>']
 })
 export class AppComponent {
-  title = '<%= name %>';
 }
