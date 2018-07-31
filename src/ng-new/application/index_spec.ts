@@ -5,7 +5,7 @@ import * as path from 'path';
 import { Schema as ApplicationOptions } from './schema';
 import { isInModuleMetadata } from '../../test-utils';
 
-fdescribe('Application Schematic', () => {
+describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     path.join(__dirname, '../../collection.json'),
@@ -29,12 +29,14 @@ fdescribe('Application Schematic', () => {
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/webpack.config.js')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/app.css')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.aot.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/home/home.component.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/home/home.component.html')).toBeGreaterThanOrEqual(0);
@@ -98,5 +100,19 @@ fdescribe('Application Schematic', () => {
 
       const files = tree! .files;
       expect(files.indexOf('/foo/webpack.config.js')).toEqual(-1);
+  });
+
+  it('should generate correct files when different style extension is specified', () => {
+    const options = { ...defaultOptions, style: 'scss' };
+    const tree = schematicRunner.runSchematic('application', options);
+
+    const files = tree! .files;
+
+    expect(files.indexOf('/foo/app/app.css')).toEqual(-1);
+    expect(files.indexOf('/foo/app/app.android.scss')).toBeGreaterThan(-1);
+    expect(files.indexOf('/foo/app/app.ios.scss')).toBeGreaterThan(-1);
+
+    expect(files.indexOf('/foo/app/home/home.component.css')).toEqual(-1);
+    expect(files.indexOf('/foo/app/home/home.component.scss')).toBeGreaterThan(-1);
   });
 }); 
