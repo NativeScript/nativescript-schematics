@@ -1,3 +1,21 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/nativescript/nativescript-schematics/compare/0.2.2...0.2.3) (2018-07-31)
+
+
+### Bug Fixes
+
+* ignore spec files when building for mobile ([08ede96](https://github.com/nativescript/nativescript-schematics/commit/08ede96))
+* **application:** respect the provided style extension ([0249f06](https://github.com/nativescript/nativescript-schematics/commit/0249f06))
+
+
+### Features
+
+* add webpack flag to the application schematics ([258ddb1](https://github.com/nativescript/nativescript-schematics/commit/258ddb1))
+* have routing by default for new applications ([cc320ed](https://github.com/nativescript/nativescript-schematics/commit/cc320ed))
+* introduce --sample flag for `ng new --shared` ([528701b](https://github.com/nativescript/nativescript-schematics/commit/528701b))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/nativescript/nativescript-schematics/compare/0.2.1...0.2.2) (2018-07-26)
 
