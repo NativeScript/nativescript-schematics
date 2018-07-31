@@ -15,6 +15,7 @@
     "**/*.ns.ts",
     "**/*<%= nsext %>.ts",
     "**/*.android.ts",
-    "**/*.ios.ts"
+    "**/*.ios.ts",
+    "**/*.spec.ts"
   ]
 }
