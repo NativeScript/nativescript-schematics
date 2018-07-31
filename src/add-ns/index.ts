@@ -1,3 +1,4 @@
+import { join } from 'path';
 import {
   Rule,
   SchematicContext,
@@ -9,6 +10,8 @@ import {
   template,
   mergeWith,
   schematic,
+  noop,
+  move,
 } from '@angular-devkit/schematics';
 import {
   RunSchematicTask,
@@ -39,7 +42,11 @@ export default function (options: MigrationOptions): Rule {
 
     addNativeScriptSchematics,
 
-    addNsFiles(),
+    addNsFiles(options),
+    options.sample ?
+      addSampleFiles() :
+      noop(),
+
     addAppResources(),
     mergeGitIgnore,
     addRunScriptsToPackageJson,
@@ -100,14 +107,17 @@ ${JSON.stringify(angularJson.cli, null, 2)}`);
   tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
 }
 
-const addNsFiles = () => (_tree: Tree, context: SchematicContext) => {
+const addNsFiles = (options: MigrationOptions) => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
   const templateOptions = {
-    dasherize: dasherize,
+    sample: options.sample,
+    theme: true,
 
+    dasherize,
     nsext: extensions.ns,
     webext: extensions.web,
     sourceDir: projectSettings.sourceRoot,
+    prefix: projectSettings.prefix,
 
     main: projectSettings.mainName,
 
@@ -124,6 +134,25 @@ const addNsFiles = () => (_tree: Tree, context: SchematicContext) => {
   const templateSource = apply(url('./_ns-files'), [
       template(templateOptions)
   ]);
+  return mergeWith(templateSource);
+};
+
+const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
+  context.logger.info('Adding sample files');
+  const templateOptions = {
+    nsext: extensions.ns,
+    webext: extensions.web,
+    sourceDir: projectSettings.sourceRoot,
+
+    indexAppRootTag: projectSettings.indexAppRootTag,
+  };
+  const path = join(projectSettings.sourceRoot, 'app');
+
+  const templateSource = apply(url('./_sample-files'), [
+    template(templateOptions),
+    move(path),
+  ]);
+
   return mergeWith(templateSource);
 };
 

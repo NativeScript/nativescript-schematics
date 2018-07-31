@@ -11,4 +11,8 @@ export interface Schema {
    * The name of the project to be converted to a code sharing structure
    */
   project: string;
+  /**
+   * Specifies whether a sample master detail should be generated.
+   */
+  sample: boolean; 
 }

@@ -36,7 +36,6 @@ You can specify the following options when generating new applications:
 | theme | Specifies whether the {N} css theme should be included. | `true`
 | style | Specifies whether the app should use 'css' or 'scss' files for styling. | `css`
 | webpack | Specifies whether the app will be ready for building with webpack. | `true`
-| sample | Generates an eagerly loaded module and master-detail navigation. | `false`
 
 #### Web + Mobile Code Sharing project
 
