@@ -34,6 +34,11 @@
       "type": "boolean",
       "description": "Specifies whether the {N} theme for styling should be included.",
       "default": true
+    },
+    "sample": {
+      "type": "boolean",
+      "description": "Specifies whether a sample master detail should be generated.",
+      "default": false
     }
   },
   "required": [

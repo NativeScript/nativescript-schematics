@@ -27,4 +27,8 @@ export interface Schema {
      * Specifies whether the new application has webpack set up.
      */
     webpack: boolean;
+    /**
+     * Specifies whether a sample master detail should be generated.
+     */
+    sample: boolean; 
 }
