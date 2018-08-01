@@ -52,6 +52,7 @@ export default function (options: MigrationOptions): Rule {
     addRunScriptsToPackageJson,
     addNativeScriptProjectId,
     excludeNsFilesFromTsconfig,
+    addHomeComponent(options.nsExtension, options.webExtension),
 
     addWebpackConfig(),
 
@@ -157,12 +158,29 @@ const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
   return mergeWith(templateSource);
 };
 
+const addHomeComponent =
+  (nsExtension: string, webExtension: string) => (_tree, context: SchematicContext) => {
+    context.logger.info('Adding Shared Home Component');
+
+    return schematic('component', {
+      nsExtension: nsExtension,
+      webExtension: webExtension,
+      web: true,
+      nativescript: true,
+      name: 'home',
+      module: 'app',
+      inlineStyle: true,
+      prefix: projectSettings.prefix,
+      spec: false,
+    });
+};
+
 const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding App_Resources');
   return schematic('app-resources', {
     path: ''
   });
-}
+};
 
 /**
  * Adds NativeScript specific ignores to .gitignore
