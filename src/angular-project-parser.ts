@@ -25,6 +25,8 @@ export interface AngularProjectSettings {
   mainPath: string;
   /** default: "app" */
   prefix: string;
+  /** default: "src/tsconfig.json" */
+  tsConfig: string;
 
   /** default: "AppModule"*/
   entryModuleClassName: string;
@@ -54,6 +56,7 @@ export interface CoreProjectSettings {
   mainName: string;
   mainPath: string;
   prefix: string;
+  tsConfig: string;
 
   ngCliSemVer: SemVer;
   ngSemVer: SemVer;
@@ -95,14 +98,7 @@ export function getAngularProjectSettings(tree: Tree, projectName: string = ''):
   const indexAppRootTag = getAppRootTag(tree, entryComponent.path);
 
   return {
-    ngCliSemVer: projectSettings.ngCliSemVer,
-    ngSemVer: projectSettings.ngSemVer,
-
-    root: projectSettings.root,
-    sourceRoot: projectSettings.sourceRoot,
-    mainName: projectSettings.mainName,
-    mainPath: projectSettings.mainPath,
-    prefix: projectSettings.prefix,
+    ...projectSettings,
 
     entryModuleClassName: entryModule.className,
     entryModuleImportPath: entryModule.importPath,
@@ -142,7 +138,12 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
     const mainName = basename(mainPath).replace('.ts', '');
 
     // this by default is app
+    // settings.prefix = 'app';
     const prefix = project.prefix;
+
+    // this by default is src/tsconfig.app.json
+    // settings.tsConfig = 'src/tsconfig.app.json'
+    const tsConfig = project.architect.build.options.tsConfig;
 
     return {
       ngCliSemVer,
@@ -153,6 +154,7 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
       mainName,
       mainPath,
       prefix,
+      tsConfig,
     };
   } else {
     throw new SchematicsException(`This schematic is not compatible with @angular/cli 1.x, use 6.x or newer`);
