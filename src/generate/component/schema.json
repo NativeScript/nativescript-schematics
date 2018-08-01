@@ -24,7 +24,6 @@
       "description": "Allows specification of the used extension for web",
       "alias": "webext"
     },
-
     "path": {
       "type": "string",
       "format": "path",
