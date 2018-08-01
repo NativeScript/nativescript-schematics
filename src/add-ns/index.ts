@@ -51,6 +51,7 @@ export default function (options: MigrationOptions): Rule {
     mergeGitIgnore,
     addRunScriptsToPackageJson,
     addNativeScriptProjectId,
+    excludeNsFilesFromTsconfig,
 
     addWebpackConfig(),
 
@@ -228,6 +229,30 @@ const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
   }, packageJson.nativescript);
 
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
+}
+
+/**
+ * Adds {N}-specific extensions
+ * to the list with excluded files
+ * in the web TypeScript configuration
+ */
+const excludeNsFilesFromTsconfig = (tree: Tree, context: SchematicContext) => {
+  context.logger.info('Excluding NativeScript files from web tsconfig');
+  const tsConfigPath = projectSettings.tsConfig;
+  const tsConfig: any = getJsonFile(tree, tsConfigPath);
+
+  tsConfig.exclude = tsConfig.exclude || [];
+  const nsExtensions = [
+    '**/*.tns.ts',
+    '**/*.android.ts',
+    '**/*.ios.ts',
+    './main.ns.aot.ts',
+    './main.ns.ts',
+  ];
+
+  tsConfig.exclude = [...tsConfig.exclude, ...nsExtensions];
+
+  tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
 }
 
 // let npmInstallTaskId: TaskId;
