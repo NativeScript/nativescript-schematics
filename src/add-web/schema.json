@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "SchematicsNativeScriptAngularComponent",
+  "id": "SchematicsAddWebToNativeScript",
   "title": "NativeScript Angular migrate-ns Options Schema",
   "type": "object",
   "properties": {

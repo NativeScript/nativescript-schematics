@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "SchematicsStyling",
+  "id": "SchematicsMasterDetail",
   "title": "Styling Options Schema",
   "type": "object",
   "properties": {
