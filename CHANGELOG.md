@@ -1,3 +1,18 @@
+<a name="0.2.4"></a>
+## [0.2.4](https://github.com/nativescript/nativescript-schematics/compare/0.2.3...0.2.4) (2018-08-02)
+
+
+### Bug Fixes
+
+* **add-ns:** exclude {N} files from web tsconfig ([9792a54](https://github.com/nativescript/nativescript-schematics/commit/9792a54)), closes [#56](https://github.com/nativescript/nativescript-schematics/issues/56)
+
+
+### Features
+
+* introduce --sample flag for `ng add` ([3c05fe4b556adde214dc880d4957c970e700eeed](https://github.com/NativeScript/nativescript-schematics/commit/3c05fe4b556adde214dc880d4957c970e700eeed))
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/nativescript/nativescript-schematics/compare/0.2.2...0.2.3) (2018-07-31)
 
