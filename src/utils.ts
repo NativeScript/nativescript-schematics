@@ -148,6 +148,18 @@ export const renameFilesForce = (paths: FromTo[]) =>
 
 export const createEmptyProject = (tree: Tree): Tree => {
   tree.create('/angular.json', JSON.stringify({}));
+  // TODO: Replace with call to 'angular-json' schematic or:
+  // tree.create('/angular.json', JSON.stringify({
+  //   projects: {
+  //     myProject: {
+  //       "root": "",
+  //       "sourceRoot": ".",
+  //       "projectType": "application",
+  //       "prefix": "app"
+  //     }
+  //   }
+  // }));
+
   tree.create('/package.json', JSON.stringify({}));
 
   return tree;
