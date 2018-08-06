@@ -12,7 +12,7 @@ describe('Angular JSON Config Schematic', () => {
   const appPath = 'foo';
   const defaultOptions: NgCliConfigOptions = {
     name: 'test', // TODO: make sure it is a correct name
-    path: '.',
+    path: appPath,
     prefix: 'app',
   };
   const configPath = `/${appPath}/angular.json`;
@@ -29,7 +29,7 @@ describe('Angular JSON Config Schematic', () => {
     const prefix = 'my-app-prefix';
     const options = { ...defaultOptions, prefix };
 
-    const tree = schematicRunner.runSchematic('ng-cli-config', options);
+    const tree = schematicRunner.runSchematic('angular-json', options);
     expect(getFileContent(tree, configPath)).toContain(`"prefix": "${prefix}"`);
   });
 });
