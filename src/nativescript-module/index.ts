@@ -53,7 +53,7 @@ const addNsFiles = (options: NativeScriptModuleSchema) => (tree: Tree, context: 
     nsext: nsext
   };
   const templateSource = apply(url('./_files'), [
-      template(templateOptions)
+    template(templateOptions)
   ]);
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
