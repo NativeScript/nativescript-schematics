@@ -17,7 +17,7 @@ import { dirname, basename } from 'path';
 
 import { Schema as MigrateComponentSchema } from './schema';
 
-import { getSourceFile, addExtension, findRelativeImportPath } from '../utils';
+import { getSourceFile, addExtension, findRelativeImportPath, getFileContents } from '../utils';
 import { ComponentInfo, parseComponentInfo } from './component-info-utils';
 import { getNsConfigExtension, Extensions } from '../generate/utils';
 
@@ -47,19 +47,33 @@ export default function(options: MigrateComponentSchema): Rule {
 
 const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
+
+  let webTemplate = getFileContents(tree, componentInfo.componentHtmlPath);
+  webTemplate = parseComments(webTemplate);
+
   const templateOptions = {
     path: dirname(componentInfo.componentHtmlPath),
     htmlFileName: basename(componentInfo.componentHtmlPath),
     
     addNsExtension: (path: string) => addExtension(path, extensions.ns),
 
-    componentName: options.name
+    componentName: options.name,
+
+    webTemplate
   };
   const templateSource = apply(url('./_ns-files'), [
       template(templateOptions)
   ]);
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
+
+/**
+ * Replace all --> with ->,
+ * This is so that the comments don't accidentally close the comment
+ * from the .tns.html file
+ */
+const parseComments = (htmlFileContents: string) =>
+  htmlFileContents.replace(/-->/g, '->');
 
 const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree) => {
   if (options.skipModule) {
