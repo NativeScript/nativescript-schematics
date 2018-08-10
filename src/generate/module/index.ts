@@ -48,6 +48,11 @@ class ModuleInfo {
 
 let extensions: Extensions;
 
+interface FileNameChange {
+  from: string,
+  to: string
+}
+
 export default function (options: ModuleOptions): Rule {
   let platformUse: PlatformUse;
   let moduleInfo: ModuleInfo;
@@ -56,12 +61,6 @@ export default function (options: ModuleOptions): Rule {
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
 
-      // TODO: Remove after @angular/cli@6.1.0 is complete
-      if (!options.path) {
-        const settings = getProjectObject(tree, options.project);
-        options.path = normalize(settings.sourceRoot + '/app');
-      }
-
       if (platformUse.nsOnly && options.spec !== true) {
         options.spec = false;
       }
@@ -69,7 +68,7 @@ export default function (options: ModuleOptions): Rule {
       validateOptions(platformUse, options);
     },
 
-    () => 
+    () =>
       externalSchematic('@schematics/angular', 'module', removeNsSchemaOptions(options)),
 
     (tree: Tree) => {
@@ -77,26 +76,25 @@ export default function (options: ModuleOptions): Rule {
       moduleInfo = parseModuleInfo(tree, options);
     },
 
-    (tree: Tree) =>
-      (platformUse.useWeb && extensions.web)
-         ? renameWebModules(moduleInfo)(tree) : tree,
-
     (tree: Tree) => {
-      if (platformUse.nsOnly || !platformUse.useNs) {
-        // no need to move / rename module files
+      if (!platformUse.useNs) {
         return tree;
+      }
+
+      const updates = prepareNsModulesUpdates(moduleInfo);
+
+      if (platformUse.useWeb) {
+        // we need to copy the module files using .tns extension
+        copyFiles(updates)(tree);
       } else {
-        const updates = prepareFileUpdates(moduleInfo);
-        
-        if (platformUse.useWeb) {
-          // we need to copy the module files using .tns extension
-          copyFiles(updates)(tree);
-        } else {
-          // we need to update module files to .tns extension
-          renameFiles(updates)(tree);
-        }
+        // we need to update module files to .tns extension
+        renameFiles(updates)(tree);
       }
     },
+
+    (tree: Tree) =>
+      (platformUse.useWeb && extensions.web)
+        ? renameWebModules(moduleInfo)(tree) : tree,
 
     (tree: Tree) => {
       if (platformUse.useNs) {
@@ -119,25 +117,24 @@ const addCommonFile = (moduleInfo: ModuleInfo) => {
     ]),
   )
 }
-  
-const validateOptions = (platformUse: PlatformUse, options: ModuleOptions) =>
-  () => {
-    if (!options.nativescript && !options.web) {
-      throw new SchematicsException(`You shouldn't disable both --web and --nativescript flags`);
-    }
 
-    // this should always have at least ns, otherwise this schematic shouldn't be used
-    if (!platformUse.useWeb && !platformUse.useNs) {
-      throw new SchematicsException('You need to specify project type!');
-    }
-  };
+const validateOptions = (platformUse: PlatformUse, options: ModuleOptions) => {
+  if (!options.nativescript && !options.web) {
+    throw new SchematicsException(`You shouldn't disable both --web and --nativescript flags`);
+  }
+
+  // this should always have at least ns, otherwise this schematic shouldn't be used
+  if (!platformUse.useWeb && !platformUse.useNs) {
+    throw new SchematicsException('You need to specify project type!');
+  }
+};
 
 const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   const moduleInfo = new ModuleInfo();
-  
+
   const parsedPath = parseName(options.path || '', options.name);
   moduleInfo.name = dasherize(parsedPath.name);
-  const className = `/${moduleInfo.name}.module.ts`; 
+  const className = `/${moduleInfo.name}.module.ts`;
   const routingName = `/${moduleInfo.name}-routing.module.ts`;
 
   tree.actions.forEach(action => {
@@ -182,13 +179,17 @@ const renameWebModules = (moduleInfo: ModuleInfo) =>
     renameFiles(files)(tree);
   };
 
-const prepareFileUpdates = (moduleInfo: ModuleInfo) => {
-  const updates: any[] = [{
-    from: moduleInfo.moduleFilePath,
-    to: moduleInfo.nsModuleFilePath
-  }];
+const prepareNsModulesUpdates = (moduleInfo: ModuleInfo) => {
+  const updates: FileNameChange[] = [];
 
-  if (moduleInfo.routingFilePath) {
+  if (moduleInfo.moduleFilePath !== moduleInfo.nsModuleFilePath) {
+    updates.push({
+      from: moduleInfo.moduleFilePath,
+      to: moduleInfo.nsModuleFilePath
+    });
+  }
+
+  if (moduleInfo.routingFilePath && moduleInfo.routingFilePath !== moduleInfo.nsRoutingFilePath) {
     updates.push({
       from: moduleInfo.routingFilePath,
       to: moduleInfo.nsRoutingFilePath
@@ -226,18 +227,18 @@ import { NativeScriptRouterModule } from 'nativescript-angular/router';`
 
   const newText = fileText.replace(/RouterModule/g, 'NativeScriptRouterModule')
     .replace(importFrom, importTo);
-  
+
   const recorder = tree.beginUpdate(path);
   recorder.remove(0, fileText.length);
   recorder.insertLeft(0, newText);
   tree.commitUpdate(recorder);
 }
 
-const copyFiles = (paths: ({ from: string, to: string})[]) =>
+const copyFiles = (paths: FileNameChange[]) =>
   (tree: Tree) =>
     paths.forEach(({ from, to }) => copy(tree, from, to));
 
-const renameFiles = (paths: ({ from: string, to: string })[]) =>
+const renameFiles = (paths: FileNameChange[]) =>
   (tree: Tree) =>
     paths.forEach(({ from, to }) => tree.rename(from, to));
 
@@ -290,10 +291,10 @@ const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
 */
 const ensureCommonModule = (modulePath: string) =>
   (tree: Tree) => {
-      addNSCommonModule(tree, modulePath);
-      removeNGCommonModule(tree, modulePath);
+    addNSCommonModule(tree, modulePath);
+    removeNGCommonModule(tree, modulePath);
 
-      return tree;
+    return tree;
   };
 
 const addSchema = (modulePath: string) =>

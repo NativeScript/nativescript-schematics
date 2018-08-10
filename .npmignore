@@ -1,6 +1,6 @@
 **/*.tgz
 !*.d.ts
 *.js.map
-
+/jasmine-config
 /tsconfig.json
 

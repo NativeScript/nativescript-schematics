@@ -1,6 +1,8 @@
 # Outputs
 src/**/*.js
 src/**/*.js.map
+jasmine-config/**/*.js
+jasmine-config/**/*.js.map
 
 # Schematics template files
 !src/**/_*/**/*.js

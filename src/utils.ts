@@ -7,6 +7,9 @@ import {
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
 import { NsConfig } from './models/nsconfig';
+import { UnitTestTree } from '@angular-devkit/schematics/testing';
+import { createAppModule } from '@schematics/angular/utility/test';
+import { HostTree } from '@angular-devkit/schematics';
 
 export interface Node {
     getStart();
@@ -146,23 +149,43 @@ export const renameFilesForce = (paths: FromTo[]) =>
     tree.delete(from);
 });
 
-export const createEmptyProject = (tree: Tree): Tree => {
-  tree.create('/angular.json', JSON.stringify({}));
-  // TODO: Replace with call to 'angular-json' schematic or:
-  // tree.create('/angular.json', JSON.stringify({
-  //   projects: {
-  //     myProject: {
-  //       "root": "",
-  //       "sourceRoot": ".",
-  //       "projectType": "application",
-  //       "prefix": "app"
-  //     }
-  //   }
-  // }));
+export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
+  let appTree = new UnitTestTree(new HostTree);
 
-  tree.create('/package.json', JSON.stringify({}));
+  const modulePath = `/src/app/app.module.ts`;
 
-  return tree;
+  appTree = createAppModule(<any>appTree, modulePath);
+
+  appTree.create('/package.json', JSON.stringify({
+    nativescript: { id: "proj" }
+  }));
+
+  appTree.create('/angular.json', JSON.stringify({
+    projects: {
+      [projectName]: {
+        "root": "",
+        "sourceRoot": "src",
+        "projectType": "application",
+        "prefix": "app"
+      }
+    }
+  }));
+
+  return appTree;
+}
+
+export function createEmptySharedProject(projectName: string): UnitTestTree {
+  let appTree = createEmptyNsOnlyProject(projectName);
+
+  appTree.create('/nsconfig.json', JSON.stringify({
+    "appResourcesPath": "App_Resources",
+    "appPath": "src",
+    "nsext": ".tns",
+    "webext": "",
+    "shared": true
+  }));
+
+  return appTree;
 }
 
 /**
