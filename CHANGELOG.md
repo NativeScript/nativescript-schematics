@@ -1,3 +1,12 @@
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/nativescript/nativescript-schematics/compare/0.2.4...0.2.5) (2018-08-11)
+
+
+### Features
+
+* **migrate-component:** copy the web template into the migrated component ([#65](https://github.com/nativescript/nativescript-schematics/issues/65)) ([ad08b25](https://github.com/nativescript/nativescript-schematics/commit/ad08b25))
+
+
 <a name="0.2.4"></a>
 ## [0.2.4](https://github.com/nativescript/nativescript-schematics/compare/0.2.3...0.2.4) (2018-08-02)
 
