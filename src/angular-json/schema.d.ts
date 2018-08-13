@@ -6,9 +6,9 @@ export interface Schema {
     /**
      * Specifies the destination path.
      */
-    path: string;
+    path?: string;
     /**
      * The prefix to apply to generated selectors.
      */
-    prefix: string;
+    prefix?: string;
  }

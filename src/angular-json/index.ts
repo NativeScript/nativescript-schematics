@@ -6,6 +6,7 @@ import {
   url,
   mergeWith,
   TemplateOptions,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { Schema as NgCliConfigSchema } from './schema';
@@ -17,7 +18,7 @@ export default function (options: NgCliConfigSchema) {
         prefix: options.prefix,
         name: options.name
       }),
-      move(options.path)
+      (options.path) ? move(options.path) : noop
     ])
   ));
 }
