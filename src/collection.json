@@ -127,11 +127,6 @@
       "factory": "./migrate-module",
       "schema": "./migrate-module/schema.json"
     },
-    "nativescript-module": {
-      "description": "Generates a NativeScript Module",
-      "factory": "./nativescript-module",
-      "schema": "./nativescript-module/schema.json"
-    },
 
     "master-detail": {
       "aliases": [ "md" ],

@@ -25,8 +25,6 @@ import {
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
-import { getProjectObject } from '../../angular-project-parser';
-import { normalize } from 'path';
 
 class ModuleInfo {
   name: string;
