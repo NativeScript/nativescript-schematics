@@ -38,7 +38,7 @@ const isNs = (tree: Tree) => {
 
 const isWeb = (tree: Tree) => {
   if (!tree.exists('nsconfig.json')) {
-    // console.log(`nsconfig.json not found. Assuming this is a {N} only project`);
+    console.log(`nsconfig.json not found. Assuming this is a {N} only project`);
     return false;
   }
 

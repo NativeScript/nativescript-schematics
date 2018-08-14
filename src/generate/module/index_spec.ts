@@ -32,14 +32,11 @@ describe('Module Schematic', () => {
 
   let appTree: UnitTestTree;
 
-
-  // Structure proposal
   describe('when in ns-only project', () => {
     beforeEach(() => {
       appTree = createEmptyNsOnlyProject(project);
     });
 
-    // tests
     var tree: UnitTestTree;
     describe('with default options', () => {
       beforeEach(() => {
