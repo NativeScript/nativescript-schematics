@@ -158,7 +158,13 @@ export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
   appTree = createAppModule(<any>appTree, `/src/app/app.module.ts`);
 
   appTree.create('/package.json', JSON.stringify({
-    nativescript: { id: "proj" }
+    nativescript: { id: "proj" },
+    dependencies: {
+      "@angular/core": "^6.1.0"
+    },
+    devDependencies: {
+      "@angular/cli": "^6.1.0"
+    },
   }));
 
   return appTree;
@@ -254,4 +260,19 @@ export const findRelativeImportPath = (from, to): string => {
   }
 
   return relativePath.replace(/.ts$/, '');
+}
+
+export function safeGet(object, property, ...args) {
+  if (!object) {
+    return;
+  }
+
+  const value = object[property];
+  if (!value) {
+    return;
+  }
+
+  return typeof value === "function" ?
+    value.bind(object)(...args) :
+    value;
 }

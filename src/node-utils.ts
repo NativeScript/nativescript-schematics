@@ -1,5 +1,5 @@
 import { Tree, SchematicsException } from "@angular-devkit/schematics";
-import { getPackageJson } from "./utils";
+import { getPackageJson, safeGet } from "./utils";
 
 export class SemVer {
   constructor(
@@ -27,9 +27,10 @@ export const getAngularCLISemver = (tree: Tree): SemVer => {
 export const getModuleSemver = (tree: Tree, moduleName: string): SemVer => {
   const packageJson = getPackageJson(tree);
 
-  const moduleVersion = packageJson.dependencies[moduleName] || packageJson.devDependencies[moduleName];
+  const moduleVersion = safeGet(packageJson, 'dependencies', moduleName) ||
+    safeGet(packageJson, 'devDependencies', moduleName);
 
-  const result = parseSemver(moduleVersion);
+  const result = moduleVersion && parseSemver(moduleVersion);
 
   if (!result) {
     throw new SchematicsException(`Angular Project Parser, cannot parse the current ${moduleName} version [${moduleVersion}]`);
