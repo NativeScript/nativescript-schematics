@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json",
-    "test": "npm run build && jasmine **/*_spec.js",
+    "test": "npm run build && npm run jasmine",
+    "jasmine": "jasmine --config=jasmine-config/jasmine.json",
     "prepare": "npm run build",
     "debug": "node --debug-brk $(which ng) g command",
     "debug-v8": "node --inspect-brk $(which ng) g command",
@@ -23,6 +24,7 @@
     "@types/node": "^8.0.31",
     "conventional-changelog-cli": "^2.0.1",
     "jasmine": "^2.8.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "typescript": "2.7.2"
   },
   "repository": {

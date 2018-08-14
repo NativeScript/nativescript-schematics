@@ -36,7 +36,6 @@ const isNs = (tree: Tree) => {
   return !!packageJson.nativescript;
 }
 
-// TODO: need a better way to identify {A} Web projects
 const isWeb = (tree: Tree) => {
   if (!tree.exists('nsconfig.json')) {
     console.log(`nsconfig.json not found. Assuming this is a {N} only project`);
@@ -64,7 +63,7 @@ export const getPlatformUse = (tree: Tree, options: any): PlatformUse => {
   const nsReady = isNs(tree);
   const webReady = isWeb(tree);
   const nsOnly = nsReady && !webReady;
-  
+
   const useNs = options.nativescript && nsReady;
   const useWeb = options.web && webReady;
 
@@ -77,30 +76,25 @@ export const getPlatformUse = (tree: Tree, options: any): PlatformUse => {
   }
 }
 
-export const getExtensions = (tree: Tree, options: any): Extensions => {
+export const getExtensions = (tree: Tree, options: { nsExtension?: string; webExtension?: string; }): Extensions => {
+  let ns = options.nsExtension;
+  let web = options.webExtension;
+
   if (isWeb(tree)) {
     const nsconfig = getNsConfig(tree);
 
-    const result: Extensions = {
-      ns: (options.nsExtension != null)
-        ? options.nsExtension : nsconfig.nsext,
-      web: (options.webExtension != null)
-        ? options.webExtension : nsconfig.webext
-    };
+    ns = ns || nsconfig.nsext;
+    web = web || nsconfig.webext;
 
-    result.ns = parseExtension(result.ns);
-    result.web = parseExtension(result.web);
-
-    if (result.ns === result.web) {
-      return DEFAULT_SHARED_EXTENSIONS;
+    if (ns === web) {
+      ns = DEFAULT_SHARED_EXTENSIONS.ns;
+      web = DEFAULT_SHARED_EXTENSIONS.web
     }
+  }
 
-    return result;
-  } else {
-    return {
-      ns: '',
-      web: ''
-    };
+  return {
+    ns: parseExtension(ns || ""),
+    web: parseExtension(web || "")
   }
 }
 
@@ -122,7 +116,7 @@ export const getNsConfigExtension = (tree: Tree): Extensions => {
     };
   }
 
-  const nsconfig = getNsConfig(tree);  
+  const nsconfig = getNsConfig(tree);
   return {
     ns: nsconfig.nsext || '.tns',
     web: nsconfig.webext || ''

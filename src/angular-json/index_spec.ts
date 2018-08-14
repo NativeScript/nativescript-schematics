@@ -1,35 +1,58 @@
-import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
-import { getFileContent } from '@schematics/angular/utility/test';
 import * as path from 'path';
-
-import { Schema as NgCliConfigOptions } from './schema';
+import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
+import { getFileContent } from '@schematics/angular/utility/test';
+import { Schema as angularJsonOptions } from './schema';
 
 describe('Angular JSON Config Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     path.join(__dirname, '../collection.json'),
   );
-  const appPath = 'foo';
-  const defaultOptions: NgCliConfigOptions = {
-    name: 'test', // TODO: make sure it is a correct name
-    path: appPath,
-    prefix: 'app',
+
+  const projName = "leproj"
+  const defaultOptions: angularJsonOptions = {
+    name: projName,
   };
-  const configPath = `/${appPath}/angular.json`;
+  const configPath = `/angular.json`;
 
-  it('should create all files of an application', () => {
-    const options = { ...defaultOptions };
 
-    const tree = schematicRunner.runSchematic('angular-json', options);
-    const files = tree.files;
-    expect(files.indexOf(configPath)).toBeGreaterThanOrEqual(0);
-  }); 
+  describe("with default options (name only)", () => {
+    let tree: UnitTestTree;
+    beforeAll(() => {
+      tree = schematicRunner.runSchematic('angular-json', defaultOptions);
+    })
 
-  it('should handle the prefix option', () => {
-    const prefix = 'my-app-prefix';
-    const options = { ...defaultOptions, prefix };
+    it('should create angular.json files', () => {
+      expect(tree.files.indexOf(configPath)).toBeGreaterThanOrEqual(0);
+    });
 
-    const tree = schematicRunner.runSchematic('angular-json', options);
+    it('should insert the project name', () => {
+      expect(getFileContent(tree, configPath)).toContain(`"${projName}":`);
+    });
+
+    it('should insert "." as sourceRoot', () => {
+      expect(getFileContent(tree, configPath)).toContain(`"sourceRoot": "."`);
+    });
+  })
+
+  it('should insert the prefix option', () => {
+    const prefix = 'custom-prefix';
+    const tree = schematicRunner.runSchematic('angular-json', { ...defaultOptions, prefix });
     expect(getFileContent(tree, configPath)).toContain(`"prefix": "${prefix}"`);
+  });
+
+  it('should insert the sourceRoot option', () => {
+    const sourceRoot = 'src';
+    const tree = schematicRunner.runSchematic('angular-json', { ...defaultOptions, sourceRoot });
+    expect(getFileContent(tree, configPath)).toContain(`"sourceRoot": "${sourceRoot}"`);
+  });
+
+  it('should create files inside path when specified', () => {
+    const path = "/path/to/my/app";
+    const appJsonPath = `${path}/angular.json`;
+    const options = { ...defaultOptions, path };
+
+    const tree = schematicRunner.runSchematic('angular-json', options);
+    expect(tree.files.indexOf(appJsonPath)).toBeGreaterThanOrEqual(0);
   });
 });

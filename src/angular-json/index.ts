@@ -6,6 +6,7 @@ import {
   url,
   mergeWith,
   TemplateOptions,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { Schema as NgCliConfigSchema } from './schema';
@@ -13,11 +14,8 @@ import { Schema as NgCliConfigSchema } from './schema';
 export default function (options: NgCliConfigSchema) {
   return branchAndMerge(mergeWith(
     apply(url('./_files'), [
-      template(<TemplateOptions>{
-        prefix: options.prefix,
-        name: options.name
-      }),
-      move(options.path)
+      template(<TemplateOptions>{ ...options }),
+      (options.path) ? move(options.path) : noop
     ])
   ));
 }

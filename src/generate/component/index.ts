@@ -26,7 +26,7 @@ class ComponentInfo {
   templatePath: string;
   name: string;
 
-  constructor() {}
+  constructor() { }
 }
 
 let extensions: Extensions;
@@ -39,12 +39,6 @@ export default function (options: ComponentOptions): Rule {
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
 
-      // TODO: Remove after @angular/cli@6.1.0 is complete
-      if (!options.path) {
-        const settings = getProjectObject(tree, options.project);
-        options.path = normalize(settings.sourceRoot + '/app');
-      }
-      
       if (platformUse.nsOnly && options.spec !== true) {
         options.spec = false;
       }
@@ -63,19 +57,6 @@ export default function (options: ComponentOptions): Rule {
       componentInfo = parseComponentInfo(tree, options);
     },
 
-    (tree: Tree, context: SchematicContext) => {
-      if (platformUse.nsOnly) {
-        // return renameWebTemplate(tree, component.templatePath);
-        // don't do anything to the template file, as it its content will be replaced in the next step
-        return;
-      }
-      if (platformUse.useWeb) {
-        return renameWebTemplate(tree, componentInfo.templatePath);
-      } else {
-        return removeWebTemplate(tree, context, componentInfo.templatePath);
-      }
-    },
-
     (tree: Tree) => {
       if (platformUse.nsOnly) {
         insertModuleId(tree, componentInfo.classPath);
@@ -83,21 +64,22 @@ export default function (options: ComponentOptions): Rule {
     },
 
     (tree: Tree, context: SchematicContext) => {
-      if (platformUse.nsOnly) {
-        tree.overwrite(componentInfo.templatePath, `<Button text="${componentInfo.name} works!" class="btn btn-primary"></Button>`);
-        return tree;
+      if (platformUse.useWeb) {
+        return renameWebTemplate(tree, componentInfo.templatePath);
+      } else {
+        return removeWebTemplate(tree, context, componentInfo.templatePath);
       }
+    },
 
+    (tree: Tree, context: SchematicContext) => {
       if (platformUse.useNs) {
-        // return performNsModifications(component)(tree, context);
         return addNativeScriptFiles(componentInfo)(tree, context);
       }
     }
   ]);
 };
 
-const validateOptions = (platformUse: PlatformUse, options: ComponentOptions) =>
-  () => {
+const validateOptions = (platformUse: PlatformUse, options: ComponentOptions) => {
   if (platformUse.webReady && options.inlineTemplate) {
     throw new SchematicsException('You cannot use the --inlineTemplate option for web+ns component!');
   }
@@ -107,10 +89,10 @@ const validateOptions = (platformUse: PlatformUse, options: ComponentOptions) =>
   }
 
   if (!platformUse.useNs && !platformUse.useWeb) {
-    if(options.nativescript) {
+    if (options.nativescript) {
       throw new SchematicsException(`Project is not configured for NativeScript, while --web is set to false`);
     }
-    
+
     if (options.web) {
       throw new SchematicsException(`Project is not configured for Angular Web, while --nativescript is set to false`);
     }
@@ -120,11 +102,11 @@ const validateOptions = (platformUse: PlatformUse, options: ComponentOptions) =>
 const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInfo => {
   // const path = `/${projectSettings.root}/${projectSettings.sourceRoot}/app`;
   const component = new ComponentInfo();
-  
+
   const parsedPath = parseName(options.path || '', options.name);
 
   component.name = dasherize(parsedPath.name);
-  const className = `/${component.name}.component.ts`; 
+  const className = `/${component.name}.component.ts`;
   const templateName = `/${component.name}.component.html`;
 
   tree.actions.forEach(action => {
@@ -153,16 +135,9 @@ const renameWebTemplate = (tree: Tree, templatePath: string) => {
 };
 
 const removeWebTemplate = (tree: Tree, context: SchematicContext, templatePath: string) =>
-  // tree.delete(templatePath);
   filter(
     (path: Path) => !path.match(templatePath)
   )(tree, context)
-
-// const performNsModifications = (component: ComponentInfo) =>
-//   (tree: Tree, context: SchematicContext) => {
-//     insertModuleId(component.classPath)(tree);
-//     return addNativeScriptFiles(component)(tree, context);
-//   }
 
 const addNativeScriptFiles = (component: ComponentInfo) => {
   const parsedTemplate = parseName('', component.templatePath);
@@ -180,4 +155,3 @@ const addNativeScriptFiles = (component: ComponentInfo) => {
   return mergeWith(templateSource);
 
 };
-

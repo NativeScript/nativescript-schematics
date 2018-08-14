@@ -7,11 +7,14 @@ import {
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
 import { NsConfig } from './models/nsconfig';
+import { UnitTestTree, SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import { createAppModule } from '@schematics/angular/utility/test';
+
 
 export interface Node {
-    getStart();
-    getFullStart();
-    getEnd();
+  getStart();
+  getFullStart();
+  getEnd();
 }
 
 export interface FromTo {
@@ -32,7 +35,10 @@ export interface NodeDependency {
   type: 'dependency' | 'devDependency'
 }
 
-
+export const schematicRunner = new SchematicTestRunner(
+  'nativescript-schematics',
+  join(__dirname, 'collection.json'),
+);
 
 export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
   const buffer = host.read(path);
@@ -94,7 +100,7 @@ export const getPackageJson = (tree: Tree, workingDirectory: string = ''): Packa
 
 export const overwritePackageJson = (tree: Tree, content: PackageJson, workingDirectory: string = '') => {
   const url = join(workingDirectory, 'package.json');
-  
+
   tree.overwrite(url, JSON.stringify(content, null, 2));
 }
 
@@ -117,7 +123,7 @@ export const getJsonFile = <T>(tree: Tree, path: string): T => {
   try {
     const content = JSON.parse(file.content.toString());
     return content as T;
-  } catch(e) {
+  } catch (e) {
     throw new SchematicsException(`File ${path} could not be parsed!`);
   }
 };
@@ -135,34 +141,41 @@ export const getFileContents = (tree: Tree, filePath: string): string => {
   return buffer.toString();
 }
 
-export const renameFiles = (paths: FromTo[]) => 
+export const renameFiles = (paths: FromTo[]) =>
   (tree: Tree) => paths.forEach(({ from, to }) => tree.rename(from, to));
 
-export const renameFilesForce = (paths: FromTo[]) => 
+export const renameFilesForce = (paths: FromTo[]) =>
   (tree: Tree) => paths.forEach(({ from, to }) => {
     const content = getFileContents(tree, from);
     tree.create(to, content);
 
     tree.delete(from);
-});
+  });
 
-export const createEmptyProject = (tree: Tree): Tree => {
-  tree.create('/angular.json', JSON.stringify({}));
-  // TODO: Replace with call to 'angular-json' schematic or:
-  // tree.create('/angular.json', JSON.stringify({
-  //   projects: {
-  //     myProject: {
-  //       "root": "",
-  //       "sourceRoot": ".",
-  //       "projectType": "application",
-  //       "prefix": "app"
-  //     }
-  //   }
-  // }));
+export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
+  let appTree = schematicRunner.runSchematic("angular-json", { name: projectName, sourceRoot: "src" });
 
-  tree.create('/package.json', JSON.stringify({}));
+  appTree = createAppModule(<any>appTree, `/src/app/app.module.ts`);
 
-  return tree;
+  appTree.create('/package.json', JSON.stringify({
+    nativescript: { id: "proj" }
+  }));
+
+  return appTree;
+}
+
+export function createEmptySharedProject(projectName: string): UnitTestTree {
+  let appTree = createEmptyNsOnlyProject(projectName);
+
+  appTree.create('/nsconfig.json', JSON.stringify({
+    "appResourcesPath": "App_Resources",
+    "appPath": "src",
+    "nsext": ".tns",
+    "webext": "",
+    "shared": true
+  }));
+
+  return appTree;
 }
 
 /**
@@ -208,7 +221,7 @@ export const findMissingJsonProperties = (to: Object, from: Object, resolveConfl
   }
   return result;
 }
-  
+
 /**
 * Example: source: abc.123.def , text: -x-, where: .123 => abc-x-.123.def
 */
@@ -232,9 +245,9 @@ export const findRelativeImportPath = (from, to): string => {
   let relativePath = relative(from, to);
 
   // if starts with ../../ then relative is going to skip one folder too many
-  if(relativePath.startsWith('../../')) {
+  if (relativePath.startsWith('../../')) {
     relativePath = relativePath.replace('../../', '../');
-  } else if(relativePath.startsWith('../')) {
+  } else if (relativePath.startsWith('../')) {
     relativePath = relativePath.replace('../', './');
   } else if (relativePath === '') {
     relativePath = './';

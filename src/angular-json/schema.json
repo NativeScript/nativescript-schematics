@@ -11,12 +11,16 @@
     "path": {
       "type": "string",
       "description": "Specifies the destination path.",
-      "default": "."
     },
     "prefix": {
       "type": "string",
       "description": "The prefix to apply to generated selectors.",
       "default": "app"
+    },
+    "sourceRoot": {
+      "type": "string",
+      "description": "The source root folder to be used in the generated angular project",
+      "default": "."
     }
   },
   "required": [

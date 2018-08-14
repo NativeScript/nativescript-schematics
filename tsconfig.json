@@ -23,7 +23,8 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "jasmine-config/**/*"
   ],
   "exclude": [
     "src/**/_*files*/**/*"
