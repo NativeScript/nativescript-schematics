@@ -262,17 +262,20 @@ export const findRelativeImportPath = (from, to): string => {
   return relativePath.replace(/.ts$/, '');
 }
 
-export function safeGet(object, property, ...args) {
+export function safeGet(object, ...properties) {
+  if (properties.length === 0) {
+    return object;
+  }
+
   if (!object) {
     return;
   }
 
-  const value = object[property];
+  const firstProperty = properties.shift();
+  const value = object[firstProperty];
   if (!value) {
     return;
   }
 
-  return typeof value === "function" ?
-    value.bind(object)(...args) :
-    value;
+  return safeGet(value, ...properties);
 }
