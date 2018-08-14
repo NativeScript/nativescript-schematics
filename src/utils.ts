@@ -3,6 +3,7 @@ import { relative, join } from 'path';
 import {
   SchematicsException,
   Tree,
+  Rule,
 } from '@angular-devkit/schematics';
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
@@ -278,4 +279,19 @@ export function safeGet(object, ...properties) {
   }
 
   return safeGet(value, ...properties);
+}
+
+export function callRuleSync(
+  schematicRunner: SchematicTestRunner,
+  rule: Rule,
+  tree: Tree
+): UnitTestTree | Tree {
+
+  let newTree;
+  schematicRunner.callRule(rule, tree).subscribe(tree => newTree = tree);
+  if (newTree === undefined) {
+    throw new SchematicsException('The provided rule is asyncronous! Use with `callRule` instead!');
+  }
+
+  return newTree;
 }
