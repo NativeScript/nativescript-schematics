@@ -10,7 +10,7 @@ import {
 import { addExtension, getSourceFile } from '../utils';
 
 import { Schema as MigrateModuleSchema } from './schema';
-import { Schema as NativeScriptModuleSchema } from '../nativescript-module/schema';
+import { Schema as ModuleSchema } from '../generate/module/schema';
 import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
 
 import { parseModuleInfo, ModuleInfo } from './module-info-utils';
@@ -35,21 +35,24 @@ export default function(options: MigrateModuleSchema): Rule {
       moduleInfo = parseModuleInfo(options)(tree, context);
     },
 
-    addModuleFile(options),
+    addModuleFile(options.name, options.project),
 
     (tree, context) => migrateComponents(moduleInfo, options.project)(tree, context),
     migrateProviders()
   ]);
 }
 
-const addModuleFile = (options: MigrateModuleSchema) => (tree: Tree, context: SchematicContext) => {
+const addModuleFile = (name: string, project: string) => (tree: Tree, context: SchematicContext) => {
 
-  const moduleOptions: NativeScriptModuleSchema = {
-    name: options.name,
-    nsext: nsext,
-    flat: false
+  const moduleOptions: ModuleSchema = {
+    name,
+    project,
+    nsExtension: nsext,
+    flat: false,
+    web: false,
+    spec: false,
   }
-  return schematic('nativescript-module', moduleOptions)(tree, context);
+  return schematic('module', moduleOptions)(tree, context);
 }
 
 const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
@@ -60,8 +63,8 @@ const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
       const convertComponentOptions: MigrateComponentSchema = {
         name: component.name,
         modulePath: moduleInfo.modulePath,
-        nsext: nsext,
-        project: project
+        nsext,
+        project,
       }
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),
