@@ -3,7 +3,7 @@ import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 // import { getWorkspace, WorkspaceProject } from '@schematics/angular/utility/config';
 
-import { getSourceFile, getAngularJson } from './utils';
+import { getSourceFile, getAngularJson, safeGet } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
 import { SemVer, getAngularSemver, getAngularCLISemver } from './node-utils';
 
@@ -123,27 +123,14 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
   if (ngCliSemVer.major >= 6) {
     const project = getProjectObject(tree, projectName);
 
-    const root = project.root;
-    
-    // this by default is src
-    // const sourceRoot = dirname(mainPath);
-    const sourceRoot = project.sourceRoot;
-    
-    // this by default is src/main.ts
-    // settings.mainPath = 'src/main.ts';
-    const mainPath: string = project.architect.build.options.main;
-
-    // this by default is main
-    // settings.mainName = 'main';
-    const mainName = basename(mainPath).replace('.ts', '');
-
-    // this by default is app
-    // settings.prefix = 'app';
-    const prefix = project.prefix;
-
-    // this by default is src/tsconfig.app.json
-    // settings.tsConfig = 'src/tsconfig.app.json'
-    const tsConfig = project.architect.build.options.tsConfig;
+    const root = project.root || '';
+    const sourceRoot: string = project.sourceRoot || 'src';
+    const mainPath: string = safeGet(project, 'architect', 'build', 'options', 'main') ||
+      'src/main.ts';
+    const mainName: string = basename(mainPath).replace('.ts', '');
+    const prefix: string = project.prefix || 'app';
+    const tsConfig: string = safeGet(project, 'architect', 'build', 'options', 'tsConfig') ||
+      'src/tsconfig.app.json';
 
     return {
       ngCliSemVer,
