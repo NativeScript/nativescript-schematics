@@ -42,18 +42,17 @@ export default function(options: MigrateModuleSchema): Rule {
   ]);
 }
 
-const addModuleFile = (name: string, project: string) => (tree: Tree, context: SchematicContext) => {
-
-  const moduleOptions: ModuleSchema = {
-    name,
-    project,
-    nsExtension: nsext,
-    flat: false,
-    web: false,
-    spec: false,
-  }
-  return schematic('module', moduleOptions)(tree, context);
-}
+const addModuleFile =
+  (name: string, project: string) =>
+    (tree: Tree, context: SchematicContext) =>
+      schematic('module', <ModuleSchema>{
+        name,
+        project,
+        nsExtension: nsext,
+        flat: false,
+        web: false,
+        spec: false,
+      })(tree, context);
 
 const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
   const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
@@ -71,7 +70,6 @@ const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
   );
 }
 
-
 const migrateProviders = () => (tree: Tree) => {
   moduleInfo.providers.forEach(provider => {
     addProvider(provider.name, provider.importPath)(tree);
@@ -84,8 +82,8 @@ const addProvider = (providerClassName: string, providerPath: string) => (tree: 
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
     throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
-Create it if you want the schematic to add ${moduleInfo.className} to its' module providers,
-or if you just want to update the component without updating its' module, then rerun this command with --skip-module flag`);
+Create it if you want the schematic to add ${moduleInfo.className} to its module providers,
+or if you just want to update the component without updating its module, then rerun this command with --skip-module flag`);
   }
 
   // Get the changes required to update the @NgModule
