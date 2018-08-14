@@ -29,12 +29,22 @@ describe('Angular JSON Config Schematic', () => {
     it('should insert the project name', () => {
       expect(getFileContent(tree, configPath)).toContain(`"${projName}":`);
     });
+
+    it('should insert "." as sourceRoot', () => {
+      expect(getFileContent(tree, configPath)).toContain(`"sourceRoot": "."`);
+    });
   })
 
   it('should insert the prefix option', () => {
     const prefix = 'custom-prefix';
     const tree = schematicRunner.runSchematic('angular-json', { ...defaultOptions, prefix });
     expect(getFileContent(tree, configPath)).toContain(`"prefix": "${prefix}"`);
+  });
+
+  it('should insert the sourceRoot option', () => {
+    const sourceRoot = 'src';
+    const tree = schematicRunner.runSchematic('angular-json', { ...defaultOptions, sourceRoot });
+    expect(getFileContent(tree, configPath)).toContain(`"sourceRoot": "${sourceRoot}"`);
   });
 
   it('should create files inside path when specified', () => {

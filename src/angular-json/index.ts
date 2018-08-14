@@ -14,10 +14,7 @@ import { Schema as NgCliConfigSchema } from './schema';
 export default function (options: NgCliConfigSchema) {
   return branchAndMerge(mergeWith(
     apply(url('./_files'), [
-      template(<TemplateOptions>{
-        prefix: options.prefix,
-        name: options.name
-      }),
+      template(<TemplateOptions>{ ...options }),
       (options.path) ? move(options.path) : noop
     ])
   ));
