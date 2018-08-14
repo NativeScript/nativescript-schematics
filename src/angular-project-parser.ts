@@ -161,11 +161,6 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
   }
 }
 
-// export function getProject(tree: Tree, projectName: string): WorkspaceProject {
-//   const workspace = getWorkspace(tree);
-//   return workspace.projects[projectName];
-// }
-
 export function getProjectObject(tree: Tree, projectName: string) {
   const angularJson = getAngularJson(tree);
   
