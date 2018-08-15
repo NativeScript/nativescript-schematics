@@ -17,9 +17,8 @@ import { insertModuleId } from '../../ast-utils';
 import { Schema as ComponentOptions } from './schema';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { parseName } from '@schematics/angular/utility/parse-name';
-import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse } from '../utils';
-import { Path, normalize } from '@angular-devkit/core';
-import { getProjectObject } from '../../angular-project-parser';
+import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
+import { Path } from '@angular-devkit/core';
 
 class ComponentInfo {
   classPath: string;
@@ -43,7 +42,8 @@ export default function (options: ComponentOptions): Rule {
         options.spec = false;
       }
 
-      validateOptions(platformUse, options);
+      validateGenerateOptions(platformUse, options);
+      validateGenerateComponentOptions(platformUse, options);
 
       return tree;
     },
@@ -79,23 +79,9 @@ export default function (options: ComponentOptions): Rule {
   ]);
 };
 
-const validateOptions = (platformUse: PlatformUse, options: ComponentOptions) => {
+const validateGenerateComponentOptions = (platformUse: PlatformUse, options: ComponentOptions) => {
   if (platformUse.webReady && options.inlineTemplate) {
     throw new SchematicsException('You cannot use the --inlineTemplate option for web+ns component!');
-  }
-
-  if (!options.nativescript && !options.web) {
-    throw new SchematicsException(`You shouldn't disable both --web and --nativescript flags`);
-  }
-
-  if (!platformUse.useNs && !platformUse.useWeb) {
-    if (options.nativescript) {
-      throw new SchematicsException(`Project is not configured for NativeScript, while --web is set to false`);
-    }
-
-    if (options.web) {
-      throw new SchematicsException(`Project is not configured for Angular Web, while --nativescript is set to false`);
-    }
   }
 };
 

@@ -23,7 +23,7 @@ import {
   removeMetadataArrayValue,
 } from '../../ast-utils';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension } from '../utils';
+import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension, validateGenerateOptions } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
 class ModuleInfo {
@@ -63,7 +63,7 @@ export default function (options: ModuleOptions): Rule {
         options.spec = false;
       }
 
-      validateOptions(platformUse, options);
+      validateGenerateOptions(platformUse, options);
     },
 
     () =>
@@ -115,17 +115,6 @@ const addCommonFile = (moduleInfo: ModuleInfo) => {
     ]),
   )
 }
-
-const validateOptions = (platformUse: PlatformUse, options: ModuleOptions) => {
-  if (!options.nativescript && !options.web) {
-    throw new SchematicsException(`You shouldn't disable both --web and --nativescript flags`);
-  }
-
-  // this should always have at least ns, otherwise this schematic shouldn't be used
-  if (!platformUse.useWeb && !platformUse.useNs) {
-    throw new SchematicsException('You need to specify project type!');
-  }
-};
 
 const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   const moduleInfo = new ModuleInfo();

@@ -1,29 +1,15 @@
 import { getNsConfig, getPackageJson } from "../utils";
-import { Tree } from "@angular-devkit/schematics";
+import { Tree, SchematicsException } from "@angular-devkit/schematics";
 import { extname } from "path";
+import { Schema as ComponentOptions } from './component/schema';
+import { Schema as ModuleOptions } from './module/schema';
+
+type Options = ComponentOptions | ModuleOptions;
 
 export interface Extensions {
   web: string,
   ns: string,
 };
-
-// export const validateProject = () => (tree: Tree, options: any) => {
-//   // if --web flag explicitly specified
-//   if (options.web === true) {
-//     // then nsconfig.json must be present
-//     if (tree.exists('nsconfig.json')) {
-//       throw new SchematicsException(`nsconfig.json not found. While --web flag specified`);
-//     }
-
-//     // also nsconfig must contain the "webext" property
-//     const nsconfig = getNsConfig(tree);
-//     if (nsconfig.webext == null) {
-//       throw new SchematicsException(`property webext is missing in nsconfig.json.
-//   Add the following to the configuration:
-//     "webext": ""`);
-//     }
-//   }
-// }
 
 export const DEFAULT_SHARED_EXTENSIONS: Extensions = {
   web: '',
@@ -59,13 +45,13 @@ export interface PlatformUse {
   useWeb: boolean
 }
 
-export const getPlatformUse = (tree: Tree, options: any): PlatformUse => {
+export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
   const nsReady = isNs(tree);
   const webReady = isWeb(tree);
   const nsOnly = nsReady && !webReady;
 
-  const useNs = options.nativescript && nsReady;
-  const useWeb = options.web && webReady;
+  const useNs = !!options.nativescript && nsReady;
+  const useWeb = !!options.web && webReady;
 
   return {
     nsReady,
@@ -76,7 +62,7 @@ export const getPlatformUse = (tree: Tree, options: any): PlatformUse => {
   }
 }
 
-export const getExtensions = (tree: Tree, options: { nsExtension?: string; webExtension?: string; }): Extensions => {
+export const getExtensions = (tree: Tree, options: Options): Extensions => {
   let ns = options.nsExtension;
   let web = options.webExtension;
 
@@ -123,7 +109,7 @@ export const getNsConfigExtension = (tree: Tree): Extensions => {
   }
 }
 
-export const removeNsSchemaOptions = (options: any) => {
+export const removeNsSchemaOptions = (options: Options) => {
   const duplicate = { ...options };
   delete duplicate['web'];
   delete duplicate['nativescript'];
@@ -137,3 +123,19 @@ export const addExtension = (fileName: string, ext: string) => {
   const fileExtension = extname(fileName);
   return fileName.replace(fileExtension, `${ext}${fileExtension}`);
 }
+
+export const validateGenerateOptions = (platformUse: PlatformUse, options: Options) => {
+  if (!options.nativescript && !options.web) {
+    throw new SchematicsException(`You shouldn't disable both --web and --nativescript flags`);
+  }
+
+  if (!platformUse.useNs && !platformUse.useWeb) {
+    if (options.nativescript) {
+      throw new SchematicsException(`Project is not configured for NativeScript, while --web is set to false`);
+    }
+
+    if (options.web) {
+      throw new SchematicsException(`Project is not configured for Angular Web, while --nativescript is set to false`);
+    }
+  }
+};
