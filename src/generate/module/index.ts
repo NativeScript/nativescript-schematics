@@ -9,6 +9,8 @@ import {
   url,
   template,
   move,
+  branchAndMerge,
+  filter,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
@@ -55,7 +57,17 @@ export default function (options: ModuleOptions): Rule {
   let platformUse: PlatformUse;
   let moduleInfo: ModuleInfo;
 
-  return chain([
+  return branchAndMerge(chain([
+    // Filter existing modules with the same names so that they don't
+    // cause merge conflicts before the files are renamed.
+    filter(fileName => {
+      const {
+        moduleName,
+        routingName
+      } = getParsedName(options)
+      return ![moduleName, routingName].some(modName => fileName.endsWith(modName));
+    }),
+
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
 
@@ -66,8 +78,10 @@ export default function (options: ModuleOptions): Rule {
       validateGenerateOptions(platformUse, options);
     },
 
-    () =>
-      externalSchematic('@schematics/angular', 'module', removeNsSchemaOptions(options)),
+    () => {
+      let opts = removeNsSchemaOptions(options);
+      return externalSchematic('@schematics/angular', 'module', opts)
+    },
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
@@ -102,7 +116,7 @@ export default function (options: ModuleOptions): Rule {
 
     (tree: Tree) => (platformUse.nsOnly) ?
       tree : addCommonFile(moduleInfo)
-  ]);
+  ]));
 };
 
 const addCommonFile = (moduleInfo: ModuleInfo) => {
@@ -116,16 +130,29 @@ const addCommonFile = (moduleInfo: ModuleInfo) => {
   )
 }
 
-const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
-  const moduleInfo = new ModuleInfo();
-
+const getParsedName = (options: ModuleOptions): { name: string, moduleName: string, routingName: string } => {
   const parsedPath = parseName(options.path || '', options.name);
-  moduleInfo.name = dasherize(parsedPath.name);
-  const className = `/${moduleInfo.name}.module.ts`;
-  const routingName = `/${moduleInfo.name}-routing.module.ts`;
+  const name = dasherize(parsedPath.name);
+
+  return {
+    name,
+    moduleName: `/${name}.module.ts`,
+    routingName: `/${name}-routing.module.ts`
+  }
+}
+
+const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
+  const {
+    name,
+    moduleName,
+    routingName
+  } = getParsedName(options)
+
+  const moduleInfo = new ModuleInfo();
+  moduleInfo.name = name;
 
   tree.actions.forEach(action => {
-    if (action.path.endsWith(className)) {
+    if (action.path.endsWith(moduleName)) {
       const file = action.path;
       moduleInfo.moduleFilePath = file;
       moduleInfo.nsModuleFilePath = addExtension(file, extensions.ns);

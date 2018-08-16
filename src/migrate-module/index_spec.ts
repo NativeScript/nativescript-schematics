@@ -59,29 +59,38 @@ describe('Migrate module Schematic', () => {
     });
   });
 
-  // describe('When the module has a component', () => {
-  //   beforeEach(() => {
-  //     appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
-  //       name: 'a',
-  //       module: moduleName,
-  //       project,
-  //       nativescript: false,
-  //     }, appTree);
+  describe('When the module has a component', () => {
+    const nsModulePath = '/src/app/admin/admin.module.tns.ts';
+    const webModulePath = '/src/app/admin/admin.module.ts';
 
-  //     const options: MigrateModuleOptions = { ...defaultOptions };
+    let originalWebModuleContent: string;
 
-  //     appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
-  //   });
+    beforeEach(() => {
+      appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
+        name: 'a',
+        module: moduleName,
+        project,
+        nativescript: false,
+      }, appTree);
+      
+      originalWebModuleContent = getFileContent(appTree, webModulePath);
 
-  //   it('should declare it in the mobile module', () => {
-  //     const modulePath = '/src/app/admin/admin.module.tns.ts';
-  //     expect(appTree.files.includes(modulePath)).toBeTruthy();
-  //     const content = getFileContent(appTree, modulePath);
+      const options: MigrateModuleOptions = { ...defaultOptions };
+      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+    });
 
-  //     const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
-  //     expect(content).toMatch(matcher);
-  //   });
-  // });
+    it('should declare it in the mobile module', () => {
+      
+      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
+
+      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      const content = getFileContent(appTree, nsModulePath);
+
+      const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
+      expect(content).toMatch(matcher);
+    });
+  });
 });
 
 const setupProject = (appTree, schematicRunner, project, moduleName) => {
