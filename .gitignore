@@ -10,7 +10,6 @@ jasmine-config/**/*.js.map
 # IDEs
 .idea/
 jsconfig.json
-.vscode/
 .history
 
 # Misc
