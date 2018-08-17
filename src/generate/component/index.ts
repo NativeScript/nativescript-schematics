@@ -42,15 +42,20 @@ export default function (options: ComponentOptions): Rule {
         options.spec = false;
       }
 
+      if (
+        !platformUse.nsOnly && // the project is shared
+        platformUse.useNs && !platformUse.useWeb // the new component is only for {N}
+      ) {
+        options.skipImport = true; // don't declare it in the web NgModule
+      }
+
       validateGenerateOptions(platformUse, options);
       validateGenerateComponentOptions(platformUse, options);
 
       return tree;
     },
 
-    () => {
-      return externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options));
-    },
+    () => externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options)),
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
