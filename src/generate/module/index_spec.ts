@@ -24,6 +24,7 @@ describe('Module Schematic', () => {
   const noExtensionModulePath = getModulePath('');
   const nsModulePath = getModulePath(DEFAULT_SHARED_EXTENSIONS.ns);
   const webModulePath = getModulePath(DEFAULT_SHARED_EXTENSIONS.web);
+  const commonFilePath = `/src/app/${name}/${name}.common.ts`;
 
   const getRoutingModulePath = (extension: string) => `/src/app/${name}/${name}-routing.module${extension}.ts`;
   const noExtensionRoutingModulePath = getRoutingModulePath('');
@@ -49,9 +50,12 @@ describe('Module Schematic', () => {
         expect(getFileContent(tree, noExtensionModulePath)).toContain(`class ${moduleClassName}`);
       });
 
-
       it('should not create files with .tns extension', () => {
         expect(tree.exists(nsModulePath)).toBeFalsy();
+      });
+
+      it('should not create a common file', () => {
+        expect(tree.exists(commonFilePath)).toBeFalsy();
       });
 
       it('should not have CommonModule imported', () => {
@@ -151,6 +155,13 @@ describe('Module Schematic', () => {
         expect(tree.exists(nsModulePath)).toBeFalsy();
       });
 
+      it('should not create a common file', () => {
+        const options = { ...webOnlyOptions };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        expect(tree.exists(commonFilePath)).toBeFalsy();
+      });
+
       it('should respect passed extension', () => {
         const customExtension = '.web';
         const options = { ...webOnlyOptions, webExtension: customExtension, routing: true };
@@ -176,6 +187,13 @@ describe('Module Schematic', () => {
         const tree = schematicRunner.runSchematic('module', options, appTree);
         expect(tree.exists(nsModulePath)).toBeTruthy();
         expect(tree.exists(webModulePath)).toBeTruthy();
+      });
+
+      it('should not create a common file', () => {
+        const options = { ...nsWebOptions };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        expect(tree.exists(commonFilePath)).toBeTruthy();
       });
 
       it('should create both routing modules when routing flag is passed', () => {
