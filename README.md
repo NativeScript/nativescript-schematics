@@ -1,4 +1,4 @@
-# NativeScript Schematics
+# NativeScript Schematics  [![Build Status](https://travis-ci.org/NativeScript/nativescript-schematics.svg?branch=master)](https://travis-ci.org/NativeScript/nativescript-schematics)
 
 This repository contains schematics for generating components in NativeScript Angular apps using the Angular CLI.
 
