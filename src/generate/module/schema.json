@@ -65,7 +65,7 @@
     },
     "common": {
       "type": "boolean",
-      "description": "Flag to control if a common file is created.",
+      "description": "Flag to control if a common file is created. The common file exports components, providers and routes common for both Web and NativeScript.",
       "alias": "c"
     },
     "commonModule": {

@@ -53,7 +53,8 @@ export interface Schema {
   */
   flat?: boolean;
   /**
-   * FLag to control if a common file is created.
+   * Flag to control if a common file is created.
+   * The common file exports components, providers and routes common for both Web and NativeScript.
    */
   common?: boolean;
   /**
