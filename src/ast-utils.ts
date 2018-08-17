@@ -22,22 +22,6 @@ class RemoveContent implements Node {
   }
 }
 
-export function addSymbolToComponentMetadata(
-  source: ts.SourceFile,
-  componentPath: string,
-  metadataField: string,
-  symbolName: string,
-): Change[] {
-  return addSymbolToDecoratorMetadata(
-    source,
-    componentPath,
-    metadataField,
-    symbolName,
-    'Component',
-    '@angular/core'
-  );
-}
-
 // Almost identical to addSymbolToNgModuleMetadata from @schematics/angular/utility/ast-utils
 // the method can be refactored so that it can be used with custom decorators
 export function addSymbolToDecoratorMetadata(
@@ -630,19 +614,6 @@ export function findImportPath(source: ts.Node, name) {
   return moduleSpecifier.text;
 }
 
-export const insertModuleId = (tree: Tree, component: string) => {
-  const componentSource = getSourceFile(tree, component);
-  const recorder = tree.beginUpdate(component);
-
-  const metadataChange = addSymbolToComponentMetadata(
-    componentSource, component, 'moduleId', 'module.id');
-
-  metadataChange.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd)
-  );
-  tree.commitUpdate(recorder);
-
-};
 
 export const updateNodeText = (tree: Tree, node: ts.Node, newText: string) => {
   const recorder = tree.beginUpdate(node.getSourceFile().fileName);
