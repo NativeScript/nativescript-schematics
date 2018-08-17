@@ -1,0 +1,12 @@
+env:
+  global:
+  - DATE=$(date +%Y-%m-%d)
+  - PACKAGE_VERSION=$DATE-$TRAVIS_BUILD_NUMBER
+language: node_js
+node_js:
+- '8'
+install:
+- npm install --ignore-scripts
+script:
+- npm run build
+- npm run test
