@@ -52,6 +52,7 @@ const addModuleFile =
         flat: false,
         web: false,
         spec: false,
+        common: true,
       })(tree, context);
 
 const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
