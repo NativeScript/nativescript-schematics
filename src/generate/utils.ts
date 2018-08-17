@@ -119,6 +119,7 @@ export const removeNsSchemaOptions = (options: Options) => {
   delete duplicate['nativescript'];
   delete duplicate['nsExtension'];
   delete duplicate['webExtension'];
+  delete duplicate['common'];
 
   return duplicate;
 };

@@ -14,7 +14,7 @@ describe('Module Schematic', () => {
   const moduleClassName = toNgModuleClassName(name);
   const defaultOptions: ModuleOptions = {
     project,
-    name,
+    name
   };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',

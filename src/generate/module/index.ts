@@ -115,14 +115,15 @@ export default function (options: ModuleOptions): Rule {
       }
     },
 
-    (tree: Tree) => shouldCreateCommonFile(platformUse) ?
+    (tree: Tree) => shouldCreateCommonFile(platformUse, options.common) ?
       addCommonFile(moduleInfo) : tree
   ]));
 };
 
-const shouldCreateCommonFile = (platformUse: PlatformUse) =>
+const shouldCreateCommonFile = (platformUse: PlatformUse, useCommon?: boolean) =>
+  !!useCommon || // the common flag is raised or
   !platformUse.nsOnly && // it's a shared project
-  platformUse.useWeb && platformUse.useNs; // and we want a shared module
+  platformUse.useWeb && platformUse.useNs; // and we generate a shared module
 
 const addCommonFile = (moduleInfo: ModuleInfo) => {
   return mergeWith(
