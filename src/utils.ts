@@ -153,10 +153,10 @@ export const renameFilesForce = (paths: FromTo[]) =>
     tree.delete(from);
   });
 
-export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
+export function createEmptyNsOnlyProject(projectName: string, extension: string = ''): UnitTestTree {
   let appTree = schematicRunner.runSchematic("angular-json", { name: projectName, sourceRoot: "src" });
 
-  appTree = createAppModule(<any>appTree, `/src/app/app.module.ts`);
+  appTree = createAppModule(<any>appTree, `/src/app/app.module${extension}.ts`);
 
   appTree.create('/package.json', JSON.stringify({
     nativescript: { id: "proj" },
@@ -171,9 +171,9 @@ export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
   return appTree;
 }
 
-export function createEmptySharedProject(projectName: string): UnitTestTree {
-  let appTree = createEmptyNsOnlyProject(projectName);
-  appTree = createAppModule(<any>appTree, `/src/app/app.module.tns.ts`);
+export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
+  let appTree = createEmptyNsOnlyProject(projectName, nsExtension);
+  appTree = createAppModule(<any>appTree, `/src/app/app.module${webExtension}.ts`);
 
   appTree.create('/nsconfig.json', JSON.stringify({
     "appResourcesPath": "App_Resources",
