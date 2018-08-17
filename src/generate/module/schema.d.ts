@@ -53,6 +53,10 @@ export interface Schema {
   */
   flat?: boolean;
   /**
+   * FLag to control if a common file is created.
+   */
+  common?: boolean;
+  /**
   * Flag to control whether the CommonModule is imported.
   */
   commonModule?: boolean;
