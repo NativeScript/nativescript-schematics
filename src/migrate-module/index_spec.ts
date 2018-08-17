@@ -6,10 +6,12 @@ import { Schema as MigrateModuleOptions } from './schema';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
 import { Schema as ComponentOptions } from '../generate/component/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
-import { move, Tree, HostTree } from '@angular-devkit/schematics';
-import { callRuleSync } from '../utils';
+import { move, HostTree, source } from '@angular-devkit/schematics';
+import { callRuleSync, getSourceFile } from '../utils';
 import { getFileContent } from '@schematics/angular/utility/test';
 import { isInModuleMetadata } from '../test-utils';
+import { InsertChange } from '@schematics/angular/utility/change';
+import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 describe('Migrate module Schematic', () => {
   const project = 'some-project';
@@ -18,6 +20,8 @@ describe('Migrate module Schematic', () => {
     name: moduleName,
     project,
   };
+  const nsModulePath = '/src/app/admin/admin.module.tns.ts';
+  const webModulePath = '/src/app/admin/admin.module.ts';
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     join(__dirname, '../collection.json'),
@@ -60,11 +64,7 @@ describe('Migrate module Schematic', () => {
   });
 
   describe('When the module has a component', () => {
-    const nsModulePath = '/src/app/admin/admin.module.tns.ts';
-    const webModulePath = '/src/app/admin/admin.module.ts';
-
     let originalWebModuleContent: string;
-
     beforeEach(() => {
       appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
         name: 'a',
@@ -79,15 +79,40 @@ describe('Migrate module Schematic', () => {
       appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
     });
 
-    it('should declare it in the mobile module', () => {
-      
+    it('should keep the web module untouched', () => {
       expect(appTree.files.includes(webModulePath)).toBeTruthy();
       expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
+    });
 
+    it('should declare the component in the mobile module', () => {
       expect(appTree.files.includes(nsModulePath)).toBeTruthy();
       const content = getFileContent(appTree, nsModulePath);
 
       const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
+      expect(content).toMatch(matcher);
+    });
+  });
+
+  describe('When the module has a provider', () => {
+    const provider = 'SomeProvider';
+    let originalWebModuleContent: string;
+    beforeEach(() => {
+      appTree = insertProviderInMetadata(appTree, webModulePath, provider);
+      originalWebModuleContent = getFileContent(appTree, webModulePath);
+      const options: MigrateModuleOptions = { ...defaultOptions };
+      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+    });
+
+    it('should keep the web module untouched', () => {
+      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
+    });
+
+    it('should provide the service in the mobile module', () => {
+      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      const content = getFileContent(appTree, nsModulePath);
+
+      const matcher = isInModuleMetadata('AdminModule', 'providers', provider, true);
       expect(content).toMatch(matcher);
     });
   });
@@ -113,6 +138,22 @@ const setupProject = (appTree, schematicRunner, project, moduleName) => {
     project,
   }, appTree);
 
-
   return appTree;
+};
+
+const insertProviderInMetadata = (tree, path, providerName): UnitTestTree => {
+  const source = getSourceFile(tree, path);
+  const recorder = tree.beginUpdate(path);
+
+  // Insert a provider in the NgModule metadata
+  const metadataChange = addSymbolToNgModuleMetadata(
+    source, path, 'providers', providerName, 'somepath'
+  )
+
+  metadataChange.forEach((change: InsertChange) =>
+    recorder.insertRight(change.pos, change.toAdd)
+  );
+  tree.commitUpdate(recorder);
+
+  return tree;
 };

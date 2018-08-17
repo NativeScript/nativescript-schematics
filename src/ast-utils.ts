@@ -641,6 +641,7 @@ export const insertModuleId = (tree: Tree, component: string) => {
     recorder.insertRight(change.pos, change.toAdd)
   );
   tree.commitUpdate(recorder);
+
 };
 
 export const updateNodeText = (tree: Tree, node: ts.Node, newText: string) => {
@@ -648,7 +649,7 @@ export const updateNodeText = (tree: Tree, node: ts.Node, newText: string) => {
   recorder.remove(node.getStart(), node.getText().length);
   recorder.insertLeft(node.getStart(), newText);
   tree.commitUpdate(recorder);
-}
+};
 
 export const replaceTextInNode = (tree: Tree, node: ts.Node, oldText: string, newText: string) => {
   const index = node.getStart() + node.getText().indexOf(oldText);
