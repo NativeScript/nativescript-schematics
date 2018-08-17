@@ -64,7 +64,8 @@ export default function (options: ModuleOptions): Rule {
       const {
         moduleName,
         routingName
-      } = getParsedName(options)
+      } = getParsedName(options);
+
       return ![moduleName, routingName].some(modName => fileName.endsWith(modName));
     }),
 
@@ -114,10 +115,14 @@ export default function (options: ModuleOptions): Rule {
       }
     },
 
-    (tree: Tree) => (platformUse.nsOnly) ?
-      tree : addCommonFile(moduleInfo)
+    (tree: Tree) => shouldCreateCommonFile(platformUse) ?
+      addCommonFile(moduleInfo) : tree
   ]));
 };
+
+const shouldCreateCommonFile = (platformUse: PlatformUse) =>
+  !platformUse.nsOnly && // it's a shared project
+  platformUse.useWeb && platformUse.useNs; // and we want a shared module
 
 const addCommonFile = (moduleInfo: ModuleInfo) => {
   return mergeWith(

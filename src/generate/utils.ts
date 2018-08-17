@@ -39,6 +39,8 @@ export interface PlatformUse {
   webReady: boolean;
   /** Dictates if this is a nsOnly project */
   nsOnly: boolean;
+  /** Dictates if this is a webOnly project */
+  webOnly: boolean;
   /** Dictates if the schematic should include {N} scripts */
   useNs: boolean,
   /** Dictates if the schematic should include web scripts */
@@ -49,6 +51,7 @@ export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
   const nsReady = isNs(tree);
   const webReady = isWeb(tree);
   const nsOnly = nsReady && !webReady;
+  const webOnly = webReady && !nsReady;
 
   const useNs = !!options.nativescript && nsReady;
   const useWeb = !!options.web && webReady;
@@ -57,6 +60,7 @@ export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
     nsReady,
     webReady,
     nsOnly,
+    webOnly,
     useNs,
     useWeb
   }
