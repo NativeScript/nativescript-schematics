@@ -5,7 +5,7 @@ import { getFileContent } from '@schematics/angular/utility/test';
 
 import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName } from '../../utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
-import { isInComponentMetadata } from '../../test-utils';
+import { isInComponentMetadata, isInModuleMetadata } from '../../test-utils';
 import { Schema as ComponentOptions } from './schema';
 
 describe('Component Schematic', () => {
@@ -20,6 +20,8 @@ describe('Component Schematic', () => {
   );
 
   const componentPath = `src/app/${name}/${name}.component.ts`;
+  const rootModulePath = `src/app/app.module.ts`;
+  const rootNsModulePath = `src/app/app.module.tns.ts`;
 
   const getTemplatePath = (extension: string) => `src/app/${name}/${name}.component${extension}.html`;
 
@@ -63,6 +65,11 @@ describe('Component Schematic', () => {
       expect(appTree.exists(nsTemplatePath)).toBeFalsy());
     it('should add {N}-specific markup in template', () => ensureNsTemplate(appTree, noExtensionTemplatePath));
     it('should add module id', () => expect(hasModuleId()).toBeTruthy());
+
+    it('should declare the component in the root NgModule for {N}', () => {
+      const nsModuleContent = getFileContent(appTree, rootModulePath);
+      expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+    });
   });
 
   describe('when in ns+web project', () => {
@@ -77,6 +84,16 @@ describe('Component Schematic', () => {
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
       it('should add module id', () => expect(hasModuleId()).toBeFalsy());
+
+      it('should declare the component in the the root NgModule for web', () => {
+        const webModuleContent = getFileContent(appTree, rootModulePath);
+        expect(webModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
+
+      it('should declare the component in the root NgModule for {N}', () => {
+        const nsModuleContent = getFileContent(appTree, rootNsModulePath);
+        expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
     })
 
     describe('executing ns-only schematic', () => {
@@ -89,6 +106,16 @@ describe('Component Schematic', () => {
 
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
       it('should add module id', () => expect(hasModuleId()).toBeFalsy());
+
+      it('should not declare the component in the the root NgModule for web', () => {
+        const webModuleContent = getFileContent(appTree, rootModulePath);
+        expect(webModuleContent).not.toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
+
+      it('should declare the component in the root NgModule for {N}', () => {
+        const nsModuleContent = getFileContent(appTree, rootNsModulePath);
+        expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
     })
 
     describe('executing web-only schematic', () => {
@@ -101,6 +128,16 @@ describe('Component Schematic', () => {
 
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
       it('should add module id', () => expect(hasModuleId()).toBeFalsy());
+
+      it('should declare the component in the the root NgModule for web', () => {
+        const webModuleContent = getFileContent(appTree, rootModulePath);
+        expect(webModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
+
+      it('should not declare the component in the root NgModule for {N}', () => {
+        const nsModuleContent = getFileContent(appTree, rootNsModulePath);
+        expect(nsModuleContent).not.toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
     })
   });
 
@@ -153,7 +190,6 @@ describe('Component Schematic', () => {
         expect(appTree.exists(nsTemplate)).toBeTruthy();
         expect(appTree.exists(webTemplate)).toBeTruthy();
       });
-
     })
   });
 });
