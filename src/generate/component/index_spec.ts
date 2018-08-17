@@ -3,10 +3,12 @@ import { join } from 'path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
 
-import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName } from '../../utils';
+import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName, callRuleSync } from '../../utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInComponentMetadata, isInModuleMetadata } from '../../test-utils';
 import { Schema as ComponentOptions } from './schema';
+import { Schema as ApplicationOptions } from '../../ng-new/shared/schema';
+import { move } from '@angular-devkit/schematics';
 
 describe('Component Schematic', () => {
   const name = 'foo';
@@ -144,7 +146,7 @@ describe('Component Schematic', () => {
   describe('specifying custom extension', () => {
     describe('in ns only project', () => {
       beforeEach(() => {
-        appTree = createEmptyNsOnlyProject(project);
+        appTree = createEmptyNsOnlyProject(project, '.mobile');
       });
 
       it('should respect specified {N} extension', () => {
@@ -155,40 +157,173 @@ describe('Component Schematic', () => {
         const componentTemplatePath = getTemplatePath(customExtension);
         expect(appTree.exists(componentTemplatePath)).toBeTruthy();
       });
-    })
+    });
+
     describe('in ns+web project', () => {
-      beforeEach(() => {
-        appTree = createEmptySharedProject(project);
-      });
-
-      it('should respect specified {N} extension', () => {
-        const customExtension = '.mobile';
-        const options = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
-
-        const componentTemplatePath = getTemplatePath(customExtension);
-        expect(appTree.exists(componentTemplatePath)).toBeTruthy();
-      });
-
-      it('should respect specified web extension', () => {
+      describe('when a custom web extension is specified', () => {
         const customExtension = '.web';
-        const options = { ...defaultOptions, webExtension: customExtension, web: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        const componentOptions = { ...defaultOptions, webExtension: customExtension, web: true };
 
-        const componentTemplatePath = getTemplatePath(customExtension);
-        expect(appTree.exists(componentTemplatePath)).toBeTruthy();
+        beforeEach(() => {
+          appTree = createEmptySharedProject(project, customExtension, '.tns');
+        });
+
+        it('should create the files with this extension', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const componentTemplatePath = getTemplatePath(customExtension);
+          expect(appTree.exists(componentTemplatePath)).toBeTruthy();
+        });
+
+        it('should declare in NgModule', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const webModulePath = `src/app/app.module${customExtension}.ts`;
+          const nsModulePath = `src/app/app.module.tns.ts`;
+          const matcher = isInModuleMetadata('AppModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
+
+        it('should respect the module option', () => {
+          const moduleName = 'random';
+          const webModulePath = `src/app/${moduleName}/${moduleName}.module${customExtension}.ts`;
+          const nsModulePath = `src/app/${moduleName}/${moduleName}.module.tns.ts`;
+          appTree = schematicRunner.runSchematic('module', {
+            project,
+            name: moduleName,
+            webExtension: customExtension,
+          }, appTree);
+
+          const options = { ...componentOptions, module: moduleName };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
       });
 
-      it('should respect both web and {N} extensions', () => {
+      describe('when a custon {N} extension is specified', () => {
+        const customExtension = '.mobile';
+        const componentOptions = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
+
+        beforeEach(() => {
+          appTree = createEmptySharedProject(project, '', customExtension);
+        });
+
+        it('should create the files with this extension', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const componentTemplatePath = getTemplatePath(customExtension);
+          expect(appTree.exists(componentTemplatePath)).toBeTruthy();
+        });
+
+        it('should declare in NgModule', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const webModulePath = `src/app/app.module.ts`;
+          const nsModulePath = `src/app/app.module${customExtension}.ts`;
+          const matcher = isInModuleMetadata('AppModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
+
+        it('should respect the module option', () => {
+          const moduleName = 'random';
+          const webModulePath = `src/app/${moduleName}/${moduleName}.module.ts`;
+          const nsModulePath = `src/app/${moduleName}/${moduleName}.module${customExtension}.ts`;
+          appTree = schematicRunner.runSchematic('module', {
+            project,
+            name: moduleName,
+            nsExtension: customExtension,
+          }, appTree);
+
+          const options = { ...componentOptions, module: moduleName };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
+      });
+
+      describe('when custom web and {N} extensions are specified', () => {
         const nsExtension = '.mobile';
         const webExtension = '.web';
-        const options = { ...defaultOptions, nsExtension, webExtension, web: true, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        const componentOptions = { ...defaultOptions, nsExtension, webExtension, web: true, nativescript: true };
 
-        const nsTemplate = getTemplatePath(nsExtension);
-        const webTemplate = getTemplatePath(webExtension);
-        expect(appTree.exists(nsTemplate)).toBeTruthy();
-        expect(appTree.exists(webTemplate)).toBeTruthy();
+        beforeEach(() => {
+          appTree = createEmptySharedProject(project, webExtension, nsExtension);
+        });
+
+        it('should create the files with these extensions', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const nsTemplate = getTemplatePath(nsExtension);
+          const webTemplate = getTemplatePath(webExtension);
+          expect(appTree.exists(nsTemplate)).toBeTruthy();
+          expect(appTree.exists(webTemplate)).toBeTruthy();
+        });
+
+        it('should declare in NgModule', () => {
+          const options = { ...componentOptions };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const webModulePath = `src/app/app.module${webExtension}.ts`;
+          const nsModulePath = `src/app/app.module${nsExtension}.ts`;
+          const matcher = isInModuleMetadata('AppModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
+
+        it('should respect the module option', () => {
+          const moduleName = 'random';
+          const webModulePath = `src/app/${moduleName}/${moduleName}.module${webExtension}.ts`;
+          const nsModulePath = `src/app/${moduleName}/${moduleName}.module${nsExtension}.ts`;
+          appTree = schematicRunner.runSchematic('module', {
+            project,
+            name: moduleName,
+            webExtension,
+            nsExtension,
+          }, appTree);
+
+          const options = { ...componentOptions, module: moduleName };
+          appTree = schematicRunner.runSchematic('component', options, appTree);
+
+          const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
+
+          const webModuleContent = getFileContent(appTree, webModulePath);
+          expect(webModuleContent).toMatch(matcher);
+
+          const nsModuleContent = getFileContent(appTree, nsModulePath);
+          expect(nsModuleContent).toMatch(matcher);
+        });
       });
     })
   });
