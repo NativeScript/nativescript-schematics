@@ -1,3 +1,5 @@
+import { dirname } from 'path';
+
 import {
   Rule,
   SchematicContext,
@@ -11,14 +13,17 @@ import {
   mergeWith,
   TemplateOptions,
   filter,
+  DirEntry,
 } from '@angular-devkit/schematics';
 
-import { insertModuleId } from '../../ast-utils';
-import { Schema as ComponentOptions } from './schema';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { parseName } from '@schematics/angular/utility/parse-name';
-import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
 import { Path } from '@angular-devkit/core';
+import { parseName } from '@schematics/angular/utility/parse-name';
+
+import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
+import { addDeclarationToNgModule, insertModuleId } from './ast-utils';
+import { Schema as ComponentOptions } from './schema';
+import { findModule } from './find-module';
 
 class ComponentInfo {
   classPath: string;
@@ -42,24 +47,37 @@ export default function (options: ComponentOptions): Rule {
         options.spec = false;
       }
 
-      if (
-        !platformUse.nsOnly && // the project is shared
-        platformUse.useNs && !platformUse.useWeb // the new component is only for {N}
-      ) {
-        options.skipImport = true; // don't declare it in the web NgModule
-      }
-
       validateGenerateOptions(platformUse, options);
       validateGenerateComponentOptions(platformUse, options);
 
       return tree;
     },
 
-    () => externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions(options)),
+    () => externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions({ ...options, skipImport: true })),
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
       componentInfo = parseComponentInfo(tree, options);
+    },
+    
+    (tree: Tree) => {
+      if (options.skipImport) {
+        return tree;
+      }
+
+      const componentPath = componentInfo.classPath;
+      const componentDir = dirname(componentPath);
+      if (platformUse.useWeb) {
+        const webModule = findModule(tree, options, componentDir, extensions.web);
+        addDeclarationToNgModule(tree, options, componentPath, webModule);
+      }
+
+      if (platformUse.useNs) {
+        const nsModule = findModule(tree, options, componentDir, extensions.ns);
+        addDeclarationToNgModule(tree, options, componentPath, nsModule);
+      }
+
+      return tree;
     },
 
     (tree: Tree) => {
@@ -91,7 +109,6 @@ const validateGenerateComponentOptions = (platformUse: PlatformUse, options: Com
 };
 
 const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInfo => {
-  // const path = `/${projectSettings.root}/${projectSettings.sourceRoot}/app`;
   const component = new ComponentInfo();
 
   const parsedPath = parseName(options.path || '', options.name);
@@ -144,5 +161,4 @@ const addNativeScriptFiles = (component: ComponentInfo) => {
   ]);
 
   return mergeWith(templateSource);
-
 };

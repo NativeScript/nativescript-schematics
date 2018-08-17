@@ -27,7 +27,7 @@ export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tr
     ? options.name
     : classify(`${options.name}Component`);
 
-  // if no module provided and skipModule flag is on, then don't search for module path
+  // if no module is provided and the skipModule flag is on, then don't search for module path
   const modulePath = (!options.module && options.skipModule) ? '' : findModulePath(options, tree);
 
   const componentPath = findComponentPath(className, modulePath, options, tree);
@@ -123,7 +123,11 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     const componentImportPath = findImportPath(source, componentClassName);
     console.log(`${componentClassName} import found in its module at: ${componentImportPath}`);
     
-    componentPath = join(dirname(modulePath), componentImportPath + '.ts')
+    componentPath = join(dirname(modulePath), componentImportPath);
+    if (!componentPath.endsWith('.ts')) {
+      componentPath = componentPath + '.ts';
+    }
+
     if (tree.exists(componentPath)) {
       console.log(`${componentClassName} file found at: ${componentPath}`);
     } else {

@@ -85,8 +85,8 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
     throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
-Create it if you want the schematic to add ${componentInfo.className} to its' module declarations,
-or if you just want to update the component without updating its' module, then rerun this command with --skip-module flag`);
+Create it if you want the schematic to add ${componentInfo.className} to its module declarations,
+or if you just want to update the component without updating its module, then rerun this command with --skip-module flag`);
   }
 
   // Get the changes required to update the @NgModule
