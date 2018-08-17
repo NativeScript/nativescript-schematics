@@ -133,7 +133,40 @@ describe('Module Schematic', () => {
     describe('executing ns-only schematic', () => {
       const nsOnlyOptions = { ...defaultOptions, nativescript: true, web: false };
 
-      // TODO: add tests here
+      it('should create ns module file', () => {
+        const options = { ...nsOnlyOptions };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        expect(tree.files.indexOf(nsModulePath)).toBeGreaterThanOrEqual(0);
+        expect(getFileContent(tree, nsModulePath)).toContain('CommonModule');
+        expect(getFileContent(tree, nsModulePath)).toContain(`class ${moduleClassName}`);
+      });
+
+      it('should not create web module file', () => {
+        const options = { ...nsOnlyOptions };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        expect(tree.exists(webModulePath)).toBeFalsy();
+      });
+
+      it('should not create a common file', () => {
+        const options = { ...nsOnlyOptions };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        expect(tree.exists(commonFilePath)).toBeFalsy();
+      });
+
+      it('should respect passed extension', () => {
+        const customExtension = '.mobile';
+        const options = { ...nsOnlyOptions, nsExtension: customExtension, routing: true };
+        const tree = schematicRunner.runSchematic('module', options, appTree);
+
+        const modulePath = getModulePath(customExtension);
+        expect(tree.exists(modulePath)).toBeTruthy();
+
+        const routingModulePath = getRoutingModulePath(customExtension);
+        expect(tree.exists(routingModulePath)).toBeTruthy();
+      });
     });
 
     describe('executing web-only schematic', () => {
