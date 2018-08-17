@@ -173,6 +173,7 @@ export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
 
 export function createEmptySharedProject(projectName: string): UnitTestTree {
   let appTree = createEmptyNsOnlyProject(projectName);
+  appTree = createAppModule(<any>appTree, `/src/app/app.module.tns.ts`);
 
   appTree.create('/nsconfig.json', JSON.stringify({
     "appResourcesPath": "App_Resources",
