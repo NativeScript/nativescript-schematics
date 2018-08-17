@@ -4,16 +4,16 @@ import { <%= masterClassName %>Component } from './<%= master %>/<%= master %>.c
 import { <%= detailClassName %>DetailComponent } from './<%= detail %>-detail/<%= detail %>-detail.component';
 import { DataService } from './data.service';
 
-export const COMPONENT_DECLARATIONS: any[] = [
+export const componentDeclarations: any[] = [
   <%= masterClassName %>Component,
   <%= detailClassName %>DetailComponent
 ];
 
-export const PROVIDERS_DECLARATIONS: any[] = [
+export const providerDeclarations: any[] = [
   DataService
 ];
 
-export const ROUTES: Routes = [
+export const routes: Routes = [
   { path: '<%= master %>', component: <%= masterClassName %>Component },
   { path: '<%= detail %>/:id', component: <%= detailClassName %>DetailComponent },
 ];
