@@ -54,8 +54,6 @@ export default function (options: MigrationOptions): Rule {
     excludeNsFilesFromTsconfig,
     addHomeComponent(options.nsExtension, options.webExtension),
 
-    addWebpackConfig(),
-
     installNpmModules()
   ]);
 }
@@ -296,24 +294,5 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
   }
 
   context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
-}
-
-const addWebpackConfig = () => (tree:Tree) => {
-  const templateOptions = {
-    entryModuleClassName: projectSettings.entryModuleClassName,
-    entryModuleImportPath: projectSettings.entryModuleImportPath,
-    nsext: extensions.ns,
-    shortExt: extensions.ns.replace('.', '')
-  }
-
-  // This is always going to be the case for ng cli before 6.0
-  if (!tree.exists('webpack.config.js')) {
-    const templateSource = apply(url('./_webpack-files'), [
-      template(templateOptions)
-    ]);
-    return mergeWith(templateSource);
-  } else {
-    throw new SchematicsException('Failed at addWebpackConfig step. webpack.config.js already exists.');
-  }
 }
 
