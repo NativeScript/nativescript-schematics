@@ -8,7 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { BarcelonaModule } from './barcelona/barcelona.module';<% } %>
 
 // Uncomment and add to NgModule imports if you need to use two-way binding
-// import { NativeScriptFormsModule } from "nativescript-angular/forms";
+// import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
 // import { NativeScriptHttpClientModule } from 'nativescript-angular/http-client';

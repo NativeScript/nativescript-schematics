@@ -1,6 +1,6 @@
-import { getNsConfig, getPackageJson } from "../utils";
-import { Tree, SchematicsException } from "@angular-devkit/schematics";
-import { extname } from "path";
+import { getNsConfig, getPackageJson } from '../utils';
+import { Tree, SchematicsException } from '@angular-devkit/schematics';
+import { extname } from 'path';
 import { Schema as ComponentOptions } from './component/schema';
 import { Schema as ModuleOptions } from './module/schema';
 
@@ -83,8 +83,8 @@ export const getExtensions = (tree: Tree, options: Options): Extensions => {
   }
 
   return {
-    ns: parseExtension(ns || ""),
-    web: parseExtension(web || "")
+    ns: parseExtension(ns || ''),
+    web: parseExtension(web || '')
   }
 }
 

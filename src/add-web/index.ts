@@ -329,8 +329,8 @@ function mergeDependenciesJSON(nsPackageJson: any, webPackageJson: any) {
     
     /**
     * renames main.ts to main.tns.ts
-    * and updates: import { AppModule } from "./app.module";
-    *         to:  import { AppModule } from "./app.module.tns";
+    * and updates: import { AppModule } from './app.module';
+    *         to:  import { AppModule } from './app.module.tns';
     */
     // const updateMain = (tree: Tree) => {
     //     const importPath = projectSettings.entryModuleImportPath;

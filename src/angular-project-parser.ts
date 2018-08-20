@@ -13,40 +13,40 @@ export interface AngularProjectSettings {
   /** ng Npm Version */
   ngSemVer: SemVer;
 
-  /** default: "" */
+  /** default: '' */
   root: string;
 
-  /** default: "src" */
+  /** default: 'src' */
   sourceRoot: string;
   
-  /** default: "main"*/
+  /** default: 'main'*/
   mainName: string;
-  /** default: "src/main.ts"*/
+  /** default: 'src/main.ts'*/
   mainPath: string;
-  /** default: "app" */
+  /** default: 'app' */
   prefix: string;
-  /** default: "src/tsconfig.json" */
+  /** default: 'src/tsconfig.json' */
   tsConfig: string;
 
-  /** default: "AppModule"*/
+  /** default: 'AppModule'*/
   entryModuleClassName: string;
-  /** default: "App"*/
+  /** default: 'App'*/
   entryModuleName: string;
-  /** default: "src/app/app.module.ts"*/
+  /** default: 'src/app/app.module.ts'*/
   entryModulePath: string;
-  /** default: "./app/app.module"*/
+  /** default: './app/app.module'*/
   entryModuleImportPath: string;
 
-  /** default: "AppComponent" */
+  /** default: 'AppComponent' */
   entryComponentClassName: string;
-  /** default: "App" */
+  /** default: 'App' */
   entryComponentName: string;
-  /** default: "src/app/app.component.ts" */
+  /** default: 'src/app/app.component.ts' */
   entryComponentPath: string;
-  /** default: "./app.component" */
+  /** default: './app.component' */
   entryComponentImportPath: string;
 
-  /** default: "app-root"*/
+  /** default: 'app-root'*/
   indexAppRootTag: string;
 }
 
@@ -173,7 +173,7 @@ export function getProjectObject(tree: Tree, projectName: string) {
 
 // Step 2 - get entryModule and entryModulePath   => open ${sourceRoot}/${main}.ts 
 // - get entryModule from .bootstrapModule(__value__)
-// - get entryModulePath from import { ${entryModule} } from "__value__" -- might need to remove ./
+// - get entryModulePath from import { ${entryModule} } from '__value__' -- might need to remove ./
 function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
   const source = getSourceFile(tree, mainPath);
 
@@ -197,7 +197,7 @@ function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
 
 // Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
 // - get appComponent from bootstrap: [ __value__ ]
-// - get appComponentPath from import { ${appComponent} } from "__value__"
+// - get appComponentPath from import { ${appComponent} } from '__value__'
 function getEntryComponentMetadata(tree: Tree, entryModulePath: string): ClassMetadata {
   const source = getSourceFile(tree, entryModulePath);
   
@@ -227,7 +227,7 @@ function getEntryComponentMetadata(tree: Tree, entryModulePath: string): ClassMe
   };
 }
 
-// Step 4 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: "__value__"
+// Step 4 - get indexAppRootTag => open ${appRoot}/${appComponentPath} - get from selector: '__value__'
 function getAppRootTag(tree: Tree, entryComponentPath: string): string {
   const source = getSourceFile(tree, entryComponentPath);
 
