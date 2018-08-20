@@ -4,16 +4,16 @@ import { PlayersComponent } from "./players/players.component";
 import { PlayerDetailComponent } from "./player-detail/player-detail.component";
 import { PlayerService } from './player.service';
 
-export const COMPONENT_DECLARATIONS: any[] = [
+export const componentDeclarations: any[] = [
   PlayersComponent,
   PlayerDetailComponent
 ];
 
-export const PROVIDERS_DECLARATIONS: any[] = [
+export const providerDeclarations: any[] = [
   PlayerService
 ];
 
-export const ROUTES: Routes = [
+export const routes: Routes = [
   { path: 'players', component: PlayersComponent },
   { path: 'player/:id', component: PlayerDetailComponent },
 ];

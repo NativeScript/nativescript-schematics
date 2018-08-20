@@ -2,22 +2,26 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from 'nativescript-angular/common';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
-import { ROUTES, COMPONENT_DECLARATIONS, PROVIDERS_DECLARATIONS } from './barcelona.common';
+import {
+  componentDeclarations,
+  providerDeclarations,
+  routes,
+} from './barcelona.common';
 
 @NgModule({
   imports: [
     NativeScriptCommonModule,
     NativeScriptRouterModule,
-    NativeScriptRouterModule.forRoot(ROUTES)
+    NativeScriptRouterModule.forRoot(routes)
   ],
   exports: [
     NativeScriptRouterModule
   ],
   declarations: [
-    ...COMPONENT_DECLARATIONS
+    ...componentDeclarations
   ],
   providers: [
-    ...PROVIDERS_DECLARATIONS
+    ...providerDeclarations
   ],
   schemas: [
     NO_ERRORS_SCHEMA

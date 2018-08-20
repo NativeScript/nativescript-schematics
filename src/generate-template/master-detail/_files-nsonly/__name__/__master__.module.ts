@@ -7,7 +7,7 @@ import { <%= masterClassName %>Component } from './<%= master %>/<%= master %>.c
 import { <%= detailClassName %>DetailComponent } from './<%= detail %>-detail/<%= detail %>-detail.component';
 import { DataService } from './data.service';
 
-export const ROUTES: Routes = [
+export const routes: Routes = [
   { path: '<%= master %>', component: <%= masterClassName %>Component },
   { path: '<%= detail %>/:id', component: <%= detailClassName %>DetailComponent },
 ];
@@ -16,7 +16,7 @@ export const ROUTES: Routes = [
   imports: [
     NativeScriptCommonModule,
     NativeScriptRouterModule,
-    NativeScriptRouterModule.forRoot(ROUTES)
+    NativeScriptRouterModule.forRoot(routes)
   ],
   exports: [
     NativeScriptRouterModule

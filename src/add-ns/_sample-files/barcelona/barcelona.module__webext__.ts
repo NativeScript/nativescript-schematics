@@ -2,22 +2,26 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { ROUTES, COMPONENT_DECLARATIONS, PROVIDERS_DECLARATIONS } from './barcelona.common';
+import {
+  componentDeclarations,
+  providerDeclarations,
+  routes,
+} from './barcelona.common';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
-    RouterModule.forRoot(ROUTES)
+    RouterModule.forRoot(routes)
   ],
   exports: [
     RouterModule
   ],
   declarations: [
-    ...COMPONENT_DECLARATIONS
+    ...componentDeclarations
   ],
   providers: [
-    ...PROVIDERS_DECLARATIONS
+    ...componentDeclarations
   ]
 })
 export class BarcelonaModule { }
