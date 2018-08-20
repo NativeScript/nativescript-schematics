@@ -286,7 +286,7 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       'tns-core-modules': '~4.2.0'
     },
     devDependencies: {
-      'nativescript-dev-webpack': '^0.15.0'
+      'nativescript-dev-webpack': 'rc'
     }
   }
 
