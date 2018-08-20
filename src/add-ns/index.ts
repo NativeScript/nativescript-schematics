@@ -317,15 +317,3 @@ const addWebpackConfig = () => (tree:Tree) => {
   }
 }
 
-// const updateDevWebpack = () => (tree: Tree, context: SchematicContext) => {
-//   context.logger.info('Updating webpack.config.js');
-//   const options: UpdateDevWebpackOptions = {
-//     nsext: extensions.ns
-//   }
-
-//   if (projectSettings.ngCliSemVer.major === 1) {
-//     return schematic('update-dev-webpack', options)(tree, context);
-//   } else {
-//     context.addTask(new RunSchematicTask('@nativescript/schematics', 'update-dev-webpack', options), [npmInstallTaskId]);
-//   }
-// }
