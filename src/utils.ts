@@ -171,8 +171,9 @@ export function createEmptyNsOnlyProject(projectName: string, extension: string 
   return appTree;
 }
 
-export function createEmptySharedProject(projectName: string): UnitTestTree {
-  let appTree = createEmptyNsOnlyProject(projectName);
+export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
+  let appTree = createEmptyNsOnlyProject(projectName, nsExtension);
+  appTree = createAppModule(<any>appTree, `/src/app/app.module${webExtension}.ts`);
 
   appTree.create('/nsconfig.json', JSON.stringify({
     'appResourcesPath': 'App_Resources',
