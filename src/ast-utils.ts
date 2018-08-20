@@ -290,7 +290,7 @@ function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.Node)
   const start = nodeStart - source.getFullStart();
   const symbolBefore = content.substring(start - 1, start);
 
-  if (symbolBefore === ",") {
+  if (symbolBefore === ',') {
     return new RemoveContent(nodeStart - 1, nodeEnd);
   } else {
     return new RemoveContent(nodeStart, nodeEnd + 1);
@@ -613,7 +613,6 @@ export function findImportPath(source: ts.Node, name) {
   const moduleSpecifier = node.moduleSpecifier as ts.StringLiteral;
   return moduleSpecifier.text;
 }
-
 
 export const updateNodeText = (tree: Tree, node: ts.Node, newText: string) => {
   const recorder = tree.beginUpdate(node.getSourceFile().fileName);

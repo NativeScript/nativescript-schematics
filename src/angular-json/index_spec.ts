@@ -9,14 +9,14 @@ describe('Angular JSON Config Schematic', () => {
     path.join(__dirname, '../collection.json'),
   );
 
-  const projName = "leproj"
+  const projName = 'leproj';
   const defaultOptions: angularJsonOptions = {
     name: projName,
   };
   const configPath = `/angular.json`;
 
 
-  describe("with default options (name only)", () => {
+  describe('with default options (name only)', () => {
     let tree: UnitTestTree;
     beforeAll(() => {
       tree = schematicRunner.runSchematic('angular-json', defaultOptions);
@@ -48,7 +48,7 @@ describe('Angular JSON Config Schematic', () => {
   });
 
   it('should create files inside path when specified', () => {
-    const path = "/path/to/my/app";
+    const path = '/path/to/my/app';
     const appJsonPath = `${path}/angular.json`;
     const options = { ...defaultOptions, path };
 

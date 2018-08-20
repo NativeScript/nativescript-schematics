@@ -1,5 +1,5 @@
-import { Tree, SchematicsException } from "@angular-devkit/schematics";
-import { getPackageJson, safeGet } from "./utils";
+import { Tree, SchematicsException } from '@angular-devkit/schematics';
+import { getPackageJson, safeGet } from './utils';
 
 export class SemVer {
   constructor(

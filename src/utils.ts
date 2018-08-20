@@ -153,34 +153,33 @@ export const renameFilesForce = (paths: FromTo[]) =>
     tree.delete(from);
   });
 
-export function createEmptyNsOnlyProject(projectName: string, extension: string = ''): UnitTestTree {
-  let appTree = schematicRunner.runSchematic("angular-json", { name: projectName, sourceRoot: "src" });
+export function createEmptyNsOnlyProject(projectName: string): UnitTestTree {
+  let appTree = schematicRunner.runSchematic('angular-json', { name: projectName, sourceRoot: 'src' });
 
-  appTree = createAppModule(<any>appTree, `/src/app/app.module${extension}.ts`);
+  appTree = createAppModule(<any>appTree, `/src/app/app.module.ts`);
 
   appTree.create('/package.json', JSON.stringify({
-    nativescript: { id: "proj" },
+    nativescript: { id: 'proj' },
     dependencies: {
-      "@angular/core": "^6.1.0"
+      '@angular/core': '^6.1.0'
     },
     devDependencies: {
-      "@angular/cli": "^6.1.0"
+      '@angular/cli': '^6.1.0'
     },
   }));
 
   return appTree;
 }
 
-export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
-  let appTree = createEmptyNsOnlyProject(projectName, nsExtension);
-  appTree = createAppModule(<any>appTree, `/src/app/app.module${webExtension}.ts`);
+export function createEmptySharedProject(projectName: string): UnitTestTree {
+  let appTree = createEmptyNsOnlyProject(projectName);
 
   appTree.create('/nsconfig.json', JSON.stringify({
-    "appResourcesPath": "App_Resources",
-    "appPath": "src",
-    "nsext": ".tns",
-    "webext": "",
-    "shared": true
+    'appResourcesPath': 'App_Resources',
+    'appPath': 'src',
+    'nsext': '.tns',
+    'webext': '',
+    'shared': true
   }));
 
   return appTree;

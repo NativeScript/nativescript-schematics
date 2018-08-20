@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { PlayersComponent } from "./players/players.component";
-import { PlayerDetailComponent } from "./player-detail/player-detail.component";
+import { PlayersComponent } from './players/players.component';
+import { PlayerDetailComponent } from './player-detail/player-detail.component';
 import { PlayerService } from './player.service';
 
 export const componentDeclarations: any[] = [
