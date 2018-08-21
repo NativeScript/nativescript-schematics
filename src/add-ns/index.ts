@@ -100,9 +100,7 @@ ${JSON.stringify(angularJson.cli, null, 2)}
 ${JSON.stringify(angularJson.cli, null, 2)}`);
   }
 
-  angularJson.cli = {
-    'defaultCollection' : defaultCollection
-  }
+  angularJson.cli = { 'defaultCollection': defaultCollection };
 
   tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
 }
@@ -254,18 +252,17 @@ const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
  */
 const excludeNsFilesFromTsconfig = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Excluding NativeScript files from web tsconfig');
+
+  const nsExtensions = [
+    `**/*${extensions.ns}.ts`,
+    '**/*.android.ts',
+    '**/*.ios.ts',
+  ];
+
   const tsConfigPath = projectSettings.tsConfig;
   const tsConfig: any = getJsonFile(tree, tsConfigPath);
 
   tsConfig.exclude = tsConfig.exclude || [];
-  const nsExtensions = [
-    '**/*.tns.ts',
-    '**/*.android.ts',
-    '**/*.ios.ts',
-    './main.ns.aot.ts',
-    './main.ns.ts',
-  ];
-
   tsConfig.exclude = [...tsConfig.exclude, ...nsExtensions];
 
   tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
