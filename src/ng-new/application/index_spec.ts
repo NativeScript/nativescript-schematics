@@ -28,14 +28,11 @@ describe('Application Schematic', () => {
     expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/webpack.config.js')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.css')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/main.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/main.aot.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/app/home/home.component.ts')).toBeGreaterThanOrEqual(0);

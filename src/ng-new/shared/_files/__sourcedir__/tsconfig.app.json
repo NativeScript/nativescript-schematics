@@ -1,18 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/app",
+    "outDir": "./out-tsc/app",
+    "baseUrl": "./",
     "module": "es2015",
     "types": []
-  },
-  "exclude": [
-    "<%= sourcedir %>/test.ts",
-    "**/*.spec.ts",
-    "**/*.tns.ts",
-    "**/*.android.ts",
-    "**/*.ios.ts",
-    "./main.ns.aot.ts",
-    "./main.ns.ts",
-    "./vendor.ts"
-  ]
+  }
 }
