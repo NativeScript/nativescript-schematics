@@ -5,16 +5,13 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
+      "~/*": [
+          "src/*"
+      ],
       "*": [
-        "./node_modules/tns-core-modules/*",
-        "./node_modules/*"
+          "./node_modules/tns-core-modules/*",
+          "./node_modules/*"
       ]
     }
-  },
-  "exclude": [
-    "**/*.tns.ts",
-    "**/*.android.ts",
-    "**/*.ios.ts",
-    "app/main.aot.ts"
-  ]
+  }
 }

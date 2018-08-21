@@ -5,6 +5,9 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
+      "~/*": [
+          "src/*"
+      ],
       "*": [
         "./node_modules/tns-core-modules/*",
         "./node_modules/*"
@@ -14,7 +17,6 @@
   "exclude": [
     "**/*<%= nsext %>.ts",
     "**/*.android.ts",
-    "**/*.ios.ts",
-    "app/main.aot.ts"
+    "**/*.ios.ts"
   ]
 }

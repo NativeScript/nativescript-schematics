@@ -26,14 +26,10 @@ describe('Shared Application Schematic', () => {
     expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/tsconfig.tns.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/tsconfig.aot.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/webpack.config.js')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/src/package.json')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/main.ns.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/main.ns.aot.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/app.module.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/app.module.ngfactory.d.ts')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/src/app/app.component.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/app.component.html')).toBeGreaterThanOrEqual(0);

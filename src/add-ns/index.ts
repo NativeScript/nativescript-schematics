@@ -54,8 +54,6 @@ export default function (options: MigrationOptions): Rule {
     excludeNsFilesFromTsconfig,
     addHomeComponent(options.nsExtension, options.webExtension),
 
-    addWebpackConfig(),
-
     installNpmModules()
   ]);
 }
@@ -102,9 +100,7 @@ ${JSON.stringify(angularJson.cli, null, 2)}
 ${JSON.stringify(angularJson.cli, null, 2)}`);
   }
 
-  angularJson.cli = {
-    'defaultCollection' : defaultCollection
-  }
+  angularJson.cli = { 'defaultCollection': defaultCollection };
 
   tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
 }
@@ -256,18 +252,17 @@ const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
  */
 const excludeNsFilesFromTsconfig = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Excluding NativeScript files from web tsconfig');
+
+  const nsExtensions = [
+    `**/*${extensions.ns}.ts`,
+    '**/*.android.ts',
+    '**/*.ios.ts',
+  ];
+
   const tsConfigPath = projectSettings.tsConfig;
   const tsConfig: any = getJsonFile(tree, tsConfigPath);
 
   tsConfig.exclude = tsConfig.exclude || [];
-  const nsExtensions = [
-    '**/*.tns.ts',
-    '**/*.android.ts',
-    '**/*.ios.ts',
-    './main.ns.aot.ts',
-    './main.ns.ts',
-  ];
-
   tsConfig.exclude = [...tsConfig.exclude, ...nsExtensions];
 
   tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
@@ -286,7 +281,7 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
       'tns-core-modules': '~4.2.0'
     },
     devDependencies: {
-      'nativescript-dev-webpack': '^0.15.0'
+      'nativescript-dev-webpack': 'rc'
     }
   }
 
@@ -298,34 +293,3 @@ const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
   context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
 }
 
-const addWebpackConfig = () => (tree:Tree) => {
-  const templateOptions = {
-    entryModuleClassName: projectSettings.entryModuleClassName,
-    entryModuleImportPath: projectSettings.entryModuleImportPath,
-    nsext: extensions.ns,
-    shortExt: extensions.ns.replace('.', '')
-  }
-
-  // This is always going to be the case for ng cli before 6.0
-  if (!tree.exists('webpack.config.js')) {
-    const templateSource = apply(url('./_webpack-files'), [
-      template(templateOptions)
-    ]);
-    return mergeWith(templateSource);
-  } else {
-    throw new SchematicsException('Failed at addWebpackConfig step. webpack.config.js already exists.');
-  }
-}
-
-// const updateDevWebpack = () => (tree: Tree, context: SchematicContext) => {
-//   context.logger.info('Updating webpack.config.js');
-//   const options: UpdateDevWebpackOptions = {
-//     nsext: extensions.ns
-//   }
-
-//   if (projectSettings.ngCliSemVer.major === 1) {
-//     return schematic('update-dev-webpack', options)(tree, context);
-//   } else {
-//     context.addTask(new RunSchematicTask('@nativescript/schematics', 'update-dev-webpack', options), [npmInstallTaskId]);
-//   }
-// }

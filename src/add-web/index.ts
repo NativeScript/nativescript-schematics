@@ -1,5 +1,4 @@
 import { Schema as MigrationOptions } from './schema';
-import { Schema as UpdateDevWebpackOptions } from '../update-dev-webpack/schema';
 
 import { getSourceFile, addExtension } from '../utils';
 import {
@@ -39,7 +38,6 @@ export default function (options: MigrationOptions): Rule {
     validatePrerequisits,
     getProjectSettings,
     applyNsExtensionToCoreFiles,
-    updateWebpackConfig(),
     updateMainTns,
     mergeNgProjectSettings,
     addWebFiles(),
@@ -87,26 +85,6 @@ const applyNsExtensionToCoreFiles = (tree: Tree) => {
     return { from: path, to: addExtension(path, extensions.ns) };
   });
   renameFilesForce(paths)(tree);
-};
-
-/**
-* update webpack.config referenes:
-* - main.ts -> bundle: "./main.tns.ts",
-* - tsconfig.json -> tsConfigPath: "tsconfig.tns.json"
-* - app.module -> app.module.tns#AppModule
-*/
-const updateWebpackConfig = () => (tree: Tree, context: SchematicContext) => {
-  //TODO: need to test this
-  const options: UpdateDevWebpackOptions = {
-    nsext: extensions.ns
-  }
-
-  return schematic('update-dev-webpack', options)(tree, context);
-  //   installDevWebpackIfRequired(tree);
-  //   updateMainTsExtension(tree);
-  //   updateTsConfigExtension(tree);
-  //   updateEntryModuleExtension(tree);
-  //   return tree;
 };
 
 // function installDevWebpackIfRequired(tree: Tree) {
