@@ -29,6 +29,12 @@ describe('Component Schematic', () => {
   const nsTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.ns);
   const webTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.web);
 
+  const getStylesheetPath = (extension: string, styleExtension: string = 'css') =>
+    `src/app/${name}/${name}.component${extension}.${styleExtension}`;
+  const noExtensionStylesheetPath = getStylesheetPath('');
+  const nsStylesheetPath = getStylesheetPath(DEFAULT_SHARED_EXTENSIONS.ns);
+  const webStylesheetPath = getStylesheetPath(DEFAULT_SHARED_EXTENSIONS.web);
+
   let appTree: UnitTestTree;
 
   const hasModuleId = () => {
@@ -64,6 +70,12 @@ describe('Component Schematic', () => {
     it('should not create template with {N} extension', () =>
       expect(appTree.exists(nsTemplatePath)).toBeFalsy());
     it('should add {N}-specific markup in template', () => ensureNsTemplate(appTree, noExtensionTemplatePath));
+
+    it('should create stylesheet without extension', () =>
+      expect(appTree.exists(noExtensionStylesheetPath)).toBeTruthy());
+    it('should not create stylesheet with {N} extension', () =>
+      expect(appTree.exists(nsStylesheetPath)).toBeFalsy());
+
     it('should add module id', () => expect(hasModuleId()).toBeTruthy());
 
     it('should declare the component in the root NgModule for {N}', () => {
@@ -83,6 +95,12 @@ describe('Component Schematic', () => {
 
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
+
+      it('should add web-specific stylesheet file', () =>
+        expect(appTree.exists(webStylesheetPath)).toBeTruthy());
+      it('should add {N}-specific stylesheet file', () =>
+        expect(appTree.exists(nsStylesheetPath)).toBeTruthy());
+
       it('should add module id', () => expect(hasModuleId()).toBeFalsy());
 
       it('should declare the component in the the root NgModule for web', () => {
@@ -105,6 +123,8 @@ describe('Component Schematic', () => {
       });
 
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
+      it('should add {N}-specific stylesheet file', () =>
+        expect(appTree.exists(nsStylesheetPath)).toBeTruthy());
       it('should add module id', () => expect(hasModuleId()).toBeFalsy());
 
       it('should not declare the component in the the root NgModule for web', () => {
@@ -143,17 +163,29 @@ describe('Component Schematic', () => {
 
   describe('specifying custom extension', () => {
     describe('in ns only project', () => {
+      const customExtension = '.mobile';
       beforeEach(() => {
-        appTree = createEmptyNsOnlyProject(project, '.mobile');
+        appTree = createEmptyNsOnlyProject(project, customExtension);
       });
 
       it('should respect specified {N} extension', () => {
-        const customExtension = '.mobile';
         const options = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
         appTree = schematicRunner.runSchematic('component', options, appTree);
 
         const componentTemplatePath = getTemplatePath(customExtension);
         expect(appTree.exists(componentTemplatePath)).toBeTruthy();
+
+        const componentStylesheetPath = getStylesheetPath(customExtension);
+        expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
+      });
+
+      it('should respect specified style extension', () => {
+        const styleext = 'scss';
+        const options = { ...defaultOptions, nsExtension: customExtension, styleext, nativescript: true };
+        appTree = schematicRunner.runSchematic('component', options, appTree);
+
+        const componentStylesheetPath = getStylesheetPath(customExtension, styleext);
+        expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
       });
     });
 
@@ -226,6 +258,9 @@ describe('Component Schematic', () => {
 
           const componentTemplatePath = getTemplatePath(customExtension);
           expect(appTree.exists(componentTemplatePath)).toBeTruthy();
+
+          const componentStylesheetPath = getStylesheetPath(customExtension);
+          expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
         });
 
         it('should declare in NgModule', () => {
@@ -283,6 +318,11 @@ describe('Component Schematic', () => {
           const webTemplate = getTemplatePath(webExtension);
           expect(appTree.exists(nsTemplate)).toBeTruthy();
           expect(appTree.exists(webTemplate)).toBeTruthy();
+
+          const nsStylesheet = getStylesheetPath(nsExtension);
+          const webStylesheet = getStylesheetPath(webExtension);
+          expect(appTree.exists(nsStylesheet)).toBeTruthy();
+          expect(appTree.exists(webStylesheet)).toBeTruthy();
         });
 
         it('should declare in NgModule', () => {
