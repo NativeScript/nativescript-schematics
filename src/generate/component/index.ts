@@ -121,30 +121,27 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
   const component = new ComponentInfo();
 
   const parsedPath = parseName(options.path || '', options.name);
-
   component.name = dasherize(parsedPath.name);
-  const className = `/${component.name}.component.ts`;
-  const templateName = `/${component.name}.component.html`;
-  const stylesheetName = `/${component.name}.component.${options.styleext}`;
 
-  tree.actions.forEach(action => {
-    // TODO - refactor this to use Array find()
-    if (action.path.endsWith(templateName)) {
-      component.templatePath = action.path;
+  const getGeneratedFilePath = (searchPath: string) => {
+    const action = tree.actions.find(({ path }) => path.endsWith(searchPath));
+    if (!action) {
+      throw new SchematicsException(
+        `Failed to find generated component file ${searchPath}. ` +
+        `Please contact the @nativescript/schematics author.`);
     }
 
-    if (action.path.endsWith(className)) {
-      component.classPath = action.path;
-    }
-
-    if (action.path.endsWith(stylesheetName)) {
-      component.stylesheetPath = action.path;
-    }
-  });
-
-  if (!component.classPath || !component.templatePath) {
-    throw new SchematicsException(`Failed to find generated component files from @schematics/angular. Please contact the @nativescript/schematics author.`);
+    return action.path;
   }
+
+  const className = `/${component.name}.component.ts`;
+  component.classPath = getGeneratedFilePath(className);
+
+  const templateName = `/${component.name}.component.html`;
+  component.templatePath = getGeneratedFilePath(templateName);
+
+  const stylesheetName = `/${component.name}.component.${options.styleext}`;
+  component.stylesheetPath = getGeneratedFilePath(stylesheetName)
 
   return component;
 }
