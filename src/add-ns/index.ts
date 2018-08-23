@@ -165,7 +165,6 @@ const addHomeComponent = (nsExtension: string, webExtension: string, project: st
       nativescript: true,
       name: 'home',
       module: 'app',
-      inlineStyle: true,
       prefix: projectSettings.prefix,
       spec: false,
       project,
