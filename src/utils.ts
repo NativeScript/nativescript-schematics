@@ -4,6 +4,7 @@ import {
   SchematicsException,
   Tree,
   Rule,
+  move,
 } from '@angular-devkit/schematics';
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
@@ -282,11 +283,22 @@ export function safeGet(object, ...properties) {
   return safeGet(value, ...properties);
 }
 
-export function callRuleSync(
+/**
+ * Move the sources of a tree from a specified directory to the root.
+ * Example: move the application of a project to root level,
+ * so we can call schematics that depend on being executed inside a project.
+ */
+export const moveToRoot = <T extends Tree | UnitTestTree>(
+  schematicRunner: SchematicTestRunner,
+  tree: T,
+  from: string,
+): T => callRuleSync(schematicRunner, () => move(from, '.'), tree);
+
+function callRuleSync<T extends Tree | UnitTestTree>(
   schematicRunner: SchematicTestRunner,
   rule: Rule,
-  tree: Tree
-): UnitTestTree | Tree {
+  tree: T,
+): T {
 
   let newTree;
   schematicRunner.callRule(rule, tree).subscribe(tree => newTree = tree);

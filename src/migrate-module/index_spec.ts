@@ -1,17 +1,17 @@
 import { join } from 'path';
 
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
+import { HostTree } from '@angular-devkit/schematics';
+import { getFileContent } from '@schematics/angular/utility/test';
+import { InsertChange } from '@schematics/angular/utility/change';
+import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 import { Schema as MigrateModuleOptions } from './schema';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
 import { Schema as ComponentOptions } from '../generate/component/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
-import { move, HostTree, source } from '@angular-devkit/schematics';
-import { callRuleSync, getSourceFile } from '../utils';
-import { getFileContent } from '@schematics/angular/utility/test';
+import { getSourceFile, moveToRoot } from '../utils';
 import { isInModuleMetadata } from '../test-utils';
-import { InsertChange } from '@schematics/angular/utility/change';
-import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 describe('Migrate module Schematic', () => {
   const project = 'some-project';
@@ -118,7 +118,12 @@ describe('Migrate module Schematic', () => {
   });
 });
 
-const setupProject = (appTree, schematicRunner, project, moduleName) => {
+const setupProject = (
+    appTree: UnitTestTree,
+    schematicRunner: SchematicTestRunner,
+    project: string,
+    moduleName: string,
+) => {
   appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
     name: project,
     prefix: '',
@@ -128,9 +133,7 @@ const setupProject = (appTree, schematicRunner, project, moduleName) => {
     sample: false,
   }, appTree);
 
-  // Move the application from 'project' to the root,
-  // so we can call schematics that depend on being executed inside a project
-  appTree = callRuleSync(schematicRunner, () => move(project, '.'), appTree) as UnitTestTree;
+  appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
   appTree = schematicRunner.runSchematic('module', <ModuleOptions>{
     name: moduleName,
     nativescript: false,

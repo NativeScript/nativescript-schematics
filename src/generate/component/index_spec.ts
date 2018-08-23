@@ -3,12 +3,10 @@ import { join } from 'path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
 
-import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName, callRuleSync } from '../../utils';
+import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName } from '../../utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInComponentMetadata, isInModuleMetadata } from '../../test-utils';
 import { Schema as ComponentOptions } from './schema';
-import { Schema as ApplicationOptions } from '../../ng-new/shared/schema';
-import { move } from '@angular-devkit/schematics';
 
 describe('Component Schematic', () => {
   const name = 'foo';
