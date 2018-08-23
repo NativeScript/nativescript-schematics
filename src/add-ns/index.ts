@@ -52,7 +52,7 @@ export default function (options: MigrationOptions): Rule {
     addRunScriptsToPackageJson,
     addNativeScriptProjectId,
     excludeNsFilesFromTsconfig,
-    addHomeComponent(options.nsExtension, options.webExtension),
+    addHomeComponent(options.nsExtension, options.webExtension, options.project),
 
     installNpmModules()
   ]);
@@ -122,7 +122,7 @@ const addNsFiles = (options: MigrationOptions) => (_tree: Tree, context: Schemat
     entryModuleClassName: projectSettings.entryModuleClassName,
     entryModuleName: projectSettings.entryModuleName,
     entryModuleImportPath: projectSettings.entryModuleImportPath,
-    
+
     entryComponentClassName: projectSettings.entryComponentClassName,
     entryComponentName: projectSettings.entryComponentName,
     entryComponentImportPath: projectSettings.entryComponentImportPath,
@@ -130,7 +130,7 @@ const addNsFiles = (options: MigrationOptions) => (_tree: Tree, context: Schemat
     indexAppRootTag: projectSettings.indexAppRootTag
   };
   const templateSource = apply(url('./_ns-files'), [
-      template(templateOptions)
+    template(templateOptions)
   ]);
   return mergeWith(templateSource);
 };
@@ -154,8 +154,8 @@ const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
   return mergeWith(templateSource);
 };
 
-const addHomeComponent =
-  (nsExtension: string, webExtension: string) => (_tree, context: SchematicContext) => {
+const addHomeComponent = (nsExtension: string, webExtension: string, project: string) =>
+  (_tree, context: SchematicContext) => {
     context.logger.info('Adding Shared Home Component');
 
     return schematic('component', {
@@ -168,8 +168,9 @@ const addHomeComponent =
       inlineStyle: true,
       prefix: projectSettings.prefix,
       spec: false,
+      project,
     });
-};
+  };
 
 const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding App_Resources');
@@ -183,34 +184,30 @@ const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
  */
 const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding NativeScript specific exclusions to .gitignore');
-  
-  if (!tree.exists('.gitignore')) {
-    tree.create('.gitignore', '');
-  }
-  const gitignore = getFileContents(tree, '/.gitignore').split('\n');
 
-  // Prepare NativeScript .gitignore lines
-  let nsGitignoreContent = [
+  // Read existing .gitignore file
+  const GITIGNORE = '.gitignore';
+  if (!tree.exists(GITIGNORE)) {
+    tree.create(GITIGNORE, '');
+  }
+  const gitignore = getFileContents(tree, `/${GITIGNORE}`).split('\n');
+
+  // Prepare {N} ignore items
+  const nsGitignoreItems = [
     'node_modules/',
     'platforms/',
     'hooks/',
     `${projectSettings.sourceRoot}/**/*.js`,
-  ];
-  
-  // Remove any lines that are already in the .gitignore
-  nsGitignoreContent = nsGitignoreContent.filter(
-    nsLine => !gitignore.includes(nsLine)
-  );
+  ].filter(line => !gitignore.includes(line));
 
-  // Prepare content to add to .gitignore
-  const content = `# NativeScript
-${nsGitignoreContent.join('\n')}
+  const nsGitignoreContent =
+    `# NativeScript` +
+    nsGitignoreItems.join('\n') +
+    '\n';
 
-`;
-
-  // Add content to .gitignore
-  const recorder = tree.beginUpdate('.gitignore');
-  recorder.insertLeft(0, content);
+  // Update .gitignore
+  const recorder = tree.beginUpdate(GITIGNORE);
+  recorder.insertLeft(0, nsGitignoreContent);
 
   tree.commitUpdate(recorder);
 }
