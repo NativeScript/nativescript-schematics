@@ -28,6 +28,7 @@ import { findModule } from './find-module';
 class ComponentInfo {
   classPath: string;
   templatePath: string;
+  stylesheetPath: string;
   name: string;
 
   constructor() { }
@@ -88,9 +89,17 @@ export default function (options: ComponentOptions): Rule {
 
     (tree: Tree, context: SchematicContext) => {
       if (platformUse.useWeb) {
-        return renameWebTemplate(tree, componentInfo.templatePath);
+        return renameFile(tree, componentInfo.templatePath);
       } else {
-        return removeWebTemplate(tree, context, componentInfo.templatePath);
+        return removeFile(tree, context, componentInfo.templatePath);
+      }
+    },
+
+    (tree: Tree, context: SchematicContext) => {
+      if (platformUse.useWeb) {
+        return renameFile(tree, componentInfo.stylesheetPath);
+      } else {
+        return removeFile(tree, context, componentInfo.stylesheetPath);
       }
     },
 
@@ -112,53 +121,69 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
   const component = new ComponentInfo();
 
   const parsedPath = parseName(options.path || '', options.name);
-
   component.name = dasherize(parsedPath.name);
-  const className = `/${component.name}.component.ts`;
-  const templateName = `/${component.name}.component.html`;
 
-  tree.actions.forEach(action => {
-    if (action.path.endsWith(templateName)) {
-      component.templatePath = action.path;
+  const getGeneratedFilePath = (searchPath: string) => {
+    const action = tree.actions.find(({ path }) => path.endsWith(searchPath));
+    if (!action) {
+      throw new SchematicsException(
+        `Failed to find generated component file ${searchPath}. ` +
+        `Please contact the @nativescript/schematics author.`);
     }
 
-    if (action.path.endsWith(className)) {
-      component.classPath = action.path;
-    }
-  });
-
-  if (!component.classPath || !component.templatePath) {
-    throw new SchematicsException(`Failed to find generated component files from @schematics/angular. Please contact the @nativescript/schematics author.`);
+    return action.path;
   }
+
+  const className = `/${component.name}.component.ts`;
+  component.classPath = getGeneratedFilePath(className);
+
+  const templateName = `/${component.name}.component.html`;
+  component.templatePath = getGeneratedFilePath(templateName);
+
+  const stylesheetName = `/${component.name}.component.${options.styleext}`;
+  component.stylesheetPath = getGeneratedFilePath(stylesheetName)
 
   return component;
 }
 
-const renameWebTemplate = (tree: Tree, templatePath: string) => {
+const renameFile = (tree: Tree, filePath: string) => {
   if (extensions.web) {
-    const webName = templatePath.replace('.html', `${extensions.web}.html`);
-    tree.rename(templatePath, webName);
+    const webName = insertExtension(filePath, extensions.web);
+    tree.rename(filePath, webName);
   }
   return tree;
 };
 
-const removeWebTemplate = (tree: Tree, context: SchematicContext, templatePath: string) =>
+const removeFile = (tree: Tree, context: SchematicContext, filePath: string) =>
   filter(
-    (path: Path) => !path.match(templatePath)
+    (path: Path) => !path.match(filePath)
   )(tree, context)
 
 const addNativeScriptFiles = (component: ComponentInfo) => {
   const parsedTemplate = parseName('', component.templatePath);
-  parsedTemplate.name = parsedTemplate.name.replace('.html', `${extensions.ns}.html`);
+  const nsTemplateName = insertExtension(parsedTemplate.name, extensions.ns);
+
+  const { name: stylesheetName } = parseName('', component.stylesheetPath);
+  const nsStylesheetName = insertExtension(stylesheetName, extensions.ns);
 
   const templateSource = apply(url('./_files'), [
     template(<TemplateOptions>{
+      name: component.name,
       path: parsedTemplate.path,
-      fileName: parsedTemplate.name,
-
-      name: component.name
+      templateName: nsTemplateName,
+      stylesheetName: nsStylesheetName,
     }),
   ]);
 
   return mergeWith(templateSource);
 };
+
+const insertExtension = (fileName: string, extension: string) => {
+  const extensionStart = fileName.lastIndexOf('.');
+
+  const newFilename = fileName.substr(0, extensionStart) +
+    extension +
+    fileName.substr(extensionStart);
+
+  return newFilename;
+}
