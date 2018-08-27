@@ -17,7 +17,6 @@ export default function (options: MasterDetailSchema) {
   return generateTemplate(options);
 }
 
-
 const generateTemplate = (options: MasterDetailSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Generating Master Detail template');
   const projectParams = getProjectInfo(tree);
@@ -50,7 +49,7 @@ interface ProjectInfo {
   nsext: string;
 }
 const getProjectInfo = (tree: Tree): ProjectInfo => {
-  if(tree.exists('nsconfig.json')) {
+  if (tree.exists('nsconfig.json')) {
     const nsconfig = getNsConfig(tree);
     return {
       shared: true,
