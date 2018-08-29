@@ -2,17 +2,18 @@ import {
   Rule,
   Tree,
   chain,
-  schematic
+  schematic,
+  SchematicContext
 } from '@angular-devkit/schematics';
 
 import { Schema as ApplicationOptions } from './application/schema';
 import { Schema as SharedOptions } from './shared/schema';
 import { Schema as NgNewOptions } from './schema';
-import { Schema as NpmIstallOptions } from '../npm-install/schema';
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 export default function(options: NgNewOptions): Rule {
   return chain([
-    (_tree: Tree) => {
+    () => {
       if (options.shared) {
         const sharedOptions: SharedOptions = parseToSharedOptions(options);
         return schematic('shared', sharedOptions);
@@ -21,13 +22,9 @@ export default function(options: NgNewOptions): Rule {
         return schematic('application', applicationOptions)
       }
     },
-    () => {
-      const npmInstallOptions: NpmIstallOptions = {
-        workingDirectory: options.name
-      };
-
-      return schematic('npm-install', npmInstallOptions)
-    }
+    (_tree: Tree, context: SchematicContext) => {
+      context.addTask(new NodePackageInstallTask(options.name));
+    },
   ]);
 }
 
