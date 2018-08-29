@@ -69,6 +69,22 @@ describe('Add {N} schematic', () => {
             expect(gitignore.includes('foo/src/**/*.js')).toBeTruthy();
         });
 
+        it('should add all required dependencies to the package.json', () => {
+            const packageJsonPath = '/package.json';
+            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+
+            const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
+            const { dependencies, devDependencies } = packageJson;
+            expect(dependencies).toBeDefined();
+            expect(dependencies['nativescript-angular']).toBeDefined();
+            expect(dependencies['nativescript-theme-core']).toBeDefined();
+            expect(dependencies['tns-core-modules']).toBeDefined();
+            expect(dependencies['reflect-metadata']).toBeDefined();
+            
+            expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
+            expect(devDependencies['@nativescript/schematics']).toBeDefined();
+        });
+
         it('should add run scripts to the package json', () => {
             const packageJsonPath = '/package.json';
             expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
