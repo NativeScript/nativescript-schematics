@@ -13,15 +13,12 @@ import {
   noop,
   move,
 } from '@angular-devkit/schematics';
-import {
-  RunSchematicTask,
-} from '@angular-devkit/schematics/tasks';
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MigrationOptions } from './schema';
-import { Schema as NpmInstallOptions } from '../npm-install/schema';
-import { getJsonFile, getFileContents } from '../utils';
+import { getJsonFile, getFileContents, getPackageJson, overwritePackageJson } from '../utils';
 import { getAngularProjectSettings, AngularProjectSettings } from '../angular-project-parser';
 import { Extensions } from '../generate/utils';
 
@@ -218,15 +215,15 @@ const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
  */
 const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding NativeScript run scripts to package.json');
-  const packageJson: any = getJsonFile(tree, 'package.json');
+  const packageJson = getPackageJson(tree);
 
-  packageJson.scripts = packageJson.scripts || {};
-  packageJson.scripts = Object.assign({
+  const scriptsToAdd = {
     android: 'tns run android --bundle',
     ios: 'tns run ios --bundle'
-  }, packageJson.scripts);
+  };
+  packageJson.scripts = Object.assign({}, scriptsToAdd, packageJson.scripts);
 
-  tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
+  overwritePackageJson(tree, packageJson);
 }
 
 const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
@@ -264,28 +261,26 @@ const excludeNsFilesFromTsconfig = (tree: Tree, context: SchematicContext) => {
   tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
 }
 
-// let npmInstallTaskId: TaskId;
-const installNpmModules = () => (_tree: Tree, context: SchematicContext) => {
+const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Installing npm modules');
+  const packageJson = getPackageJson(tree);
 
   // @UPGRADE: Update all versions whenever {N} version updates
-  const dependeciesToAdd = {
-    dependencies: {
-      'nativescript-angular': '~6.1.0',
-      'nativescript-theme-core': '~1.0.4',
-      'reflect-metadata': '~0.1.8',
-      'tns-core-modules': '~4.2.0'
-    },
-    devDependencies: {
-      'nativescript-dev-webpack': 'rc'
-    }
-  }
+  const depsToAdd = {
+    'nativescript-angular': '~6.1.0',
+    'nativescript-theme-core': '~1.0.4',
+    'reflect-metadata': '~0.1.8',
+    'tns-core-modules': '~4.2.0'
+  };
+  packageJson.dependencies = Object.assign({}, depsToAdd, packageJson.dependencies);
 
-  const options: NpmInstallOptions = {
-    json: JSON.stringify(dependeciesToAdd),
-    workingDirectory: ''
-  }
+  const devDepsToAdd = {
+    'nativescript-dev-webpack': 'rc',
+    '@nativescript/schematics': '~0.2.5',
+  };
+  packageJson.devDependencies = Object.assign({}, devDepsToAdd, packageJson.devDependencies);
 
-  context.addTask(new RunSchematicTask('@nativescript/schematics', 'npm-install', options));
+  overwritePackageJson(tree, packageJson);
+
+  context.addTask(new NodePackageInstallTask());
 }
-
