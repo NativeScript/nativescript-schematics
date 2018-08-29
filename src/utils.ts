@@ -12,6 +12,7 @@ import { NsConfig } from './models/nsconfig';
 import { UnitTestTree, SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { createAppModule } from '@schematics/angular/utility/test';
 
+const PACKAGE_JSON = 'package.json';
 
 export interface Node {
   getStart();
@@ -95,13 +96,13 @@ const setDependency = (
 ) => Object.assign(dependenciesMap, { [name]: version });
 
 export const getPackageJson = (tree: Tree, workingDirectory: string = ''): PackageJson => {
-  const url = join(workingDirectory, 'package.json');
+  const url = join(workingDirectory, PACKAGE_JSON);
 
   return getJsonFile(tree, url);
 }
 
 export const overwritePackageJson = (tree: Tree, content: PackageJson, workingDirectory: string = '') => {
-  const url = join(workingDirectory, 'package.json');
+  const url = join(workingDirectory, PACKAGE_JSON);
 
   tree.overwrite(url, JSON.stringify(content, null, 2));
 }
