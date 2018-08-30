@@ -5,6 +5,7 @@
 !src/**/files/*
 
 **/*.tgz
+*.spec.js
 *.js.map
 tsconfig.json
 
