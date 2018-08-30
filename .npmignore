@@ -1,4 +1,5 @@
 **/*.tgz
+*.ts
 !*.d.ts
 *.js.map
 /jasmine-config
