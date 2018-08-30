@@ -1,6 +1,12 @@
-**/*.tgz
+
+# Ignores TypeScript files, but keeps definitions and templates.
+*.ts
 !*.d.ts
+!src/**/files/*
+
+**/*.tgz
 *.js.map
+tsconfig.json
+
 /jasmine-config
-/tsconfig.json
 
