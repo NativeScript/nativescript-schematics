@@ -9,7 +9,10 @@ import {
 import { Schema as ApplicationOptions } from './application/schema';
 import { Schema as SharedOptions } from './shared/schema';
 import { Schema as NgNewOptions } from './schema';
-import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
+import {
+  NodePackageInstallTask,
+  RepositoryInitializerTask,
+} from '@angular-devkit/schematics/tasks';
 
 export default function(options: NgNewOptions): Rule {
   return chain([
@@ -23,7 +26,10 @@ export default function(options: NgNewOptions): Rule {
       }
     },
     (_tree: Tree, context: SchematicContext) => {
-      context.addTask(new NodePackageInstallTask(options.name));
+      const packageTask = context.addTask(new NodePackageInstallTask(options.name));
+
+      const dependencies = [packageTask];
+      context.addTask(new RepositoryInitializerTask(options.name, {}), dependencies);
     },
   ]);
 }
