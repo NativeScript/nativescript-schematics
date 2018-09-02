@@ -121,11 +121,11 @@ describe('Add {N} schematic', () => {
             expect(exclude.includes('src/test.ts')).toBeTruthy();
         });
 
-        it('should generate a shared home component', () => {
+        it('should generate a sample shared component', () => {
             const { files } = appTree;
-            expect(files.includes('/foo/src/app/home/home.component.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/home/home.component.html')).toBeTruthy();
-            expect(files.includes('/foo/src/app/home/home.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.ts');
+            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.html');
+            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.tns.html');
         });
     });
 

@@ -49,7 +49,7 @@ export default function (options: MigrationOptions): Rule {
     addRunScriptsToPackageJson,
     addNativeScriptProjectId,
     excludeNsFilesFromTsconfig,
-    addHomeComponent(options.nsExtension, options.webExtension, options.project),
+    addSampleComponent(options.nsExtension, options.webExtension, options.project),
 
     installNpmModules()
   ]);
@@ -151,16 +151,16 @@ const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
   return mergeWith(templateSource);
 };
 
-const addHomeComponent = (nsExtension: string, webExtension: string, project: string) =>
+const addSampleComponent = (nsExtension: string, webExtension: string, project: string) =>
   (_tree, context: SchematicContext) => {
-    context.logger.info('Adding Shared Home Component');
+    context.logger.info('Adding Sample Shared Component');
 
     return schematic('component', {
       nsExtension: nsExtension,
       webExtension: webExtension,
       web: true,
       nativescript: true,
-      name: 'home',
+      name: 'auto-generated-component',
       module: 'app',
       prefix: projectSettings.prefix,
       spec: false,
