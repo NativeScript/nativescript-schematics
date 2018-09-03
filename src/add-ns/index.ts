@@ -51,7 +51,13 @@ export default function (options: MigrationOptions): Rule {
     excludeNsFilesFromTsconfig,
     addHomeComponent(options.nsExtension, options.webExtension, options.project),
 
-    installNpmModules()
+    addDependencies(),
+
+    options.skipInstall ?
+      noop() :
+      (_tree: Tree, context: SchematicContext) => {
+        context.addTask(new NodePackageInstallTask());
+      },
   ]);
 }
 
@@ -261,8 +267,8 @@ const excludeNsFilesFromTsconfig = (tree: Tree, context: SchematicContext) => {
   tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
 }
 
-const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
-  context.logger.info('Installing npm modules');
+const addDependencies = () => (tree: Tree, context: SchematicContext) => {
+  context.logger.info('Adding npm dependencies');
   const packageJson = getPackageJson(tree);
 
   // @UPGRADE: Update all versions whenever {N} version updates
@@ -281,6 +287,4 @@ const installNpmModules = () => (tree: Tree, context: SchematicContext) => {
   packageJson.devDependencies = Object.assign({}, devDepsToAdd, packageJson.devDependencies);
 
   overwritePackageJson(tree, packageJson);
-
-  context.addTask(new NodePackageInstallTask());
 }
