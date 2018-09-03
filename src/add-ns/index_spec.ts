@@ -4,7 +4,6 @@ import { HostTree } from '@angular-devkit/schematics';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 
 import { Schema as AddNsOptions } from './schema';
-import { moveToRoot } from '../utils';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 describe('Add {N} schematic', () => {
@@ -118,7 +117,6 @@ describe('Add {N} schematic', () => {
             expect(exclude.includes('**/*.tns.ts')).toBeTruthy();
             expect(exclude.includes('**/*.android.ts')).toBeTruthy();
             expect(exclude.includes('**/*.ios.ts')).toBeTruthy();
-            expect(exclude.includes('src/test.ts')).toBeTruthy();
         });
 
         it('should generate a sample shared component', () => {

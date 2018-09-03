@@ -5,9 +5,9 @@ import {
   template,
   url,
   mergeWith,
-  TemplateOptions,
   noop,
 } from '@angular-devkit/schematics';
+import { TemplateOptions } from '@angular-devkit/core';
 
 import { Schema as NgCliConfigSchema } from './schema';
 

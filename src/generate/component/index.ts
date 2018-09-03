@@ -11,13 +11,11 @@ import {
   template,
   url,
   mergeWith,
-  TemplateOptions,
   filter,
-  DirEntry,
 } from '@angular-devkit/schematics';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { Path } from '@angular-devkit/core';
+import { Path, TemplateOptions } from '@angular-devkit/core';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
 import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
