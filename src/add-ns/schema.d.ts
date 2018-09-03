@@ -15,4 +15,8 @@ export interface Schema {
    * Specifies whether a sample master detail should be generated.
    */
   sample: boolean; 
+  /**
+   * Skip installing dependency packages.
+   */
+  skipInstall?: boolean;
 }
