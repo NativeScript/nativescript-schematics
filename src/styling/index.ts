@@ -5,10 +5,10 @@ import {
   move,
   template,
   mergeWith,
-  TemplateOptions,
   Tree,
   noop,
 } from '@angular-devkit/schematics';
+import { TemplateOptions } from '@angular-devkit/core';
 
 import { Schema as StylingOptions } from './schema';
 import { addDependency, NodeDependency } from '../utils';

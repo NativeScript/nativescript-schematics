@@ -119,17 +119,20 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
   const ngCliSemVer = getAngularCLISemver(tree);
   const ngSemVer = getAngularSemver(tree);
   
-  // TODO: this might go away
   if (ngCliSemVer.major >= 6) {
     const project = getProjectObject(tree, projectName);
 
     const root = project.root || '';
     const sourceRoot: string = project.sourceRoot || 'src';
-    const mainPath: string = safeGet(project, 'architect', 'build', 'options', 'main') ||
+    const mainPath: string =
+      safeGet(project, 'targets', 'build', 'options', 'main') || // Angular CLI 6.2
+      safeGet(project, 'architect', 'build', 'options', 'main') || // Angular CLI 6.1
       'src/main.ts';
     const mainName: string = basename(mainPath).replace('.ts', '');
     const prefix: string = project.prefix || 'app';
-    const tsConfig: string = safeGet(project, 'architect', 'build', 'options', 'tsConfig') ||
+    const tsConfig: string =
+      safeGet(project, 'targets', 'build', 'options', 'tsConfig') || // Angular CLI 6.2
+      safeGet(project, 'architect', 'build', 'options', 'tsConfig') || // Angular CLI 6.1
       'src/tsconfig.app.json';
 
     return {

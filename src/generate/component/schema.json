@@ -6,23 +6,23 @@
   "properties": {
     "web": {
       "type": "boolean",
+      "description": "If web files should be generated",
       "alias": "w",
       "default": true
     },
     "nativescript": {
       "type": "boolean",
-      "alias": "ns",
+      "description": "If {N} files should be generated",
+      "alias": "n",
       "default": true
     },
     "nsExtension": {
       "type": "string",
-      "description": "Allows specification of the used extension for {N}",
-      "alias": "nsext"
+      "description": "Allows specification of the used extension for {N}"
     },
     "webExtension": {
       "type": "string",
-      "description": "Allows specification of the used extension for web",
-      "alias": "webext"
+      "description": "Allows specification of the used extension for web"
     },
     "path": {
       "type": "string",

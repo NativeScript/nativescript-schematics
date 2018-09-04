@@ -12,7 +12,6 @@
     "sourceDir": {
       "type": "string",
       "description": "The name of the source directory.",
-      "alias": "sd",
       "default": "src"
     },
     "prefix": {

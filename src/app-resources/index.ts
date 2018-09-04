@@ -5,12 +5,11 @@ import {
   template,
   url,
   mergeWith,
-  TemplateOptions,
   noop,
 } from '@angular-devkit/schematics';
+import { TemplateOptions } from '@angular-devkit/core';
 
 import { Schema as AppResourcesSchema } from './schema';
-
 
 export default function (options: AppResourcesSchema) {
   return branchAndMerge(mergeWith(

@@ -6,10 +6,10 @@ import {
   noop,
   template,
   mergeWith,
-  TemplateOptions,
   schematic,
   Rule,
 } from '@angular-devkit/schematics';
+import { TemplateOptions } from '@angular-devkit/core';
 
 import { stringUtils } from '../../utils';
 import { Schema as ApplicationOptions } from './schema';

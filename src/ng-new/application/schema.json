@@ -12,8 +12,7 @@
     "sourceDir": {
       "type": "string",
       "description": "The path of the source directory.",
-      "default": "app",
-      "alias": "sd"
+      "default": "app"
     },
     "prefix": {
       "type": "string",

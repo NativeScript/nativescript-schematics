@@ -7,10 +7,10 @@ import {
   url,
   template,
   move,
-  TemplateOptions,
   schematic,
   noop,
 } from '@angular-devkit/schematics';
+import { TemplateOptions } from '@angular-devkit/core';
 
 import { stringUtils } from '../../utils';
 
