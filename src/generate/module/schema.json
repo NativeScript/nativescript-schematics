@@ -11,7 +11,7 @@
     },
     "nativescript": {
       "type": "boolean",
-      "alias": "ns",
+      "alias": "n",
       "default": true
     },
     "nsExtension": {
