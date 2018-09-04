@@ -23,9 +23,9 @@
         "zone.js": "^0.8.26"
     },
     "devDependencies": {
-        "@angular/cli": "~6.1.0",
+        "@angular/cli": "^6.2.0-rc.1",
         "@angular/compiler-cli": "~6.1.0",
-        "@angular-devkit/core": "~0.7.0",
+        "@angular-devkit/core": "^0.8.0-rc.1",
         "@nativescript/schematics": "~0.2.0",
         "nativescript-dev-typescript": "~0.7.0",<% if(webpack) {%>
         "nativescript-dev-webpack": "rc",

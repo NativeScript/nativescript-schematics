@@ -1,3 +1,26 @@
+<a name="0.3.0-rc.0"></a>
+# [0.3.0-rc.0](https://github.com/nativescript/nativescript-schematics/compare/0.2.4...v0.3.0-rc.0) (2018-09-04)
+
+
+### Bug Fixes
+
+* respect extensions and module imports when generating components ([13516d6](https://github.com/nativescript/nativescript-schematics/commit/13516d6)), closes [#78](https://github.com/nativescript/nativescript-schematics/issues/78) [#54](https://github.com/nativescript/nativescript-schematics/issues/54)
+* **add-ns:** choose a more generic name for the generated shared ([#103](https://github.com/nativescript/nativescript-schematics/issues/103)) ([991aec2](https://github.com/nativescript/nativescript-schematics/commit/991aec2)), closes [#99](https://github.com/nativescript/nativescript-schematics/issues/99)
+* **add-ns:** use the package installation task from schematics ([9e63508](https://github.com/nativescript/nativescript-schematics/commit/9e63508)), closes [#94](https://github.com/nativescript/nativescript-schematics/issues/94)
+* **component:** don't declare component in web module if it's not shared ([8a2388f](https://github.com/nativescript/nativescript-schematics/commit/8a2388f))
+* **module:** prevents file module merge collisions ([a74c6a0](https://github.com/nativescript/nativescript-schematics/commit/a74c6a0))
+* **module:** stop generating common files in web/ns only cases ([63d6b5a](https://github.com/nativescript/nativescript-schematics/commit/63d6b5a))
+* **node-utils:** add safety checks to version parser ([8a4775d](https://github.com/nativescript/nativescript-schematics/commit/8a4775d))
+
+
+### Features
+
+* add travis ci ([#73](https://github.com/nativescript/nativescript-schematics/issues/73)) ([a63b411](https://github.com/nativescript/nativescript-schematics/commit/a63b411))
+* **component:** generate mobile stylesheets files ([#87](https://github.com/nativescript/nativescript-schematics/issues/87)) ([7d7930b](https://github.com/nativescript/nativescript-schematics/commit/7d7930b))
+* **migrate-component:** copy the web template into the migrated component ([#65](https://github.com/nativescript/nativescript-schematics/issues/65)) ([ad08b25](https://github.com/nativescript/nativescript-schematics/commit/ad08b25))
+* init git repository when creating new application ([#104](https://github.com/nativescript/nativescript-schematics/issues/104)) ([a745640](https://github.com/nativescript/nativescript-schematics/commit/a745640)), closes [#95](https://github.com/nativescript/nativescript-schematics/issues/95)
+
+
 <a name="0.2.5"></a>
 ## [0.2.5](https://github.com/nativescript/nativescript-schematics/compare/0.2.4...0.2.5) (2018-08-11)
 
