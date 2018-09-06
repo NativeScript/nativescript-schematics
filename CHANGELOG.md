@@ -1,3 +1,13 @@
+<a name="0.3.0-rc.1"></a>
+# [0.3.0-rc.1](https://github.com/nativescript/nativescript-schematics/compare/0.3.0-rc.0...0.3.0-rc.1) (2018-09-06)
+
+
+### Bug Fixes
+
+* include .ts template files in the node package ([#107](https://github.com/nativescript/nativescript-schematics/issues/107)) ([d9bc64c](https://github.com/nativescript/nativescript-schematics/commit/d9bc64c))
+
+
+
 <a name="0.3.0-rc.0"></a>
 # [0.3.0-rc.0](https://github.com/nativescript/nativescript-schematics/compare/0.2.4...v0.3.0-rc.0) (2018-09-04)
 
