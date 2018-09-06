@@ -2,7 +2,7 @@
 # Ignores TypeScript files, but keeps definitions and templates.
 *.ts
 !*.d.ts
-!src/**/files/*
+!src/**/_*files/**/*
 
 **/*.tgz
 *.spec.js
