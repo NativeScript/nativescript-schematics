@@ -281,7 +281,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
   packageJson.dependencies = Object.assign({}, depsToAdd, packageJson.dependencies);
 
   const devDepsToAdd = {
-    'nativescript-dev-webpack': 'rc',
+    'nativescript-dev-webpack': '^0.16.0',
     '@nativescript/schematics': '~0.2.5',
   };
   packageJson.devDependencies = Object.assign({}, devDepsToAdd, packageJson.devDependencies);
