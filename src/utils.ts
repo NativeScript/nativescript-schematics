@@ -166,7 +166,7 @@ export function createEmptyNsOnlyProject(projectName: string, extension: string 
       '@angular/core': '^6.1.0'
     },
     devDependencies: {
-      '@angular/cli': '^6.2.0-rc.1'
+      '@angular/cli': '^6.2.0'
     },
   }));
 
