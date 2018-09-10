@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "0.3.0-rc.1",
+  "version": "0.3.0",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -15,9 +15,9 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^0.8.0-rc.1",
-    "@angular-devkit/schematics": "^0.8.0-rc.1",
-    "@schematics/angular": "^0.8.0-rc.1"
+    "@angular-devkit/core": "^0.8.0",
+    "@angular-devkit/schematics": "^0.8.0",
+    "@schematics/angular": "^0.8.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
