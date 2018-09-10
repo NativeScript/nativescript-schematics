@@ -64,7 +64,7 @@ export default function (options: ComponentOptions): Rule {
         return tree;
       }
 
-      const componentPath = componentInfo.classPath;
+      const componentPath = componentInfo.classPath.replace(/\.ts$/, '');
       const componentDir = dirname(componentPath);
       if (platformUse.useWeb) {
         const webModule = findModule(tree, options, componentDir, extensions.web);
