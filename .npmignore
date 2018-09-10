@@ -2,7 +2,6 @@
 # Ignores TypeScript files, but keeps definitions and templates.
 *.ts
 !*.d.ts
-!src/**/_*files/**/*
 
 **/*.tgz
 *.spec.js
@@ -10,4 +9,6 @@
 tsconfig.json
 
 /jasmine-config
+
+!src/**/_*files/**/*
 
