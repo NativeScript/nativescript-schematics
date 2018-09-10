@@ -3,7 +3,6 @@ import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 
 import { AppRoutingModule } from './app-routing.module<%= nsext %>';
 import { <%= entryComponentClassName %> } from '<%= entryComponentImportPath %>';
-import { HomeComponent } from './home/home.component';
 <% if (sample) { %>
 import { BarcelonaModule } from './barcelona/barcelona.module';<% } %>
 
@@ -16,7 +15,6 @@ import { BarcelonaModule } from './barcelona/barcelona.module';<% } %>
 @NgModule({
   declarations: [
     <%= entryComponentClassName %>,
-    HomeComponent,
   ],
   imports: [
     NativeScriptModule,

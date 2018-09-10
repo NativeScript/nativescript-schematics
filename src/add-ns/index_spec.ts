@@ -121,9 +121,9 @@ describe('Add {N} schematic', () => {
 
         it('should generate a sample shared component', () => {
             const { files } = appTree;
-            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.ts');
-            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.html');
-            expect(files).toContain('/foo/src/app/auto-generated-component/auto-generated-component.component.tns.html');
+            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.ts');
+            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.html');
+            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.tns.html');
         });
     });
 

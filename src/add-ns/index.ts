@@ -166,7 +166,7 @@ const addSampleComponent = (nsExtension: string, webExtension: string, project: 
       webExtension: webExtension,
       web: true,
       nativescript: true,
-      name: 'auto-generated-component',
+      name: 'auto-generated',
       module: 'app',
       prefix: projectSettings.prefix,
       spec: false,
