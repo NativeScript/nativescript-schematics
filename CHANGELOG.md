@@ -1,3 +1,15 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/nativescript/nativescript-schematics/compare/0.3.0...0.3.1) (2018-09-14)
+
+### Bug Fixes
+
+* remove tsconfig.spec.ts extend option ([#114](https://github.com/nativescript/nativescript-schematics/issues/114)) ([5a58d21](https://github.com/nativescript/nativescript-schematics/commit/5a58d21))
+* **ng-new:** update the version of [@ngtools](https://github.com/ngtools)/webpack to 6.2.0 ([#116](https://github.com/nativescript/nativescript-schematics/issues/116)) ([fe11520](https://github.com/nativescript/nativescript-schematics/commit/fe11520))
+
+
+> Special thanks to [steadycoding](https://github.com/steadycoding)!
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/nativescript/nativescript-schematics/compare/0.3.0-rc.1...0.3.0) (2018-09-10)
 
