@@ -29,7 +29,7 @@
         "@nativescript/schematics": "~0.3.0",
         "nativescript-dev-typescript": "~0.7.0",<% if(webpack) {%>
         "nativescript-dev-webpack": "^0.16.0",
-        "@ngtools/webpack": "~6.1.0",
+        "@ngtools/webpack": "~6.2.0",
         <% } %>"typescript": "~2.7.2"
     }
 }
