@@ -11,6 +11,11 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "types": [
+      "jasmine",
+      "jasminewd2",
+      "node"
+    ],
     "lib": [
       "es2017",
       "dom"
