@@ -594,17 +594,6 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
   return child.getText() === searchParam.name;
 }
 
-export function getFunctionParams(source: ts.Node, name: string) {
-  const node = findNode<ts.CallExpression>(source, [
-    { kind: ts.SyntaxKind.CallExpression, name },
-  ]);
-
-  if (node.getChildCount() !== 4) {
-    throw new SchematicsException(`Couldn't find function params for ${name} in ${node.getSourceFile().fileName}`);
-  }
-  return node.arguments.map(node => node.getText());
-}
-
 export function findImportPath(source: ts.Node, name) {
   const node = findNode<ts.ImportDeclaration>(source, [
     { kind: ts.SyntaxKind.ImportDeclaration, name },
