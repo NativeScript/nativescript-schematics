@@ -1,18 +1,13 @@
 import * as ts from 'typescript';
 import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
-// import { getWorkspace, WorkspaceProject } from '@schematics/angular/utility/config';
+import { getWorkspace } from '@schematics/angular/utility/config';
+import { getProjectTargets } from '@schematics/angular/utility/project-targets';
 
-import { getSourceFile, getAngularJson, safeGet } from './utils';
+import { getSourceFile, safeGet } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
-import { SemVer, getAngularSemver, getAngularCLISemver } from './node-utils';
 
 export interface AngularProjectSettings {
-  /** ng cli Npm Version */
-  ngCliSemVer: SemVer;
-  /** ng Npm Version */
-  ngSemVer: SemVer;
-
   /** default: '' */
   root: string;
 
@@ -57,9 +52,6 @@ export interface CoreProjectSettings {
   mainPath: string;
   prefix: string;
   tsConfig: string;
-
-  ngCliSemVer: SemVer;
-  ngSemVer: SemVer;
 }
 
 /**
@@ -90,7 +82,7 @@ export interface ClassMetadata {
   path: string
 }
 
-export function getAngularProjectSettings(tree: Tree, projectName: string = ''): AngularProjectSettings {
+export function getAngularProjectSettings(tree: Tree, projectName: string): AngularProjectSettings {
   const projectSettings = getCoreProjectSettings(tree, projectName);
   const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath);
 
@@ -114,64 +106,47 @@ export function getAngularProjectSettings(tree: Tree, projectName: string = ''):
   };
 }
 
-// Step 1 - get appRoot => open .angular-cli.json -> get apps.root
 export function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
-  const ngCliSemVer = getAngularCLISemver(tree);
-  const ngSemVer = getAngularSemver(tree);
-  
-  if (ngCliSemVer.major >= 6) {
-    const project = getProjectObject(tree, projectName);
-
-    const root = project.root || '';
-    const sourceRoot: string = project.sourceRoot || 'src';
-    const mainPath: string =
-      safeGet(project, 'targets', 'build', 'options', 'main') || // Angular CLI 6.2
-      safeGet(project, 'architect', 'build', 'options', 'main') || // Angular CLI 6.1
-      'src/main.ts';
-    const mainName: string = basename(mainPath).replace('.ts', '');
-    const prefix: string = project.prefix || 'app';
-    const tsConfig: string =
-      safeGet(project, 'targets', 'build', 'options', 'tsConfig') || // Angular CLI 6.2
-      safeGet(project, 'architect', 'build', 'options', 'tsConfig') || // Angular CLI 6.1
-      'src/tsconfig.app.json';
-
-    return {
-      ngCliSemVer,
-      ngSemVer,
-
-      root,
-      sourceRoot,
-      mainName,
-      mainPath,
-      prefix,
-      tsConfig,
-    };
-  } else {
-    throw new SchematicsException(`This schematic is not compatible with @angular/cli 1.x, use 6.x or newer`);
+  const project = getProjectObject(tree, projectName);
+  const targets = getProjectTargets(project);
+  if (!targets) {
+    throw new SchematicsException(
+      `Failed to find build targets for project ${projectName}!`
+    );
   }
+
+  const buildTarget = targets.build;
+  if (!buildTarget) {
+    throw new SchematicsException(
+      `Failed to find build target for project ${projectName}!`
+    );
+  }
+
+  const root = project.root;
+  const sourceRoot = project.sourceRoot || 'src';
+  const mainPath = safeGet(buildTarget, 'options', 'main');
+  const mainName = basename(mainPath).replace(/\.ts$/, '');
+  const prefix = project.prefix;
+  const tsConfig = safeGet(buildTarget, 'options', 'tsConfig');
+
+  return {
+    root,
+    sourceRoot,
+    mainName,
+    mainPath,
+    prefix,
+    tsConfig,
+  };
 }
 
-export function getProjectObject(tree: Tree, projectName: string) {
-  const angularJson = getAngularJson(tree);
-  
-  // return the requested project object
-  if (projectName) {
-    const project = angularJson.projects[projectName];
-    if (!project) {
-      throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
-    }
-
-    return project;
+function getProjectObject(tree: Tree, projectName: string) {
+  const workspace = getWorkspace(tree);
+  const project = workspace.projects[projectName];
+  if (!project) {
+    throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);
   }
 
-  // or return the default project
-  if (angularJson.defaultProject) {
-    return angularJson.projects[angularJson.defaultProject];
-  }
-
-  // or return the first project on the list
-  // this is the same behaviour as in ng cli
-  return Object.values(angularJson.projects)[0];
+  return project;
 }
 
 // Step 2 - get entryModule and entryModulePath   => open ${sourceRoot}/${main}.ts 
