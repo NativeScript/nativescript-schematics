@@ -23,7 +23,8 @@ export interface Schema {
   nsext?: string;
   webext?: string;
   /**
-  * Allows specification of the project to be updated
+  * Allows specification of the project to be updated.
+  * The default option is the smart default 'projectName' provided by the Angular CLI.
   */
-  project?: string
+  project: string
 }

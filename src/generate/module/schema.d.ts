@@ -34,6 +34,7 @@ export interface Schema {
   path?: string;
   /**
   * The name of the project.
+  * The default option is the smart default 'projectName' provided by the Angular CLI.
   */
   project: string;
   /**

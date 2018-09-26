@@ -10,6 +10,7 @@ export interface Schema {
   nsext?: string;
   /**
   * Allows specification of the project to be updated
+  * The default option is the smart default 'projectName' provided by the Angular CLI.
   */
   project: string
 }
