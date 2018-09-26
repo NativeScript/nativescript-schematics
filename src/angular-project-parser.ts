@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { getWorkspace } from '@schematics/angular/utility/config';
+import { getProjectTargets } from '@schematics/angular/utility/project-targets';
 
 import { getSourceFile, safeGet } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
@@ -105,22 +106,28 @@ export function getAngularProjectSettings(tree: Tree, projectName: string): Angu
   };
 }
 
-// Step 1 - get appRoot => open .angular-cli.json -> get apps.root
 export function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
   const project = getProjectObject(tree, projectName);
+  const targets = getProjectTargets(project);
+  if (!targets) {
+    throw new SchematicsException(
+      `Failed to find build targets for project ${projectName}!`
+    );
+  }
 
-  const root = project.root || '';
-  const sourceRoot: string = project.sourceRoot || 'src';
-  const mainPath: string =
-    safeGet(project, 'targets', 'build', 'options', 'main') || // Angular CLI 6.2
-    safeGet(project, 'architect', 'build', 'options', 'main') || // Angular CLI 6.1
-    'src/main.ts';
-  const mainName: string = basename(mainPath).replace('.ts', '');
-  const prefix: string = project.prefix || 'app';
-  const tsConfig: string =
-    safeGet(project, 'targets', 'build', 'options', 'tsConfig') || // Angular CLI 6.2
-    safeGet(project, 'architect', 'build', 'options', 'tsConfig') || // Angular CLI 6.1
-    'src/tsconfig.app.json';
+  const buildTarget = targets.build;
+  if (!buildTarget) {
+    throw new SchematicsException(
+      `Failed to find build target for project ${projectName}!`
+    );
+  }
+
+  const root = project.root;
+  const sourceRoot = project.sourceRoot || 'src';
+  const mainPath = safeGet(buildTarget, 'options', 'main');
+  const mainName = basename(mainPath).replace(/\.ts$/, '');
+  const prefix = project.prefix;
+  const tsConfig = safeGet(buildTarget, 'options', 'tsConfig');
 
   return {
     root,
@@ -132,11 +139,11 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
   };
 }
 
-export function getProjectObject(tree: Tree, projectName: string) {
+function getProjectObject(tree: Tree, projectName: string) {
   const workspace = getWorkspace(tree);
   const project = workspace.projects[projectName];
   if (!project) {
-    throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
+    throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);
   }
 
   return project;
