@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
-// import { getWorkspace, WorkspaceProject } from '@schematics/angular/utility/config';
+import { getWorkspace } from '@schematics/angular/utility/config';
 
 import { getSourceFile, getAngularJson, safeGet } from './utils';
 import { findNode, getFunctionParams, findImportPath } from './ast-utils';
@@ -90,7 +90,7 @@ export interface ClassMetadata {
   path: string
 }
 
-export function getAngularProjectSettings(tree: Tree, projectName: string = ''): AngularProjectSettings {
+export function getAngularProjectSettings(tree: Tree, projectName: string): AngularProjectSettings {
   const projectSettings = getCoreProjectSettings(tree, projectName);
   const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath);
 
@@ -152,26 +152,13 @@ export function getCoreProjectSettings(tree: Tree, projectName: string): CorePro
 }
 
 export function getProjectObject(tree: Tree, projectName: string) {
-  const angularJson = getAngularJson(tree);
-  
-  // return the requested project object
-  if (projectName) {
-    const project = angularJson.projects[projectName];
-    if (!project) {
-      throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
-    }
-
-    return project;
+  const workspace = getWorkspace(tree);
+  const project = workspace.projects[projectName];
+  if (!project) {
+    throw new SchematicsException(`Couldn't find --projectName "${projectName}" in angular.json`);
   }
 
-  // or return the default project
-  if (angularJson.defaultProject) {
-    return angularJson.projects[angularJson.defaultProject];
-  }
-
-  // or return the first project on the list
-  // this is the same behaviour as in ng cli
-  return Object.values(angularJson.projects)[0];
+  return project;
 }
 
 // Step 2 - get entryModule and entryModulePath   => open ${sourceRoot}/${main}.ts 
