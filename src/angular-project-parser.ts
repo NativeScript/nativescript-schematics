@@ -3,9 +3,14 @@ import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { getWorkspace } from '@schematics/angular/utility/config';
 import { getProjectTargets } from '@schematics/angular/utility/project-targets';
+import {
+  getAppModulePath,
+  findBootstrapModuleCall,
+  findBootstrapModulePath,
+} from '@schematics/angular/utility/ng-ast-utils';
 
 import { getSourceFile, safeGet } from './utils';
-import { findNode, getFunctionParams, findImportPath } from './ast-utils';
+import { findNode, findImportPath } from './ast-utils';
 
 export interface AngularProjectSettings {
   /** default: '' */
@@ -106,7 +111,7 @@ export function getAngularProjectSettings(tree: Tree, projectName: string): Angu
   };
 }
 
-export function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
+function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
   const project = getProjectObject(tree, projectName);
   const targets = getProjectTargets(project);
   if (!targets) {
@@ -149,28 +154,24 @@ function getProjectObject(tree: Tree, projectName: string) {
   return project;
 }
 
-// Step 2 - get entryModule and entryModulePath   => open ${sourceRoot}/${main}.ts 
-// - get entryModule from .bootstrapModule(__value__)
-// - get entryModulePath from import { ${entryModule} } from '__value__' -- might need to remove ./
 function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
-  const source = getSourceFile(tree, mainPath);
+  const bootstrapCall = findBootstrapModuleCall(tree, mainPath);
+  if (!bootstrapCall) {
+      throw new SchematicsException('Bootstrap call not found! Cannot build project data!');
+  }
+  const className = bootstrapCall.arguments[0].getText();
+  const name = className.replace(/Module$/, '');
+  const importPath = findBootstrapModulePath(tree, mainPath);
+  const path = getAppModulePath(tree, mainPath);
 
-  const params = getFunctionParams(source, 'bootstrapModule');
-  const className = params[0];
-
-  const name = className.replace('Module', '');
-
-  const importPath: string = findImportPath(source, className);
-
-  const mainDir = dirname(mainPath);
-  const path = join(mainDir, importPath) + '.ts';
-
-  return {
+  const metadata = {
     className,
     name,
     importPath,
-    path
-  }
+    path,
+  };
+
+  return metadata;
 }
 
 // Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
