@@ -35,7 +35,6 @@ export default function (options: MigrationOptions): Rule {
     validateOptions(options),
 
     getProjectSettings(options.project),
-    validateProjectSettings,
 
     addNativeScriptSchematics,
 
@@ -69,17 +68,6 @@ const validateOptions = (options: MigrationOptions) => () => {
     throw new SchematicsException(`nsExtension "${options.nsExtension}" and webExtension "${options.webExtension}" should have different values`);
   }
 };
-
-/**
- * This schematic should only be used with ng/cli v6+
- */
-const validateProjectSettings = (_tree: Tree) => {
-  const cliVer = projectSettings.ngCliSemVer;
-
-  if (cliVer.major < 6) {
-    throw new SchematicsException(`@angular/cli ${cliVer.toString()} version detected. Upgrade to 6.0 or newer.`);
-  }
-}
 
 const getProjectSettings = (projectName: string) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Reading Project Settings');

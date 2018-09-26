@@ -135,10 +135,6 @@ export const getNsConfig = (tree: Tree): NsConfig => {
   return getJsonFile<NsConfig>(tree, '/nsconfig.json');
 }
 
-export const getAngularJson = (tree: Tree): any => {
-  return getJsonFile<any>(tree, '/angular.json');
-}
-
 export const getFileContents = (tree: Tree, filePath: string): string => {
   const buffer = tree.read(filePath) || '';
   return buffer.toString();
