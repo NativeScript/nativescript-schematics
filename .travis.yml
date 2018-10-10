@@ -44,6 +44,7 @@ matrix:
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
 
     - language: android
+      language: node_js
       node_js: "8"
       os: linux
       env:
