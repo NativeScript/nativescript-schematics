@@ -18,7 +18,7 @@ export function findModule(tree: Tree, options: ComponentOptions, path: string, 
 }
 
 function findExplicitModule(tree: Tree, path: string, extension: string, moduleName: string) {
-  while (path) {
+  while (path && path !== '/') {
     const modulePath = normalize(`/${path}/${moduleName}`);
     const moduleBaseName = normalize(modulePath).split('/').pop();
 
@@ -44,7 +44,7 @@ function findImplicitModule(tree: Tree, path: string, extension: string) {
     const moduleRe = new RegExp(`.module${extension}.ts`);
     const routingModuleRe = new RegExp(`-routing.module${extension}.ts`);
 
-    while (dir) {
+    while (dir && dir.path && dir.path !== '/') {
       const matches = dir.subfiles.filter(p => moduleRe.test(p) && !routingModuleRe.test(p));
       if (matches.length == 1) {
         return join(dir.path, matches[0]);
