@@ -57,15 +57,15 @@ matrix:
         - cd .. 
         - npm pack ./nativescript-schematics
         - npm i -g nativescript-schematics*.tgz
+        - npm i -g appium
         - android-wait-for-emulator
         - adb shell input keyevent 82 &
       script: 
         - ng new -c=@nativescript/schematics shared-proj
         - cd shared-proj
-        - cat package.json || true
         - npm i
+        - cat package.json || true
         - tns build android --bundle
-        - npm i -D figlet
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
         - npm run e2e-appium -- --runType="android"$EMULATOR_API_LEVEL --ignoreDeviceController=true
 android:
