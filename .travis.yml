@@ -44,13 +44,13 @@ matrix:
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
 
     - language: android
-      language: node_js
       node_js: "8"
       os: linux
       env:
         - Build="Android"
       jdk: oraclejdk8
       before_install: 
+        - nvm install $NODE_VERSION
         - echo no | android create avd --force -n $EMULATOR_NAME -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG -c 12M
         - QEMU_AUDIO_DRV=none emulator -avd $EMULATOR_NAME -no-window &
         - npm install
