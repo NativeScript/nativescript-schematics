@@ -33,10 +33,10 @@ matrix:
       before_install: 
         - npm install --ignore-scripts
         - npm install -g
-      script: 
-        - cd ..
+        - cd .. 
         - npm pack ./nativescript-schematics
         - npm i -g nativescript-schematics*.tgz
+      script: 
         - ng new -c=@nativescript/schematics shared-proj
         - cd shared-proj
         - npm i
@@ -60,14 +60,12 @@ matrix:
         - android-wait-for-emulator
         - adb shell input keyevent 82 &
       script: 
-        - cd ..
-        - npm install -g nativescript-schematics
         - ng new -c=@nativescript/schematics shared-proj
         - cd shared-proj
         - npm i
         - tns build android --bundle
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
-        - npm run e2e -- runType android$EMULATOR_API_LEVEL --ignoreDeviceController
+        - npm run e2e-appuium -- runType android$EMULATOR_API_LEVEL --ignoreDeviceController
 android:
   components:
     - tools
