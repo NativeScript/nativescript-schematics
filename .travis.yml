@@ -67,7 +67,7 @@ matrix:
         - cat package.json || true
         - tns build android --bundle
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
-        - npm run e2e-appium -- --runType="android"$EMULATOR_API_LEVEL --ignoreDeviceController=true
+        - npm run e2e-appium -- --runType="android"$EMULATOR_API_LEVEL --ignoreDeviceController=true --verbose=true
 android:
   components:
     - tools
