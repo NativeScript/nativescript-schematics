@@ -37,7 +37,7 @@ export default function(options: MigrateModuleSchema): Rule {
 
     addModuleFile(options.name, options.project),
 
-    (tree, context) => migrateComponents(moduleInfo, options.project)(tree, context),
+    (tree, context) => migrateComponents(moduleInfo, options)(tree, context),
     migrateProviders()
   ]);
 }
@@ -55,7 +55,7 @@ const addModuleFile =
         common: true,
       })(tree, context);
 
-const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
+const migrateComponents = (moduleInfo: ModuleInfo, options: MigrateModuleSchema) => {
   const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
 
   return chain(
@@ -64,7 +64,8 @@ const migrateComponents = (moduleInfo: ModuleInfo, project: string) => {
         name: component.name,
         modulePath: moduleInfo.modulePath,
         nsext,
-        project,
+        project: options.project,
+        style: options.style
       }
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),

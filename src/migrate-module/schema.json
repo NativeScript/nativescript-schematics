@@ -12,6 +12,10 @@
       "type": "string",
       "alias": "p"
     },
+    "style": {
+      "type": "boolean",
+      "default": true
+    },
     "nsext": {
       "type": "string"
     },

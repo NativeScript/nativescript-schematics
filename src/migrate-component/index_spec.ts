@@ -29,6 +29,7 @@ describe('Migrate component schematic', () => {
         const options: MigrateComponentOptions = {
             project,
             name: componentName,
+            style: true
         };
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;
@@ -70,6 +71,7 @@ describe('Migrate component schematic', () => {
             project,
             name: componentName,
             module: moduleName,
+            style: true
         };
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;

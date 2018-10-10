@@ -15,7 +15,7 @@ export interface ComponentInfo {
   modulePath: string;
   componentPath: string;
   componentHtmlPath: string;
-  // componentStylePath: string;
+  componentStylePath: string;
 }
 
 let projectSettings: AngularProjectSettings;
@@ -33,11 +33,14 @@ export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tr
   const componentPath = findComponentPath(className, modulePath, options, tree);
   const componentHtmlPath = findTemplateUrl(componentPath, className, tree);
 
+  const componentStylePath = findStyleUrl(componentPath, className, tree);
+
   const componentInfo: ComponentInfo = {
     className,
     modulePath,
     componentPath,
-    componentHtmlPath
+    componentHtmlPath,
+    componentStylePath
   }
 
   context.logger.info(`ComponentInfo
@@ -177,5 +180,25 @@ const findTemplateUrl = (componentPath: string, componentClassName: string, tree
   } else {
     throw new SchematicsException(`${node.getText()} for Component ${componentClassName} is expected have the assigned value as StringLiteral`);
   }
+}
+
+const findStyleUrl = (componentPath: string, componentClassName: string, tree: Tree): string => {
+  const source = getSourceFile(tree, componentPath);
+
+  const node = findDecoratorPropertyNode(source, componentClassName, 'Component', 'styleUrls');
+  if (node === null) {
+    return '';
+  }
+
+  if (ts.isArrayLiteralExpression(node) && node.elements.length > 0) {
+    const stylePath = (node.elements[0] as ts.StringLiteral).text;
+
+    return join(
+      dirname(componentPath),
+      stylePath
+    );
+  }
+
+  return '';
 }
 
