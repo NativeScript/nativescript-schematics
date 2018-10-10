@@ -1,11 +1,98 @@
 env:
   global:
-  - DATE=$(date +%Y-%m-%d)
-language: node_js
-node_js:
-- '8'
+    - NODE_VERSION=8
+    - EMULATOR_API_LEVEL=23
+    - ANDROID_VERSION=28
+    - ANDROID_BUILD_TOOLS_VERSION=28.0.2
+    - ANDROID_ABI=armeabi-v7a
+    - EMULATOR_NAME="Emulator-Api23-Default"
+    - ANDROID_TAG=google_apis
+    - DATE=$(date +%Y-%m-%d)
+  branches:
+  only: 
+    - master
+matrix:
+  include:
+    - stage: "Unit tests"
+      language: node_js
+      os: linux
+      before_install: 
+        - nvm install $NODE_VERSION
+      script: 
+        - npm install --ignore-scripts
+        - npm run build
+        - npm run test
+    - stage: "e2e tests"
+      os: osx
+      env:
+        - Build="iOS"
+      osx_image: xcode9.3
+      language: node_js
+      node_js: "8"
+      jdk: oraclejdk8
+      before_install: 
+        - npm install --ignore-scripts
+        - npm install -g
+      script: 
+        - cd ..
+        - ng new -c=@nativescript/schematics shared-proj
+        - cd shared-proj
+        - npm i
+        - tns build ios --bundle
+        - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
+
+    - language: android
+      node_js: "8"
+      os: linux
+      env:
+        - Build="Android"
+      jdk: oraclejdk8
+      before_install: 
+        - echo no | android create avd --force -n $EMULATOR_NAME -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG -c 12M
+        - QEMU_AUDIO_DRV=none emulator -avd $EMULATOR_NAME -no-window &
+        - nvm install $NODE_VERSION
+        - npm install --ignore-scripts
+        - npm install -g
+        - android-wait-for-emulator
+        - adb shell input keyevent 82 &
+      script: 
+        - cd ..
+        - ng new -c=@nativescript/schematics shared-proj
+        - cd shared-proj
+        - npm i
+        - tns build android --bundle
+        - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
+        - npm run e2e -- runType android$EMULATOR_API_LEVEL --ignoreDeviceController
+android:
+  components:
+    - tools
+    - platform-tools
+    - android-$ANDROID_VERSION
+    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+    - android-$EMULATOR_API_LEVEL
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
+  licenses:
+    - ".+"
+
+before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+    directories:
+        - .nvm
+        - $HOME/.gradle/caches/
+        - $HOME/.gradle/wrapper/
+
 install:
-- npm install --ignore-scripts
-script:
-- npm run build
-- npm run test
+    - nvm install $NODE_VERSION
+    - npm install -g typings
+    - wget -O ./nativescript.tgz "https://s3.amazonaws.com/nativescript-ci/build_result/nativescript.tgz"
+    - npm install -g nativescript.tgz --ignore-scripts
+    - npm install -g @angular/cli
+    - tns usage-reporting disable
+    - tns error-reporting disable
