@@ -1,3 +1,13 @@
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/nativescript/nativescript-schematics/compare/0.3.2...0.3.3) (2018-10-10)
+
+
+### Bug Fixes
+
+* **component:** prevent the command from hanging if no module is found ([#127](https://github.com/nativescript/nativescript-schematics/issues/127)) ([7ca9462](https://github.com/nativescript/nativescript-schematics/commit/7ca9462)), closes [#126](https://github.com/nativescript/nativescript-schematics/issues/126)
+
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.com/nativescript/nativescript-schematics/compare/0.3.0...0.3.2) (2018-10-10)
 
