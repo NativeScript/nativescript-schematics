@@ -9,6 +9,7 @@ import {
   branchAndMerge,
   mergeWith,
   SchematicsException,
+  noop,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
@@ -39,6 +40,9 @@ export default function(options: MigrateComponentSchema): Rule {
     
     (tree: Tree, context: SchematicContext) =>
       addNsFiles(componentInfo, options)(tree, context),
+
+    (tree: Tree, context: SchematicContext) =>
+      addNsStyle(componentInfo, options)(tree, context),
 
     (tree: Tree) =>
       addComponentToNsModuleProviders(componentInfo, options)(tree)
@@ -103,4 +107,24 @@ or if you just want to update the component without updating its module, then re
     recorder.insertRight(change.pos, change.toAdd)
   );
   tree.commitUpdate(recorder);
+}
+
+const addNsStyle = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+  if (!componentInfo.componentStylePath || !options.style) {
+    return noop;
+  }
+
+  context.logger.info('Adding {N} StyleSheet');
+
+  const templateOptions = {
+    path: dirname(componentInfo.componentHtmlPath),
+    styleFileName: basename(componentInfo.componentStylePath),
+    
+    addNsExtension: (path: string) => addExtension(path, extensions.ns),
+  };
+
+  const templateSource = apply(url('./_ns-style'), [
+      template(templateOptions)
+  ]);
+  return branchAndMerge(mergeWith(templateSource))(tree, context);
 }

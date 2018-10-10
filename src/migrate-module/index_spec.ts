@@ -19,6 +19,7 @@ describe('Migrate module Schematic', () => {
   const defaultOptions: MigrateModuleOptions = {
     name: moduleName,
     project,
+    style: true
   };
   const nsModulePath = '/src/app/admin/admin.module.tns.ts';
   const webModulePath = '/src/app/admin/admin.module.ts';

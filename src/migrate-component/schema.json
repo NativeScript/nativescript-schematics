@@ -22,6 +22,10 @@
     "skipModule": {
       "type": "boolean"
     },
+    "style": {
+      "type": "boolean",
+      "default": true
+    },
     "nsext": {
       "type": "string"
     },

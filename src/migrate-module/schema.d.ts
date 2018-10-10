@@ -7,6 +7,10 @@ export interface Schema {
   * Specifies the module path.
   */
   modulePath?: string;
+  /**
+  * Specifies whether stylesheets should be generated for all components.
+  */
+  style: boolean;
   nsext?: string;
   /**
   * Allows specification of the project to be updated

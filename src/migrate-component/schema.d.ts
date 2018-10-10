@@ -19,7 +19,10 @@ export interface Schema {
   * Notifies us that the component doesn't belong to any module.
   */
   skipModule?: boolean;
-  
+  /**
+   * Specifies whether stylesheets should be generated.
+   */
+  style: boolean;
   nsext?: string;
   webext?: string;
   /**
