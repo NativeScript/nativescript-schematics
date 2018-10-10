@@ -67,7 +67,7 @@ matrix:
         - tns build android --bundle
         - npm i -D figlet
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
-        - npm run e2e-appuium -- runType "android"$EMULATOR_API_LEVEL --ignoreDeviceController
+        - npm run e2e-appium -- runType "android"$EMULATOR_API_LEVEL --ignoreDeviceController
 android:
   components:
     - tools
