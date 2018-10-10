@@ -52,8 +52,7 @@ matrix:
       before_install: 
         - echo no | android create avd --force -n $EMULATOR_NAME -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG -c 12M
         - QEMU_AUDIO_DRV=none emulator -avd $EMULATOR_NAME -no-window &
-        - nvm install $NODE_VERSION
-        - npm install --ignore-scripts
+        - npm install
         - cd .. 
         - npm pack ./nativescript-schematics
         - npm i -g nativescript-schematics*.tgz
@@ -62,10 +61,11 @@ matrix:
       script: 
         - ng new -c=@nativescript/schematics shared-proj
         - cd shared-proj
+        - cat package.json || true
         - npm i
         - tns build android --bundle
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
-        - npm run e2e-appuium -- runType android$EMULATOR_API_LEVEL --ignoreDeviceController
+        - npm run e2e-appuium -- runType "android"$EMULATOR_API_LEVEL --ignoreDeviceController
 android:
   components:
     - tools
