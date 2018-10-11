@@ -36,7 +36,7 @@ matrix:
         - cd .. 
         - npm pack ./nativescript-schematics
         - npm i -g nativescript-schematics*.tgz
-        - npm i -g appium@1.9.1 
+        - npm i -g appium
       script: 
         - ng new -c=@nativescript/schematics shared-proj
         - cd shared-proj
