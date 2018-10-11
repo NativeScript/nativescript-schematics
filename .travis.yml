@@ -65,7 +65,7 @@ matrix:
         - ng new -c=@nativescript/schematics shared-proj 
         - cd shared-proj
         - npm i
-        - cat package.json || true
+        - cat package.json
         - tns build android --bundle
         - adb install -r ./platforms/android/app/build/outputs/apk/debug/app-debug.apk
         - adb shell am start -W -n org.nativescript.sharedproj/com.tns.NativeScriptActivity
