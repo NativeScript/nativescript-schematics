@@ -51,7 +51,7 @@ matrix:
       jdk: oraclejdk8
       before_install: 
         - nvm install $NODE_VERSION
-        - echo no | android create avd --force -n $EMULATOR_NAME -t "android-"$EMULATOR_API_LEVEL --abi $ANDROID_ABI --tag $ANDROID_TAG -c 12M
+        - echo no | android create avd --force -n travis-api23 -t android-23 --abi armeabi-v7a --tag google_apis -c 12M
         - QEMU_AUDIO_DRV=none emulator -avd $EMULATOR_NAME -no-window &
         - npm install
         - cd .. 
@@ -66,6 +66,8 @@ matrix:
         - npm i
         - cat package.json || true
         - tns build android --bundle
+        - adb install -r ./platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        - adb shell am start -W -n org.nativescript.sharedproj/com.tns.NativeScriptActivity'
         - npm i -D nativescript-dev-appium@next --projectType=shared-ng-project --testingFramework=jasmine
         - npm run e2e-appium -- --runType="android"$EMULATOR_API_LEVEL --ignoreDeviceController=true --verbose=true
 android:
