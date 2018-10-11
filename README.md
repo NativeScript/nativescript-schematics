@@ -167,3 +167,5 @@ The above command will generate the following file structure
 | --- | --- 
 | master | The name of the master component and the name of the module.
 | detail | The name of the detail component
+
+## Test
