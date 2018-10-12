@@ -58,7 +58,7 @@ matrix:
         - cd .. 
         - npm pack ./nativescript-schematics
         - npm i -g nativescript-schematics*.tgz
-        - npm i -g appium@1.9.1
+        - npm i -g appium
         - android-wait-for-emulator
         - adb shell input keyevent 82 &
       script: 
