@@ -64,6 +64,9 @@ export default function (options: ComponentOptions): Rule {
         return tree;
       }
 
+      // this is to ensure that we use the right name for ng module imports
+      options.name = componentInfo.name;
+
       const componentPath = componentInfo.classPath.replace(/\.ts$/, '');
       const componentDir = dirname(componentPath);
       if (platformUse.useWeb) {

@@ -84,6 +84,31 @@ describe('Component Schematic', () => {
     });
   });
 
+  describe('when in ns-only project, create a component in /home folder', () => {
+    const homeDir = 'home'
+    const componentName = `${homeDir}/${name}`;
+    const componentPath = `src/app/${homeDir}/${name}/${name}.component.ts`;
+    const templatePath = `src/app/${homeDir}/${name}/${name}.component.html`;
+
+    beforeAll(() => {
+      appTree = createEmptyNsOnlyProject(project);
+
+      const options = { ...defaultOptions, name: componentName, nativescript: true, web: false };
+      appTree = schematicRunner.runSchematic('component', options, appTree);
+    });
+
+    it('should create component in the home folder', () =>
+    expect(appTree.exists(componentPath)).toBeTruthy());
+
+    it('should create template in the home folder', () =>
+    expect(appTree.exists(templatePath)).toBeTruthy());
+
+    it('should declare the component in the root NgModule for {N} using name FooComponent with the import to home/foo', () => {
+      const nsModuleContent = getFileContent(appTree, rootModulePath);
+      expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+    });
+  });
+
   describe('when in ns+web project', () => {
     describe('executing ns+web schematic', () => {
       beforeAll(() => {
@@ -244,7 +269,7 @@ describe('Component Schematic', () => {
         });
       });
 
-      describe('when a custon {N} extension is specified', () => {
+      describe('when a custom {N} extension is specified', () => {
         const customExtension = '.mobile';
         const componentOptions = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
 
