@@ -103,4 +103,3 @@ install:
     - npm install -g @angular/cli
     - tns usage-reporting disable
     - tns error-reporting disable
-
