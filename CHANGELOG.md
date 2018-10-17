@@ -1,3 +1,13 @@
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/nativescript/nativescript-schematics/compare/0.3.3...0.3.4) (2018-10-17)
+
+
+### Bug Fixes
+
+* fix component generation issues ([#136](https://github.com/nativescript/nativescript-schematics/issues/136)) ([de30da7](https://github.com/nativescript/nativescript-schematics/commit/de30da7)), closes [#134](https://github.com/nativescript/nativescript-schematics/issues/134)
+
+
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.com/nativescript/nativescript-schematics/compare/0.3.2...0.3.3) (2018-10-10)
 
