@@ -15,9 +15,9 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^0.8.0",
-    "@angular-devkit/schematics": "^0.8.0",
-    "@schematics/angular": "^0.8.0"
+    "@angular-devkit/core": "~7.0.0",
+    "@angular-devkit/schematics": "~7.0.0",
+    "@schematics/angular": "~7.0.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
@@ -25,7 +25,7 @@
     "conventional-changelog-cli": "^2.0.1",
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
-    "typescript": "2.7.2"
+    "typescript": "~3.1.1"
   },
   "repository": {
     "type": "git",
