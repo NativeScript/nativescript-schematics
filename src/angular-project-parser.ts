@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 import { join, dirname, basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { getWorkspace } from '@schematics/angular/utility/config';
+import { getProject } from '@schematics/angular/utility/project';
 import { getProjectTargets } from '@schematics/angular/utility/project-targets';
 import {
   getAppModulePath,
@@ -146,7 +147,7 @@ function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSet
 
 function getProjectObject(tree: Tree, projectName: string) {
   const workspace = getWorkspace(tree);
-  const project = workspace.projects[projectName];
+  const project = getProject(workspace, projectName);
   if (!project) {
     throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);
   }
