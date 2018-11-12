@@ -261,7 +261,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
 
   // @UPGRADE: Update all versions whenever {N} version updates
   const depsToAdd = {
-    'nativescript-angular': '~6.1.0',
+    'nativescript-angular': '~7.0.0',
     'nativescript-theme-core': '~1.0.4',
     'reflect-metadata': '~0.1.8',
     'tns-core-modules': '~5.0.0'
