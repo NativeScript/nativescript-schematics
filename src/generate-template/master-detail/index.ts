@@ -52,7 +52,7 @@ const getProjectInfo = (tree: Tree): ProjectInfo => {
   if (tree.exists('nsconfig.json')) {
     const nsconfig = getNsConfig(tree);
     return {
-      shared: true,
+      shared: nsconfig.shared,
       appPath: join(nsconfig.appPath, 'app'),
       nsext: nsconfig.nsext
     }
