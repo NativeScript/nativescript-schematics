@@ -19,7 +19,7 @@
         "nativescript-theme-core": "~1.0.4",
         <% } %>"reflect-metadata": "~0.1.8",
         "rxjs": "~6.2.0",
-        "tns-core-modules": "~4.2.0",
+        "tns-core-modules": "~5.0.0",
         "zone.js": "^0.8.26"
     },
     "devDependencies": {
@@ -28,8 +28,8 @@
         "@angular-devkit/core": "^0.8.0",
         "@nativescript/schematics": "~0.3.0",
         "nativescript-dev-typescript": "~0.7.0",<% if(webpack) {%>
-        "nativescript-dev-webpack": "^0.16.0",
+        "nativescript-dev-webpack": "^0.17.0",
         "@ngtools/webpack": "~6.2.0",
-        <% } %>"typescript": "~2.7.2"
+        <% } %>"typescript": "~2.8.0"
     }
 }

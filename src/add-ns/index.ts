@@ -264,13 +264,13 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
     'nativescript-angular': '~6.1.0',
     'nativescript-theme-core': '~1.0.4',
     'reflect-metadata': '~0.1.8',
-    'tns-core-modules': '~4.2.0'
+    'tns-core-modules': '~5.0.0'
   };
   packageJson.dependencies = Object.assign({}, depsToAdd, packageJson.dependencies);
 
   const devDepsToAdd = {
-    'nativescript-dev-webpack': '^0.16.0',
-    '@nativescript/schematics': '~0.2.5',
+    'nativescript-dev-webpack': '^0.17.0',
+    '@nativescript/schematics': '~0.3.0',
   };
   packageJson.devDependencies = Object.assign({}, devDepsToAdd, packageJson.devDependencies);
 
