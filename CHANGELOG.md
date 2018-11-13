@@ -1,3 +1,18 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/nativescript/nativescript-schematics/compare/0.3.4...0.4.0) (2018-11-13)
+
+
+### Bug Fixes
+
+* generate issues ([#136](https://github.com/nativescript/nativescript-schematics/issues/136)) ([de30da7](https://github.com/nativescript/nativescript-schematics/commit/de30da7)), closes [#134](https://github.com/nativescript/nativescript-schematics/issues/134)
+
+
+### Features
+
+* update to Angular 7 :tada: ([#139](https://github.com/nativescript/nativescript-schematics/issues/139)) ([438b9e3](https://github.com/nativescript/nativescript-schematics/commit/438b9e3))
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.com/nativescript/nativescript-schematics/compare/0.3.3...0.3.4) (2018-10-17)
 
