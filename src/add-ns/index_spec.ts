@@ -45,7 +45,7 @@ describe('Add {N} schematic', () => {
             expect(files.includes('/nsconfig.json')).toBeTruthy();
             expect(files.includes('/tsconfig.tns.json')).toBeTruthy();
             expect(files.includes('/foo/src/app.css')).toBeTruthy();
-            expect(files.includes('/foo/src/main.ns.ts')).toBeTruthy();
+            expect(files.includes('/foo/src/main.tns.ts')).toBeTruthy();
             expect(files.includes('/foo/src/package.json')).toBeTruthy();
             expect(files.includes('/foo/src/app/app.module.tns.ts')).toBeTruthy();
             expect(files.includes('/foo/src/app/app.component.tns.ts')).toBeTruthy();
