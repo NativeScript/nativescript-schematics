@@ -14,9 +14,7 @@
       ]
     }
   },
-  "exclude": [
-    "**/*<%= nsext %>.ts",
-    "**/*.android.ts",
-    "**/*.ios.ts"
+  "files": [
+      "src/main<%= nsext %>.ts"
   ]
 }

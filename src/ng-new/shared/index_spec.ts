@@ -28,7 +28,7 @@ describe('Shared Application Schematic', () => {
     expect(files.indexOf('/foo/tsconfig.tns.json')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/src/package.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/main.ns.ts')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/src/main.tns.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/app.module.ts')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/src/app/app.component.ts')).toBeGreaterThanOrEqual(0);
