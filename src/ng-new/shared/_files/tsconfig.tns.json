@@ -3,8 +3,5 @@
   "compilerOptions": {
     "module": "es2015",
     "moduleResolution": "node"
-  },
-  "files": [
-    "src/main.tns.ts"
-  ]
+  }
 }

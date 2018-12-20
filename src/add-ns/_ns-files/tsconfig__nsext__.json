@@ -13,8 +13,5 @@
         "./node_modules/*"
       ]
     }
-  },
-  "files": [
-      "src/main<%= nsext %>.ts"
-  ]
+  }
 }
