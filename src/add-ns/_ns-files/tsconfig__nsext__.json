@@ -13,5 +13,11 @@
         "./node_modules/*"
       ]
     }
-  }
+  },
+   "exclude": [
+    "**/*.tns.ts",
+    "**/*.android.ts",
+    "**/*.ios.ts",
+    "**/*.spec.ts"
+  ]
 }
