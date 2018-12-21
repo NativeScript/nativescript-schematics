@@ -2,7 +2,7 @@
   "android": {
     "v8Flags": "--expose_gc"
   },
-  "main": "<%= main %><%= nsext %>.js",
+  "main": "<%= main %>.js",
   "name": "migration-ng",
   "version": "4.1.0"
 }
