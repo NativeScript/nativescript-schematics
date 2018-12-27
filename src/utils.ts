@@ -46,7 +46,9 @@ export const schematicRunner = new SchematicTestRunner(
 export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
   const buffer = host.read(path);
   if (!buffer) {
-    throw new SchematicsException(`Could not find bootstrapped module.`);
+    throw new SchematicsException(
+      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`
+    );
   }
   const content = buffer.toString();
   const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
