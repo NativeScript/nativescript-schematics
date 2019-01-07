@@ -7,12 +7,7 @@ about: 'We really appreciate your effort to provide feedback. Before opening a n
 ---
 
 **Environment**
-Provide version numbers for the following components (information can be retrieved by running `tns info` in your project folder or by inspecting the `package.json` of the project):
- - CLI: 
- - Cross-platform modules:
- - Android Runtime:
- - iOS Runtime:
- - Plugin(s):
+Provide the content of the `package.json` file in the project:
 
 **Describe the bug**
 <!-- A clear and concise description of what the bug is. Please, explain whether it's a build time error or a runtime error. More detailed logs can be easily obtained by following the instructions in this guide: https://docs.nativescript.org/get-support#how-to-obtain-diagnostic-reports. -->
@@ -23,7 +18,7 @@ Provide version numbers for the following components (information can be retriev
 **Expected behavior**
 
 **Sample project**
-<!-- If possible, provide a link from the [Playground](https://play.nativescript.org) with reproduction of the problem. If not, consider attaching a sample project or link to a repository with such project. -->
+<!-- If possible, attach a sample project or link to a repository with such project. -->
 
 **Additional context**
 <!-- Add any other context about the problem here. -->
