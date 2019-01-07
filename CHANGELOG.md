@@ -1,3 +1,17 @@
+# [0.5.0](https://github.com/nativescript/nativescript-schematics/compare/0.4.0...0.5.0) (2019-01-07)
+
+
+### Bug Fixes
+
+* resolve main.tns.ts with webpack's VFS instead with TS ([#174](https://github.com/nativescript/nativescript-schematics/issues/174)) ([7d9622d](https://github.com/nativescript/nativescript-schematics/commit/7d9622d)), closes [#173](https://github.com/nativescript/nativescript-schematics/issues/173) [#173](https://github.com/nativescript/nativescript-schematics/issues/173)
+
+
+### Features
+
+* flag to skip adding auto-generated component on `ng new` and `ng add` ([#171](https://github.com/nativescript/nativescript-schematics/issues/171)) ([6c835b1](https://github.com/nativescript/nativescript-schematics/commit/6c835b1))
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/nativescript/nativescript-schematics/compare/0.3.4...0.4.0) (2018-11-13)
 
