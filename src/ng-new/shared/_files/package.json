@@ -13,8 +13,8 @@
     "e2e": "ng e2e",
     "android": "tns run android --bundle",
     "ios": "tns run ios --bundle",
-    "mobile": 'tns run --bundle',
-    "preview": 'tns preview --bundle'
+    "mobile": "tns run --bundle",
+    "preview": "tns preview --bundle"
   },
   "private": true,
   "dependencies": {
