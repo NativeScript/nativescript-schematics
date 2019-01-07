@@ -46,6 +46,16 @@ You are good to go! You're strongly encouraged to follow the official NativeScri
 2. First, search for a similar request and extend it if applicable. This way it would be easier for the community to track the features.
 3. When requesting a new feature, please provide as much detail as possible about why you need the feature in your apps. We prefer that you explain a need rather than explain a technical solution for it. That might trigger a nice conversation on finding the best and broadest technical solution to a specific need.
 
+## Running Tests
+
+1. To run the unit tests, execute the following command in the root of the project:
+
+```
+npm test
+```
+
+2. The end-to-end (e2e) tests for this project are integrated within the internal build infrastructure for NativeScript. Because of that, they are not available for local execution. They will be executed internally when you submit a pull request.
+
 ## Submitting PR
 
 1. Create one or several commits describing your changes. Follow the [Angular commit message guidelines](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#heading=h.uyo6cb12dt6w).
