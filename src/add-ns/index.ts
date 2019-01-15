@@ -215,7 +215,9 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
 
   const scriptsToAdd = {
     android: 'tns run android --bundle',
-    ios: 'tns run ios --bundle'
+    ios: 'tns run ios --bundle',
+    mobile: 'tns run --bundle',
+    preview: 'tns preview --bundle'
   };
   packageJson.scripts = Object.assign({}, scriptsToAdd, packageJson.scripts);
 
