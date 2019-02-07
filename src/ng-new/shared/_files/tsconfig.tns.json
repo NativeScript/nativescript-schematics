@@ -2,6 +2,17 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "es2015",
-    "moduleResolution": "node"
-  }
+    "moduleResolution": "node",
+    "paths": {
+      "@src/*": [
+        "src/*.android.ts",
+        "src/*.ios.ts",
+        "src/*.tns.ts",
+        "src/*"
+      ]
+    }
+  },
+  "files": [
+    "src/main.tns.ts"
+  ]
 }
