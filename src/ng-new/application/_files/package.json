@@ -1,35 +1,35 @@
 {
-    "name": "<%= utils.classify(name) %>",
-    "license": "SEE LICENSE IN <your-license-filename>",
-    "version": "0.0.0",
-    "nativescript": {
-        "id": "org.nativescript.<%= utils.sanitize(name) %>"
-    },
-    "dependencies": {
-        "@angular/animations": "~7.1.0",
-        "@angular/common": "~7.1.0",
-        "@angular/compiler": "~7.1.0",
-        "@angular/core": "~7.1.0",
-        "@angular/forms": "~7.1.0",
-        "@angular/http": "~7.1.0",
-        "@angular/platform-browser": "~7.1.0",
-        "@angular/platform-browser-dynamic": "~7.1.0",
-        "@angular/router": "~7.1.0",
-        "nativescript-angular": "~7.1.0",<% if(theme) { %>
-        "nativescript-theme-core": "~1.0.4",
-        <% } %>"reflect-metadata": "~0.1.8",
-        "rxjs": "~6.3.3",
-        "tns-core-modules": "~5.1.0",
-        "zone.js": "^0.8.26"
-    },
-    "devDependencies": {
-        "@angular/cli": "^7.1.0",
-        "@angular/compiler-cli": "~7.1.0",
-        "@angular-devkit/core": "~7.1.0",
-        "@nativescript/schematics": "~0.4.0",
-        "nativescript-dev-typescript": "~0.7.0",<% if(webpack) {%>
-        "nativescript-dev-webpack": "^0.18.0",
-        "@ngtools/webpack": "~7.1.0",
-        <% } %>"typescript": "~3.1.1"
-    }
+  "name": "<%= utils.classify(name) %>",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "version": "0.0.0",
+  "nativescript": {
+    "id": "org.nativescript.<%= utils.sanitize(name) %>"
+  },
+  "dependencies": {
+    "@angular/animations": "~7.2.0",
+    "@angular/common": "~7.2.0",
+    "@angular/compiler": "~7.2.0",
+    "@angular/core": "~7.2.0",
+    "@angular/forms": "~7.2.0",
+    "@angular/http": "~7.2.0",
+    "@angular/platform-browser": "~7.2.0",
+    "@angular/platform-browser-dynamic": "~7.2.0",
+    "@angular/router": "~7.2.0",
+    "nativescript-angular": "~7.2.0",<% if(theme) { %>
+    "nativescript-theme-core": "~1.0.4",
+    <% } %>"reflect-metadata": "~0.1.12",
+    "rxjs": "~6.3.3",
+    "tns-core-modules": "~5.2.0",
+    "zone.js": "^0.8.26"
+  },
+  "devDependencies": {
+    "@angular/cli": "^7.2.0",
+    "@angular/compiler-cli": "~7.2.0",
+    "@angular-devkit/core": "~7.2.0",
+    "@nativescript/schematics": "~0.4.0",
+    "nativescript-dev-typescript": "~0.8.0",<% if(webpack) { %>
+    "nativescript-dev-webpack": "^0.20.0",
+    "@ngtools/webpack": "~7.2.0",
+    <% } %>"typescript": "~3.1.1"
+  }
 }
