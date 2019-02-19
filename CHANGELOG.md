@@ -1,3 +1,12 @@
+## [0.5.1](https://github.com/nativescript/nativescript-schematics/compare/0.5.0...0.5.1) (2019-02-19)
+
+
+### Features
+
+* update ng new/add schematics to use NativeScript 5.2 and Angular 7.2 ([#191](https://github.com/nativescript/nativescript-schematics/issues/191)) ([5e577e4](https://github.com/nativescript/nativescript-schematics/commit/5e577e4))
+
+
+
 # [0.5.0](https://github.com/nativescript/nativescript-schematics/compare/0.4.0...0.5.0) (2019-01-07)
 
 
