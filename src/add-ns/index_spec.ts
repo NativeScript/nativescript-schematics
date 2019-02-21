@@ -34,7 +34,7 @@ describe('Add {N} schematic', () => {
 
         it('should add dependency to NativeScript schematics', () => {
             const configFile = '/angular.json';
-            expect(appTree.files.includes(configFile)).toBeTruthy();
+            expect(appTree.files).toContain(configFile);
             const configFileContent = JSON.parse(getFileContent(appTree, configFile));
 
             expect(configFileContent.cli.defaultCollection).toEqual('@nativescript/schematics');
@@ -43,24 +43,24 @@ describe('Add {N} schematic', () => {
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
-            expect(files.includes('/nsconfig.json')).toBeTruthy();
-            expect(files.includes('/tsconfig.tns.json')).toBeTruthy();
-            expect(files.includes('/foo/src/app.css')).toBeTruthy();
-            expect(files.includes('/foo/src/main.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/package.json')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.module.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.component.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/nsconfig.json');
+            expect(files).toContain('/tsconfig.tns.json');
+            expect(files).toContain('/foo/src/app.css');
+            expect(files).toContain('/foo/src/main.tns.ts');
+            expect(files).toContain('/foo/src/package.json');
+            expect(files).toContain('/foo/src/app/app.module.tns.ts');
+            expect(files).toContain('/foo/src/app/app.component.tns.ts');
+            expect(files).toContain('/foo/src/app/app.component.tns.html');
         });
 
         it('should add native app resources', () => {
-            expect(appTree.files.includes('/App_Resources/Android/app.gradle')).toBeTruthy();
-            expect(appTree.files.includes('/App_Resources/iOS/Info.plist')).toBeTruthy();
+            expect(appTree.files).toContain('/App_Resources/Android/app.gradle');
+            expect(appTree.files).toContain('/App_Resources/iOS/Info.plist');
         });
 
         it('should add {N} specifics to gitignore', () => {
             const gitignorePath = '/.gitignore';
-            expect(appTree.files.includes(gitignorePath)).toBeTruthy();
+            expect(appTree.files).toContain(gitignorePath);
             const gitignore = getFileContent(appTree, gitignorePath);
 
             expect(gitignore.includes('node_modules/')).toBeTruthy();
@@ -71,7 +71,7 @@ describe('Add {N} schematic', () => {
 
         it('should add all required dependencies to the package.json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { dependencies, devDependencies } = packageJson;
@@ -80,14 +80,14 @@ describe('Add {N} schematic', () => {
             expect(dependencies['nativescript-theme-core']).toBeDefined();
             expect(dependencies['tns-core-modules']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
-            
+
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
             expect(devDependencies['@nativescript/schematics']).toBeDefined();
         });
 
         it('should add run scripts to the package json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { scripts } = packageJson;
@@ -98,7 +98,7 @@ describe('Add {N} schematic', () => {
 
         it('should add NativeScript key to the package json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { nativescript } = packageJson;
@@ -109,7 +109,7 @@ describe('Add {N} schematic', () => {
 
         it('should exclude {N} files from the web TS compilation', () => {
             const webTsconfigPath = '/foo/tsconfig.app.json';
-            expect(appTree.files.includes(webTsconfigPath)).toBeTruthy();
+            expect(appTree.files).toContain(webTsconfigPath);
 
             const webTsconfig = JSON.parse(getFileContent(appTree, webTsconfigPath));
             const { exclude } = webTsconfig;
@@ -153,9 +153,9 @@ describe('Add {N} schematic', () => {
             const { files } = appTree;
             const appRoutingModuleContent = appTree.readContent('/foo/src/app/app-routing.module.tns.ts');
             const appComponentTemplate = appTree.readContent('/foo/src/app/app.component.tns.html');
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.css')).toBeFalsy();
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.html')).toBeFalsy();
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.ts')).toBeFalsy();
+            expect(files).not.toContain('/foo/src/app/auto-generated/auto-generated.component.css');
+            expect(files).not.toContain('/foo/src/app/auto-generated/auto-generated.component.html');
+            expect(files).not.toContain('/foo/src/app/auto-generated/auto-generated.component.ts');
             expect(appRoutingModuleContent).not.toMatch(
                 /import { AutoGeneratedComponent } from '.\/auto-generated\/auto-generated.component'/
             );
@@ -181,19 +181,19 @@ describe('Add {N} schematic', () => {
         it('should generate sample files', () => {
             const { files } = appTree;
 
-            expect(files.includes('/foo/src/app/barcelona/barcelona.common.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/barcelona.module.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/barcelona.module.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player.service.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player.ts')).toBeTruthy();
+            expect(files).toContain('/foo/src/app/barcelona/barcelona.common.ts');
+            expect(files).toContain('/foo/src/app/barcelona/barcelona.module.ts');
+            expect(files).toContain('/foo/src/app/barcelona/barcelona.module.tns.ts');
+            expect(files).toContain('/foo/src/app/barcelona/player.service.ts');
+            expect(files).toContain('/foo/src/app/barcelona/player.model.ts');
 
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.html')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/foo/src/app/barcelona/players/players.component.ts');
+            expect(files).toContain('/foo/src/app/barcelona/players/players.component.html');
+            expect(files).toContain('/foo/src/app/barcelona/players/players.component.tns.html');
 
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.html')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.ts');
+            expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.html');
+            expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.tns.html');
         });
 
         it('should configure routing for redirection', () => {

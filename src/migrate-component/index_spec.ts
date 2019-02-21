@@ -45,7 +45,7 @@ describe('Migrate component schematic', () => {
         });
 
         it('should create an {N} markup file for the component', () => {
-            expect(appTree.files.includes(xmlComponentPath)).toBeTruthy();
+            expect(appTree.files).toContain(xmlComponentPath);
         });
 
         it('should declare the component in the correct NgModule', () => {
@@ -95,7 +95,7 @@ describe('Migrate component schematic', () => {
         });
 
         it('should create an {N} markup file for the component', () => {
-            expect(appTree.files.includes(xmlComponentPath)).toBeTruthy();
+            expect(appTree.files).toContain(xmlComponentPath);
         });
 
         it('should declare the component in the correct NgModule', () => {
