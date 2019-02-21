@@ -49,7 +49,7 @@ describe('Shared Application Schematic', () => {
     expect(files.indexOf('/foo/src/app/barcelona/barcelona.module.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/barcelona/barcelona.module.tns.ts')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/barcelona/player.service.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/player.ts')).toBeGreaterThanOrEqual(0);
+    expect(files.indexOf('/foo/src/app/barcelona/player.model.ts')).toBeGreaterThanOrEqual(0);
 
     expect(files.indexOf('/foo/src/app/barcelona/players/players.component.html')).toBeGreaterThanOrEqual(0);
     expect(files.indexOf('/foo/src/app/barcelona/players/players.component.tns.html')).toBeGreaterThanOrEqual(0);

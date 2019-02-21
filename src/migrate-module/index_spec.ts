@@ -41,11 +41,11 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should create a mobile module file', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.module.tns.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.module.tns.ts');
     });
 
     it('should create a common file', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.common.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.common.ts');
     });
   });
 
@@ -56,11 +56,11 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should create the module file with that extension', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.module.mobile.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.module.mobile.ts');
     });
 
     it('should create a common file without the extension', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.common.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.common.ts');
     });
   });
 
@@ -81,12 +81,12 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should keep the web module untouched', () => {
-      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(webModulePath);
       expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
     });
 
     it('should declare the component in the mobile module', () => {
-      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(nsModulePath);
       const content = getFileContent(appTree, nsModulePath);
 
       const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
@@ -105,12 +105,12 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should keep the web module untouched', () => {
-      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(webModulePath);
       expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
     });
 
     it('should provide the service in the mobile module', () => {
-      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(nsModulePath);
       const content = getFileContent(appTree, nsModulePath);
 
       const matcher = isInModuleMetadata('AdminModule', 'providers', provider, true);

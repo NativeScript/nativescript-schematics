@@ -30,12 +30,12 @@ describe('Master-detail schematic', () => {
     it('should create all necessary files', () => {
       const { files } = appTree;
 
-      expect(files.includes(`/app/${master}/${master}.module.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/data.service.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${detail}-detail/${detail}-detail.component.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${detail}-detail/${detail}-detail.component.html`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${master}/${master}.component.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${master}/${master}.component.html`)).toBeTruthy();
+      expect(files).toContain(`/app/${master}/${master}.module.ts`);
+      expect(files).toContain(`/app/${master}/data.service.ts`);
+      expect(files).toContain(`/app/${master}/${detail}-detail/${detail}-detail.component.ts`);
+      expect(files).toContain(`/app/${master}/${detail}-detail/${detail}-detail.component.html`);
+      expect(files).toContain(`/app/${master}/${master}/${master}.component.ts`);
+      expect(files).toContain(`/app/${master}/${master}/${master}.component.html`);
     });
 
   });
@@ -50,18 +50,18 @@ describe('Master-detail schematic', () => {
     it('should create all necessary files', () => {
       const { files } = appTree;
 
-      expect(files.includes(`/src/app/${master}/${master}.module.tns.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}.module.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}.common.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/data.service.ts`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${master}.module.tns.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}.module.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}.common.ts`);
+      expect(files).toContain(`/src/app/${master}/data.service.ts`);
 
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.html`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.tns.html`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.ts`);
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.html`);
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.tns.html`);
 
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.html`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.tns.html`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.html`);
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.tns.html`);
     });
 
 

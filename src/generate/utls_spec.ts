@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
+import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 
 import { createEmptyNsOnlyProject, createEmptySharedProject, toComponentClassName } from '../utils';
 import { Schema as ComponentOptions } from './component/schema';
