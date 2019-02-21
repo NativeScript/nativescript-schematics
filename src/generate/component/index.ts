@@ -11,7 +11,6 @@ import {
   template,
   url,
   mergeWith,
-  filter,
 } from '@angular-devkit/schematics';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
@@ -58,7 +57,7 @@ export default function (options: ComponentOptions): Rule {
       extensions = getExtensions(tree, options);
       componentInfo = parseComponentInfo(tree, options);
     },
-    
+
     (tree: Tree) => {
       if (options.skipImport) {
         return tree;
@@ -90,17 +89,17 @@ export default function (options: ComponentOptions): Rule {
 
     (tree: Tree, context: SchematicContext) => {
       if (platformUse.useWeb) {
-        return renameFile(tree, componentInfo.templatePath);
+        return addWebExtension(tree, componentInfo.templatePath);
       } else {
-        return removeFile(tree, context, componentInfo.templatePath);
+        return removeFile(tree, componentInfo.templatePath);
       }
     },
 
     (tree: Tree, context: SchematicContext) => {
       if (platformUse.useWeb) {
-        return renameFile(tree, componentInfo.stylesheetPath);
+        return addWebExtension(tree, componentInfo.stylesheetPath);
       } else {
-        return removeFile(tree, context, componentInfo.stylesheetPath);
+        return removeFile(tree, componentInfo.stylesheetPath);
       }
     },
 
@@ -147,7 +146,7 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
   return component;
 }
 
-const renameFile = (tree: Tree, filePath: string) => {
+const addWebExtension = (tree: Tree, filePath: string) => {
   if (extensions.web) {
     const webName = insertExtension(filePath, extensions.web);
     tree.rename(filePath, webName);
@@ -155,10 +154,10 @@ const renameFile = (tree: Tree, filePath: string) => {
   return tree;
 };
 
-const removeFile = (tree: Tree, context: SchematicContext, filePath: string) =>
-  filter(
-    (path: Path) => !path.match(filePath)
-  )(tree, context)
+const removeFile = (tree: Tree, filePath: string) => {
+  tree.delete(filePath);
+  return tree;
+}
 
 const addNativeScriptFiles = (component: ComponentInfo) => {
   const parsedTemplate = parseName('', component.templatePath);
