@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { join, dirname, basename } from 'path';
+import { basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { getWorkspace } from '@schematics/angular/utility/config';
 import { getProject } from '@schematics/angular/utility/project';
@@ -19,7 +19,7 @@ export interface AngularProjectSettings {
 
   /** default: 'src' */
   sourceRoot: string;
-  
+
   /** default: 'main'*/
   mainName: string;
   /** default: 'src/main.ts'*/
@@ -88,11 +88,16 @@ export interface ClassMetadata {
   path: string
 }
 
+interface TypescriptResolver {
+  (moduleName: string, containingFilePath: string): string
+}
+
 export function getAngularProjectSettings(tree: Tree, projectName: string): AngularProjectSettings {
   const projectSettings = getCoreProjectSettings(tree, projectName);
-  const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath);
 
-  const entryComponent = getEntryComponentMetadata(tree, entryModule.path);
+  const tsResolver = getTypescriptResolver(tree, projectSettings.tsConfig);
+  const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath, tsResolver);
+  const entryComponent = getEntryComponentMetadata(tree, entryModule.path, tsResolver);
   const indexAppRootTag = getAppRootTag(tree, entryComponent.path);
 
   return {
@@ -155,15 +160,17 @@ function getProjectObject(tree: Tree, projectName: string) {
   return project;
 }
 
-function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
+function getEntryModuleMetadata(tree: Tree, mainPath: string, tsResolver: TypescriptResolver): ClassMetadata {
   const bootstrapCall = findBootstrapModuleCall(tree, mainPath);
   if (!bootstrapCall) {
-      throw new SchematicsException('Bootstrap call not found! Cannot build project data!');
+    throw new SchematicsException('Bootstrap call not found! Cannot build project data!');
   }
   const className = bootstrapCall.arguments[0].getText();
   const name = className.replace(/Module$/, '');
+
   const importPath = findBootstrapModulePath(tree, mainPath);
-  const path = getAppModulePath(tree, mainPath);
+
+  const path = tsResolver(importPath, mainPath);
 
   const metadata = {
     className,
@@ -178,15 +185,15 @@ function getEntryModuleMetadata(tree: Tree, mainPath: string): ClassMetadata {
 // Step 3 - get appComponent and appComponentPath => open ${appRoot}/${entryModulePath} 
 // - get appComponent from bootstrap: [ __value__ ]
 // - get appComponentPath from import { ${appComponent} } from '__value__'
-function getEntryComponentMetadata(tree: Tree, entryModulePath: string): ClassMetadata {
+function getEntryComponentMetadata(tree: Tree, entryModulePath: string, tsResolver: TypescriptResolver): ClassMetadata {
   const source = getSourceFile(tree, entryModulePath);
-  
+
   // find -> bootstrap -> array -> array value
   // bootstrap: [
   //   AppComponent  <- end result
   // ],
   const node = findNode<ts.ArrayLiteralExpression>(source, [
-    { kind: ts.SyntaxKind.PropertyAssignment, name: 'bootstrap'},
+    { kind: ts.SyntaxKind.PropertyAssignment, name: 'bootstrap' },
     { kind: ts.SyntaxKind.ArrayLiteralExpression }
   ]);
 
@@ -196,8 +203,7 @@ function getEntryComponentMetadata(tree: Tree, entryModulePath: string): ClassMe
 
   const importPath = findImportPath(source, className);
 
-  const entryModuleDir = dirname(entryModulePath);
-  const path = join(entryModuleDir, importPath) + '.ts';
+  const path = tsResolver(importPath, entryModulePath);
 
   return {
     className,
@@ -212,10 +218,83 @@ function getAppRootTag(tree: Tree, entryComponentPath: string): string {
   const source = getSourceFile(tree, entryComponentPath);
 
   const node = findNode<ts.StringLiteral>(source, [
-    { kind: ts.SyntaxKind.PropertyAssignment, name: 'selector'},
+    { kind: ts.SyntaxKind.PropertyAssignment, name: 'selector' },
     { kind: ts.SyntaxKind.StringLiteral }
   ]);
 
   const indexAppRootTag = node.text;
   return indexAppRootTag;
 }
+
+function getTypescriptResolver(tree: Tree, tsConfigName: string,): TypescriptResolver {
+  const parseConfigFileHost = createParseConfigFileHost(tree);
+
+  const tsConfig = ts.getParsedCommandLineOfConfigFile(tsConfigName, ts.getDefaultCompilerOptions(), parseConfigFileHost);
+  if (!tsConfig) {
+    throw new SchematicsException(`Could not load tsconfig file: ${tsConfigName}`);
+  }
+  const compilerOptions = tsConfig.options;
+  const moduleResolutionHost: ts.ModuleResolutionHost = {
+    fileExists: parseConfigFileHost.fileExists,
+    readFile: parseConfigFileHost.readFile
+  };
+
+  return (moduleName: string, containingFilePath: string): string => {
+    const resolutionResult = ts.resolveModuleName(moduleName, containingFilePath, compilerOptions, moduleResolutionHost);
+    if (resolutionResult.resolvedModule) {
+      return resolutionResult.resolvedModule.resolvedFileName;
+    } else {
+      throw new SchematicsException(`Could not resolve ${moduleName}  using config: ${tsConfigName}`);
+    }
+  }
+}
+
+function tsResolve(moduleName: string, containingFilePath: string, tsConfigName: string, tree: Tree): string {
+  const parseConfigFileHost = createParseConfigFileHost(tree);
+
+  const tsConfig = ts.getParsedCommandLineOfConfigFile(tsConfigName, ts.getDefaultCompilerOptions(), parseConfigFileHost);
+  if (!tsConfig) {
+    throw new SchematicsException(`Could not load tsconfig file: ${tsConfigName}`);
+  }
+  const moduleResolutionHost: ts.ModuleResolutionHost = {
+    fileExists: parseConfigFileHost.fileExists,
+    readFile: parseConfigFileHost.readFile
+  };
+
+  const resolutionResult = ts.resolveModuleName(moduleName, containingFilePath, tsConfig.options, moduleResolutionHost);
+  if (resolutionResult.resolvedModule) {
+    return resolutionResult.resolvedModule.resolvedFileName;
+  } else {
+    throw new SchematicsException(`Could not resolve ${moduleName}  using config: ${tsConfigName}`);
+  }
+}
+
+function createParseConfigFileHost(tree): ts.ParseConfigFileHost {
+  const readFile = (filePath: string): string | undefined => {
+    const mainBuffer = tree.read(filePath);
+    if (!mainBuffer) {
+      throw new SchematicsException(`Main file (${filePath}) not found`);
+    }
+    return mainBuffer.toString('utf-8');
+  };
+
+  const fileExists = (filePath: string): boolean => {
+    return tree.exists(filePath);
+  };
+
+  // NOTE: readDirectory is called when there are include/exclude options in the tsconfig.
+  // We dont need these for resolving so (hopefully) its OK th just return []
+  const readDirectory = (path: string, extensions?: ReadonlyArray<string>, exclude?: ReadonlyArray<string>, include?: ReadonlyArray<string>, depth?: number): string[] => {
+    return [];
+  };
+  const parseConfigFileHost: ts.ParseConfigFileHost = {
+    getCurrentDirectory: () => '/',
+    useCaseSensitiveFileNames: false,
+    readDirectory,
+    fileExists,
+    readFile,
+    onUnRecoverableConfigFileDiagnostic: () => { }
+  };
+  return parseConfigFileHost;
+}
+
