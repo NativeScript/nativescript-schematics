@@ -1,3 +1,13 @@
+## [0.5.2](https://github.com/nativescript/nativescript-schematics/compare/0.5.1...0.5.2) (2019-03-20)
+
+
+### Bug Fixes
+
+* **ng-new:** make resolution of lazily-loaded routes consistent between web and mobile ([#198](https://github.com/nativescript/nativescript-schematics/issues/198)) ([9b1c31c](https://github.com/nativescript/nativescript-schematics/commit/9b1c31c)), closes [#197](https://github.com/nativescript/nativescript-schematics/issues/197)
+* fix the slow execution of `ng generate component` ([#190](https://github.com/NativeScript/nativescript-schematics/pull/190))
+
+
+
 ## [0.5.1](https://github.com/nativescript/nativescript-schematics/compare/0.5.0...0.5.1) (2019-02-19)
 
 
