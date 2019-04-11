@@ -3,5 +3,6 @@
   "appPath": "<%= sourcedir %>",
   "nsext": ".tns",
   "webext": "",
-  "shared": true
+  "shared": true,
+  "useLegacyWorkflow": false
 }
