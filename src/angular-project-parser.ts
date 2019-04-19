@@ -5,7 +5,6 @@ import { getWorkspace } from '@schematics/angular/utility/config';
 import { getProject } from '@schematics/angular/utility/project';
 import { getProjectTargets } from '@schematics/angular/utility/project-targets';
 import {
-  getAppModulePath,
   findBootstrapModuleCall,
   findBootstrapModulePath,
 } from '@schematics/angular/utility/ng-ast-utils';
