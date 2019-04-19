@@ -225,7 +225,7 @@ function getAppRootTag(tree: Tree, entryComponentPath: string): string {
   return indexAppRootTag;
 }
 
-function getTypescriptResolver(tree: Tree, tsConfigName: string,): TypescriptResolver {
+function getTypescriptResolver(tree: Tree, tsConfigName: string): TypescriptResolver {
   const parseConfigFileHost = createParseConfigFileHost(tree);
 
   const tsConfig = ts.getParsedCommandLineOfConfigFile(tsConfigName, ts.getDefaultCompilerOptions(), parseConfigFileHost);
@@ -243,7 +243,7 @@ function getTypescriptResolver(tree: Tree, tsConfigName: string,): TypescriptRes
     if (resolutionResult.resolvedModule) {
       return resolutionResult.resolvedModule.resolvedFileName;
     } else {
-      throw new SchematicsException(`Could not resolve ${moduleName}  using config: ${tsConfigName}`);
+      throw new SchematicsException(`Could not resolve ${moduleName} using config: ${tsConfigName}`);
     }
   }
 }
