@@ -283,7 +283,7 @@ function createParseConfigFileHost(tree): ts.ParseConfigFileHost {
   };
 
   // NOTE: readDirectory is called when there are include/exclude options in the tsconfig.
-  // We dont need these for resolving so (hopefully) its OK th just return []
+  // We don't need these for resolving so (hopefully) it's OK to just return []
   const readDirectory = (path: string, extensions?: ReadonlyArray<string>, exclude?: ReadonlyArray<string>, include?: ReadonlyArray<string>, depth?: number): string[] => {
     return [];
   };
