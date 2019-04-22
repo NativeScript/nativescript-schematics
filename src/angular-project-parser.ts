@@ -248,26 +248,6 @@ function getTypescriptResolver(tree: Tree, tsConfigName: string): TypescriptReso
   }
 }
 
-function tsResolve(moduleName: string, containingFilePath: string, tsConfigName: string, tree: Tree): string {
-  const parseConfigFileHost = createParseConfigFileHost(tree);
-
-  const tsConfig = ts.getParsedCommandLineOfConfigFile(tsConfigName, ts.getDefaultCompilerOptions(), parseConfigFileHost);
-  if (!tsConfig) {
-    throw new SchematicsException(`Could not load tsconfig file: ${tsConfigName}`);
-  }
-  const moduleResolutionHost: ts.ModuleResolutionHost = {
-    fileExists: parseConfigFileHost.fileExists,
-    readFile: parseConfigFileHost.readFile
-  };
-
-  const resolutionResult = ts.resolveModuleName(moduleName, containingFilePath, tsConfig.options, moduleResolutionHost);
-  if (resolutionResult.resolvedModule) {
-    return resolutionResult.resolvedModule.resolvedFileName;
-  } else {
-    throw new SchematicsException(`Could not resolve ${moduleName}  using config: ${tsConfigName}`);
-  }
-}
-
 function createParseConfigFileHost(tree): ts.ParseConfigFileHost {
   const readFile = (filePath: string): string | undefined => {
     const mainBuffer = tree.read(filePath);
