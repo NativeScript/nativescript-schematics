@@ -1,4 +1,4 @@
-import { relative, join } from 'path';
+import { relative, join, dirname } from 'path';
 
 import {
   SchematicsException,
@@ -307,4 +307,19 @@ function callRuleSync<T extends Tree | UnitTestTree>(
   }
 
   return newTree;
+}
+
+export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
+  const config = getJsonFile(tree, tsConfigPath);
+  const host: ts.ParseConfigHost = {
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+    readDirectory: ts.sys.readDirectory,
+    fileExists: (file: string) => tree.exists(file),
+    readFile: (file: string) => getFileContents(tree, file)
+  };
+  const basePath = dirname(tsConfigPath);
+
+  const tsConfigObject = ts.parseJsonConfigFileContent(config, host, basePath);
+
+  return tsConfigObject;
 }

@@ -4,6 +4,8 @@ import { HostTree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
+import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
+import { createEmptySharedProject, moveToRoot } from '../utils';
 
 const sourceDirectory = 'src';
 const importPrefix = '@shared';
@@ -20,10 +22,14 @@ fdescribe('Convert relative imports to mapped imports', () => {
   let appTree: UnitTestTree;
   beforeEach(() => {
     appTree = new UnitTestTree(new HostTree);
-    appTree = setupConfigFiles(appTree, defaultOptions.project);
+    // appTree = setupConfigFiles(appTree, defaultOptions.project);
+    // appTree = createEmptySharedProject(defaultOptions.project);
+
+    appTree = setupProject(appTree, schematicRunner, defaultOptions.project);
   });
 
   it('should convert the relative imports in a newly generated file', () => {
+
     const generatedFilePath = `${sourceDirectory}/about/about.module.ts`;
     const generatedContent = `
       import { AboutComponent } from './about.component';
@@ -33,7 +39,7 @@ fdescribe('Convert relative imports to mapped imports', () => {
     `;
 
     appTree.create(generatedFilePath, generatedContent);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', {}, appTree);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
     const actual = getFileContent(appTree, generatedFilePath);
 
     expect(actual).toEqual(expected);
@@ -137,6 +143,7 @@ function getAngularProjectConfig(webConfigPath: string, projectName: string) {
   };
 
   angularJsonObject.projects[projectName] = {
+    projectType: 'application',
     architect: {
       build: {
         options: {
@@ -150,3 +157,22 @@ function getAngularProjectConfig(webConfigPath: string, projectName: string) {
 
   return { angularJsonPath, angularJsonContent };
 }
+
+const setupProject = (
+    appTree: UnitTestTree,
+    schematicRunner: SchematicTestRunner,
+    project: string,
+) => {
+  appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
+    name: project,
+    prefix: '',
+    sourceDir: 'src',
+    style: 'css',
+    theme: true,
+    sample: false,
+  }, appTree);
+
+  appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
+
+  return appTree;
+};

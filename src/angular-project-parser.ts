@@ -135,7 +135,7 @@ function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSet
   const root = project.root;
   const sourceRoot = project.sourceRoot || 'src';
   const mainPath = safeGet(buildTarget, 'options', 'main');
-  const mainName = basename(mainPath).replace(/\.ts$/, '');
+  const mainName = mainPath && basename(mainPath).replace(/\.ts$/, '');
   const prefix = project.prefix;
   const tsConfig = safeGet(buildTarget, 'options', 'tsConfig');
 
