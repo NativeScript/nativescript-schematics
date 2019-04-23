@@ -1,7 +1,7 @@
 import { join } from 'path';
 
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
-import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
+import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
 import { toNgModuleClassName, createEmptySharedProject, createEmptyNsOnlyProject } from '../../utils';
