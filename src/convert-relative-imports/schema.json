@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsConvertRelativeImports",
+  "title": "Convert-relative-imports Options Schema",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "filesToIgnore": {
+      "type": "array",
+      "description": "Array with paths to the files that shouldn't be modified by the schematic.",
+      "default": []
+    }
+  },
+  "required": []
+}
