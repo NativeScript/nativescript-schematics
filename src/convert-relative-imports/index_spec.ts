@@ -5,10 +5,10 @@ import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
-import { createEmptySharedProject, moveToRoot } from '../utils';
+import { moveToRoot } from '../utils';
 
 const sourceDirectory = 'src';
-const importPrefix = '@shared';
+const importPrefix = '@src';
 const defaultOptions: ConvertRelativeImportsOptions = {
   project: 'my-app'
 };
