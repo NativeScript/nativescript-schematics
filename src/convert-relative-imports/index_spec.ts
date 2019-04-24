@@ -53,7 +53,7 @@ fdescribe('Convert relative imports to mapped imports', () => {
     // TODO
   });
 
-  it('should not modify files specified as ignored in invocation options', () => {
+  it('should not modify files specified as ignored in the invocation options', () => {
     // TODO
   });
 });
