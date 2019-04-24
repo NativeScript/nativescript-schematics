@@ -94,9 +94,10 @@ function generateTslintRule(compilerOptions: ts.CompilerOptions) : PreferMappedI
     return;
   }
 
+
   const tslintRuleArguments = {
     prefix: remapOptions.prefix,
-    'prefix-mapped-to': remapOptions.baseUrl,
+    'prefix-mapped-to': remapOptions.prefixMappedTo,
     'base-url': remapOptions.baseUrl
   };
 
