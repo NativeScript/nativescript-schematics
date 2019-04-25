@@ -117,8 +117,7 @@ export function getAngularProjectSettings(tree: Tree, projectName: string): Angu
 }
 
 function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
-  const project = getProjectObject(tree, projectName);
-  const targets = getProjectTargets(project);
+  const { targets, project } = parseAngularConfig(tree, projectName);
   if (!targets) {
     throw new SchematicsException(
       `Failed to find build targets for project ${projectName}!`
@@ -147,6 +146,19 @@ function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSet
     prefix,
     tsConfig,
   };
+}
+
+export function getTsConfigFromProject(tree: Tree, projectName: string): string {
+  const { targets } = parseAngularConfig(tree, projectName);
+  const tsConfig = safeGet(targets, 'build', 'options', 'tsConfig');
+
+  return tsConfig;
+}
+
+function parseAngularConfig(tree, projectName: string) {
+  const project = getProjectObject(tree, projectName);
+  const targets = getProjectTargets(project);
+  return { targets, project };
 }
 
 function getProjectObject(tree: Tree, projectName: string) {
