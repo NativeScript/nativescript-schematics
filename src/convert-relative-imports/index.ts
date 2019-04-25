@@ -7,7 +7,7 @@ import { PreferMappedImportsRule } from '@nativescript/tslint-rules';
 import { parseCompilerOptions } from '@nativescript/tslint-rules/dist/preferMappedImportsRule';
 
 import { parseTsConfigFile, getFileContents } from '../utils';
-import { getAngularProjectSettings } from '../angular-project-parser';
+import { getTsConfigFromProject } from '../angular-project-parser';
 import { Schema as ConvertRelativeImportsSchema } from './schema';
 
 // TODO: add link to the docs
@@ -94,7 +94,6 @@ function generateTslintRule(compilerOptions: ts.CompilerOptions) : PreferMappedI
     return;
   }
 
-
   const tslintRuleArguments = {
     prefix: remapOptions.prefix,
     'prefix-mapped-to': remapOptions.prefixMappedTo,
@@ -112,7 +111,7 @@ function generateTslintRule(compilerOptions: ts.CompilerOptions) : PreferMappedI
 }
 
 function getTsConfigPath(tree: Tree, projectName: string): string | undefined {
-  const { tsConfig } = getAngularProjectSettings(tree, projectName);
+  const tsConfig = getTsConfigFromProject(tree, projectName);
 
   return tsConfig;
 }
