@@ -4,8 +4,6 @@ import { HostTree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
-import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
-import { moveToRoot } from '../utils';
 
 const sourceDirectory = 'src';
 const importPrefix = '@src';
@@ -22,10 +20,7 @@ fdescribe('Convert relative imports to mapped imports', () => {
   let appTree: UnitTestTree;
   beforeEach(() => {
     appTree = new UnitTestTree(new HostTree);
-    // appTree = setupConfigFiles(appTree, defaultOptions.project);
-    // appTree = createEmptySharedProject(defaultOptions.project);
-
-    appTree = setupProject(appTree, schematicRunner, defaultOptions.project);
+    appTree = setupConfigFiles(appTree, defaultOptions.project);
   });
 
   it('should convert the relative imports in a newly generated file', () => {
@@ -54,6 +49,10 @@ fdescribe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files specified as ignored in the invocation options', () => {
+    // TODO
+  });
+
+  it('should not modify files that are deleted by previous rules', () => {
     // TODO
   });
 });
@@ -125,7 +124,7 @@ function getWebTypescriptConfig() {
       outDir: './out-tsc/app',
       'module': 'es2015',
       types: [],
-      paths: []
+      paths: {}
     }
   };
   webConfigObject.compilerOptions.paths[webImportRemapKey] = webImportMap;
@@ -157,22 +156,3 @@ function getAngularProjectConfig(webConfigPath: string, projectName: string) {
 
   return { angularJsonPath, angularJsonContent };
 }
-
-const setupProject = (
-    appTree: UnitTestTree,
-    schematicRunner: SchematicTestRunner,
-    project: string,
-) => {
-  appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
-    name: project,
-    prefix: '',
-    sourceDir: 'src',
-    style: 'css',
-    theme: true,
-    sample: false,
-  }, appTree);
-
-  appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
-
-  return appTree;
-};
