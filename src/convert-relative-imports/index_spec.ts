@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
-import { HostTree } from '@angular-devkit/schematics';
+import { HostTree, Tree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
@@ -19,7 +19,7 @@ fdescribe('Convert relative imports to mapped imports', () => {
 
   let appTree: UnitTestTree;
   beforeEach(() => {
-    appTree = new UnitTestTree(new HostTree);
+    appTree = new UnitTestTree(new HostTree());
     appTree = setupConfigFiles(appTree, defaultOptions.project);
   });
 
@@ -41,6 +41,9 @@ fdescribe('Convert relative imports to mapped imports', () => {
   });
 
   it('should convert the relative imports in a modified file', () => {
+    // appTree.overwrite('some-file', 'some-content');
+    // appTree['set'] = 
+    // appTree.files.push();
     // TODO
   });
 
