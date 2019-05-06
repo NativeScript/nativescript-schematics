@@ -4,6 +4,7 @@ import { HostTree, Tree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
+import { VirtualFile, setupTestTreeWithBase } from '../test-utils';
 
 const sourceDirectory = 'src';
 const importPrefix = '@src';
@@ -19,12 +20,10 @@ fdescribe('Convert relative imports to mapped imports', () => {
 
   let appTree: UnitTestTree;
   beforeEach(() => {
-    appTree = new UnitTestTree(new HostTree());
-    appTree = setupConfigFiles(appTree, defaultOptions.project);
+    appTree = setupConfigFiles(defaultOptions.project);
   });
 
   it('should convert the relative imports in a newly generated file', () => {
-
     const generatedFilePath = `${sourceDirectory}/about/about.module.ts`;
     const generatedContent = `
       import { AboutComponent } from './about.component';
@@ -41,7 +40,7 @@ fdescribe('Convert relative imports to mapped imports', () => {
   });
 
   it('should convert the relative imports in a modified file', () => {
-    // appTree.overwrite('some-file', 'some-content');
+    appTree.overwrite('tsconfig.json', 'some-content');
     // appTree['set'] = 
     // appTree.files.push();
     // TODO
@@ -60,16 +59,29 @@ fdescribe('Convert relative imports to mapped imports', () => {
   });
 });
 
-function setupConfigFiles(tree: UnitTestTree, projectName: string): UnitTestTree {
+function setupConfigFiles(projectName: string): UnitTestTree {
   const { baseConfigPath, baseConfigContent } = getBaseTypescriptConfig();
   const { webConfigPath, webConfigContent } = getWebTypescriptConfig();
   const { angularJsonPath, angularJsonContent } = getAngularProjectConfig(webConfigPath, projectName);
 
-  tree.create(baseConfigPath, baseConfigContent);
-  tree.create(webConfigPath, webConfigContent);
-  tree.create(angularJsonPath, angularJsonContent);
+  const files: VirtualFile[] = [
+    {
+      path: baseConfigPath,
+      content: baseConfigContent
+    },
+    {
+      path: webConfigPath,
+      content: webConfigContent
+    },
+    {
+      path: angularJsonPath,
+      content: angularJsonContent
+    }
+  ];
 
-  return tree;
+  const virtualTree = setupTestTreeWithBase(files);
+
+  return virtualTree;
 }
 
 function getBaseTypescriptConfig() {
