@@ -1,0 +1,4 @@
+{
+  "appPath": "<%= sourcedir %>",
+  "useLegacyWorkflow": false
+}

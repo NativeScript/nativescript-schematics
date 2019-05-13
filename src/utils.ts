@@ -180,7 +180,8 @@ export function createEmptySharedProject(projectName: string, webExtension: stri
     'appPath': 'src',
     'nsext': '.tns',
     'webext': '',
-    'shared': true
+    'shared': true,
+    'useLegacyWorkflow': false
   }));
 
   return <any>appTree;

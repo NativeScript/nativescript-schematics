@@ -3,5 +3,6 @@ export interface NsConfig {
   appPath: string,
   nsext: string,
   webext: string,
-  shared: boolean
+  shared: boolean,
+  useLegacyWorkflow: boolean
 }
