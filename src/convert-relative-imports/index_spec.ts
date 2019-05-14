@@ -12,54 +12,144 @@ const defaultOptions: ConvertRelativeImportsOptions = {
   project: 'my-app'
 };
 
-fdescribe('Convert relative imports to mapped imports', () => {
+const aboutModulePath = `${sourceDirectory}/about/about.module.ts`;
+const relativeImportContent = `
+  import { AboutComponent } from './about.component';
+`;
+const fixedImportContent = `
+  import { AboutComponent } from '${importPrefix}/about/about.component';
+`;
+
+describe('Convert relative imports to mapped imports', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
     join(__dirname, '../collection.json')
   );
 
-  let appTree: UnitTestTree;
-  beforeEach(() => {
-    appTree = setupConfigFiles(defaultOptions.project);
+  it('should convert the relative imports in a newly generated file', () => {
+    let appTree = setupConfigFiles(defaultOptions.project);
+
+    appTree.create(aboutModulePath, relativeImportContent);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    const actual = getFileContent(appTree, aboutModulePath);
+
+    expect(actual).toEqual(fixedImportContent);
   });
 
-  it('should convert the relative imports in a newly generated file', () => {
-    const generatedFilePath = `${sourceDirectory}/about/about.module.ts`;
-    const generatedContent = `
-      import { AboutComponent } from './about.component';
+  it('should convert the relative imports in a modified file', () => {
+    const existingContent = `
+      import { AboutComponent } from '${importPrefix}/about/about.component';
+    `;
+    const modifiedContent = `
+      import { AboutComponent } from '${importPrefix}/about/about.component';
+      import { AboutComponent } from './other-about.component';
     `;
     const expected = `
       import { AboutComponent } from '${importPrefix}/about/about.component';
+      import { AboutComponent } from '${importPrefix}/about/other-about.component';
     `;
 
-    appTree.create(generatedFilePath, generatedContent);
+    let appTree = setupConfigFiles(defaultOptions.project, [{
+      path: aboutModulePath,
+      content: existingContent
+    }]);
+
+    appTree.overwrite(aboutModulePath, modifiedContent);
     appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
-    const actual = getFileContent(appTree, generatedFilePath);
+    const actual = getFileContent(appTree, aboutModulePath);
 
     expect(actual).toEqual(expected);
   });
 
-  it('should convert the relative imports in a modified file', () => {
-    appTree.overwrite('tsconfig.json', 'some-content');
-    // appTree['set'] = 
-    // appTree.files.push();
-    // TODO
+  it('should convert the relative imports in a created and then renamed file', () => {
+    let appTree = setupConfigFiles(defaultOptions.project);
+
+    const renamedFilePath = aboutModulePath.replace(".ts", ".tns.ts");
+
+    appTree.create(aboutModulePath, relativeImportContent);
+    appTree.rename(aboutModulePath, renamedFilePath);
+
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    const actual = getFileContent(appTree, renamedFilePath);
+
+    expect(actual).toEqual(fixedImportContent);
+  });
+
+  it('should not modify files that weren\'t modified', () => {
+    let appTree = setupConfigFiles(defaultOptions.project, [{
+      path: aboutModulePath,
+      content: relativeImportContent
+    }]);
+
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    const actual = getFileContent(appTree, aboutModulePath);
+
+    expect(actual).toEqual(relativeImportContent);
   });
 
   it('should not modify files with extension other than .ts', () => {
-    // TODO
+    let appTree = setupConfigFiles(defaultOptions.project);
+
+    const generatedFilePath = `${sourceDirectory}/about/about.module.tsx`;
+
+    appTree.create(generatedFilePath, relativeImportContent);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    const actual = getFileContent(appTree, generatedFilePath);
+
+    expect(actual).toEqual(relativeImportContent);
   });
 
   it('should not modify files specified as ignored in the invocation options', () => {
-    // TODO
+    let appTree = setupConfigFiles(defaultOptions.project);
+
+    appTree.create(aboutModulePath, relativeImportContent);
+
+    const options: ConvertRelativeImportsOptions = { ...defaultOptions, filesToIgnore: [aboutModulePath] };
+    appTree = schematicRunner.runSchematic('convert-relative-imports', options, appTree);
+    const actual = getFileContent(appTree, aboutModulePath);
+
+    expect(actual).toEqual(relativeImportContent);
   });
 
   it('should not modify files that are deleted by previous rules', () => {
-    // TODO
+    let appTree = setupConfigFiles(defaultOptions.project, [{
+      path: aboutModulePath,
+      content: relativeImportContent
+    }]);
+
+    appTree.delete(aboutModulePath);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    
+    expect(appTree.get(aboutModulePath)).toBeNull();
   });
+
+  it('should not modify files that were created and then deleted by previous rules', () => {
+    let appTree = setupConfigFiles(defaultOptions.project);
+
+    appTree.create(aboutModulePath, relativeImportContent);
+    appTree.delete(aboutModulePath);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+
+    expect(appTree.get(aboutModulePath)).toBeNull();
+  });
+
+  it('should not modify files that were modified and then deleted by previous rules', () => {
+
+    let appTree = setupConfigFiles(defaultOptions.project, [{
+      path: aboutModulePath,
+      content: relativeImportContent
+    }]);
+
+    appTree.overwrite(aboutModulePath, relativeImportContent + '\nconsole.log(\'modified\');\n');
+    appTree.delete(aboutModulePath);
+    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+
+    expect(appTree.get(aboutModulePath)).toBeNull();
+  });
+
 });
 
-function setupConfigFiles(projectName: string): UnitTestTree {
+function setupConfigFiles(projectName: string, additionalFiles: VirtualFile[] = []): UnitTestTree {
   const { baseConfigPath, baseConfigContent } = getBaseTypescriptConfig();
   const { webConfigPath, webConfigContent } = getWebTypescriptConfig();
   const { angularJsonPath, angularJsonContent } = getAngularProjectConfig(webConfigPath, projectName);
@@ -76,7 +166,8 @@ function setupConfigFiles(projectName: string): UnitTestTree {
     {
       path: angularJsonPath,
       content: angularJsonContent
-    }
+    },
+    ...additionalFiles
   ];
 
   const virtualTree = setupTestTreeWithBase(files);
