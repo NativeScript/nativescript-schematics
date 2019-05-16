@@ -11,6 +11,7 @@ import {
   template,
   url,
   mergeWith,
+  schematic,
 } from '@angular-devkit/schematics';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
@@ -21,6 +22,8 @@ import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatf
 import { addDeclarationToNgModule, insertModuleId } from './ast-utils';
 import { Schema as ComponentOptions } from './schema';
 import { findModule } from './find-module';
+
+import { Schema as ConvertRelativeImportsSchema } from '../../convert-relative-imports/schema';
 
 class ComponentInfo {
   classPath: string;
@@ -107,7 +110,13 @@ export default function (options: ComponentOptions): Rule {
       if (platformUse.useNs) {
         return addNativeScriptFiles(componentInfo)(tree, context);
       }
-    }
+    },
+
+    // () => {
+    //   if (!(platformUse.webOnly || platformUse.nsOnly)) {
+    //     return schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options);
+    //   }
+    // },
   ]);
 };
 

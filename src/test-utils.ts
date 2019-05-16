@@ -1,6 +1,8 @@
 import { UnitTestTree } from "@angular-devkit/schematics/testing";
 import { HostTree } from "@angular-devkit/schematics";
 import { virtualFs, Path } from "@angular-devkit/core";
+import { createAppModule } from '@schematics/angular/utility/test';
+import { schematicRunner } from "./utils";
 
 export interface VirtualFile {
   path: string;
@@ -104,3 +106,161 @@ function stringToArrayBuffer(text: string): ArrayBuffer {
 
   return arrayBuffer;
 }
+
+
+
+// TESTING
+export function createEmptyNsOnlyProject(projectName: string, extension: string = ''): UnitTestTree {
+    let appTree = schematicRunner.runSchematic('angular-json', { name: projectName, sourceRoot: 'src' });
+  
+    appTree = <any>createAppModule(<any>appTree, `/src/app/app.module${extension}.ts`);
+  
+    appTree.create('/package.json', JSON.stringify({
+      nativescript: { id: 'proj' },
+      dependencies: {
+        '@angular/core': '^6.1.0'
+      },
+      devDependencies: {
+        '@angular/cli': '^6.2.0'
+      },
+    }));
+  
+    return appTree;
+  }
+  
+  export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
+    let tree = createEmptyNsOnlyProject(projectName, nsExtension);
+    const appTree = createAppModule(<any>tree, `/src/app/app.module${webExtension}.ts`);
+  
+    appTree.create('/nsconfig.json', JSON.stringify({
+      'appResourcesPath': 'App_Resources',
+      'appPath': 'src',
+      'nsext': '.tns',
+      'webext': '',
+      'shared': true
+    }));
+  
+    return <any>appTree;
+  }
+  
+  
+  export interface ProjectSetup {
+    projectName: string;
+    sourceDirectory: string;
+    importPrefix: string;
+  }
+  
+  export function setupConfigFiles(setup: ProjectSetup, additionalFiles: VirtualFile[] = []): UnitTestTree {
+    const { baseConfigPath, baseConfigContent } = getBaseTypescriptConfig(setup);
+    const { webConfigPath, webConfigContent } = getWebTypescriptConfig(setup);
+    const { angularJsonPath, angularJsonContent } = getAngularProjectConfig(webConfigPath, setup.projectName);
+  
+    const files: VirtualFile[] = [
+        {
+            path: baseConfigPath,
+            content: baseConfigContent
+        },
+        {
+            path: webConfigPath,
+            content: webConfigContent
+        },
+        {
+            path: angularJsonPath,
+            content: angularJsonContent
+        },
+        ...additionalFiles
+    ];
+  
+    const virtualTree = setupTestTreeWithBase(files);
+  
+    return virtualTree;
+  }
+  
+  function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: ProjectSetup) {
+    const baseConfigPath = 'tsconfig.json';
+    const baseConfigObject = {
+        compileOnSave: false,
+        compilerOptions: {
+            outDir: './dist/out-tsc',
+            declaration: false,
+            moduleResolution: 'node',
+            emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            target: 'es5',
+            typeRoots: [
+                'node_modules/@types'
+            ],
+            lib: [
+                'es2017',
+                'dom',
+                'es6',
+                'es2015.iterable'
+            ],
+            baseUrl: '.',
+            paths: {
+                '~/*': [
+                    `${sourceDirectory}/`
+                ]
+            }
+        }
+    };
+    const baseImportRemapKey = `${importPrefix}/*`;
+    const baseImportMap = [
+        `${sourceDirectory}/*.android.ts`,
+        `${sourceDirectory}/*.ios.ts`,
+        `${sourceDirectory}/*.tns.ts`,
+        `${sourceDirectory}/*.web.ts`,
+        `${sourceDirectory}/`
+    ];
+    baseConfigObject.compilerOptions.paths[baseImportRemapKey] = baseImportMap;
+    const baseConfigContent = JSON.stringify(baseConfigObject);
+  
+    return { baseConfigPath, baseConfigContent };
+  }
+  
+  function getWebTypescriptConfig({ sourceDirectory, importPrefix }: ProjectSetup) {
+    const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
+    const webImportRemapKey = `${importPrefix}/*`;
+    const webImportMap = [
+        `${sourceDirectory}/*.web.ts`,
+        `${sourceDirectory}/`
+    ];
+    const webConfigObject = {
+        'extends': '../tsconfig.json',
+        compilerOptions: {
+            outDir: './out-tsc/app',
+            'module': 'es2015',
+            types: [],
+            paths: {}
+        }
+    };
+    webConfigObject.compilerOptions.paths[webImportRemapKey] = webImportMap;
+    const webConfigContent = JSON.stringify(webConfigObject);
+  
+    return { webConfigPath, webConfigContent };
+  }
+  
+  function getAngularProjectConfig(webConfigPath: string, projectName: string) {
+    const angularJsonPath = 'angular.json';
+  
+    const angularJsonObject = {
+        defaultProject: projectName,
+        projects: {}
+    };
+  
+    angularJsonObject.projects[projectName] = {
+        projectType: 'application',
+        architect: {
+            build: {
+                options: {
+                    tsConfig: webConfigPath
+                }
+            }
+        }
+    };
+  
+    const angularJsonContent = JSON.stringify(angularJsonObject);
+  
+    return { angularJsonPath, angularJsonContent };
+  }
+  

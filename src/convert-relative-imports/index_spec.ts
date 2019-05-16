@@ -4,13 +4,19 @@ import { HostTree, Tree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
-import { VirtualFile, setupTestTreeWithBase } from '../test-utils';
+import { setupConfigFiles, ProjectSetup } from '../test-utils';
 
 const sourceDirectory = 'src';
 const importPrefix = '@src';
 const defaultOptions: ConvertRelativeImportsOptions = {
   project: 'my-app'
 };
+
+const projSetup: ProjectSetup = {
+  projectName: defaultOptions.project,
+  sourceDirectory,
+  importPrefix
+}
 
 const aboutModulePath = `${sourceDirectory}/about/about.module.ts`;
 const relativeImportContent = `
@@ -27,7 +33,7 @@ describe('Convert relative imports to mapped imports', () => {
   );
 
   it('should convert the relative imports in a newly generated file', () => {
-    let appTree = setupConfigFiles(defaultOptions.project);
+    let appTree = setupConfigFiles(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
@@ -49,7 +55,7 @@ describe('Convert relative imports to mapped imports', () => {
       import { AboutComponent } from '${importPrefix}/about/other-about.component';
     `;
 
-    let appTree = setupConfigFiles(defaultOptions.project, [{
+    let appTree = setupConfigFiles(projSetup, [{
       path: aboutModulePath,
       content: existingContent
     }]);
@@ -62,7 +68,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should convert the relative imports in a created and then renamed file', () => {
-    let appTree = setupConfigFiles(defaultOptions.project);
+    let appTree = setupConfigFiles(projSetup);
 
     const renamedFilePath = aboutModulePath.replace(".ts", ".tns.ts");
 
@@ -76,7 +82,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files that weren\'t modified', () => {
-    let appTree = setupConfigFiles(defaultOptions.project, [{
+    let appTree = setupConfigFiles(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
@@ -88,7 +94,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files with extension other than .ts', () => {
-    let appTree = setupConfigFiles(defaultOptions.project);
+    let appTree = setupConfigFiles(projSetup);
 
     const generatedFilePath = `${sourceDirectory}/about/about.module.tsx`;
 
@@ -100,7 +106,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files specified as ignored in the invocation options', () => {
-    let appTree = setupConfigFiles(defaultOptions.project);
+    let appTree = setupConfigFiles(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
 
@@ -112,19 +118,19 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files that are deleted by previous rules', () => {
-    let appTree = setupConfigFiles(defaultOptions.project, [{
+    let appTree = setupConfigFiles(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
 
     appTree.delete(aboutModulePath);
     appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
-    
+
     expect(appTree.get(aboutModulePath)).toBeNull();
   });
 
   it('should not modify files that were created and then deleted by previous rules', () => {
-    let appTree = setupConfigFiles(defaultOptions.project);
+    let appTree = setupConfigFiles(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree.delete(aboutModulePath);
@@ -135,7 +141,7 @@ describe('Convert relative imports to mapped imports', () => {
 
   it('should not modify files that were modified and then deleted by previous rules', () => {
 
-    let appTree = setupConfigFiles(defaultOptions.project, [{
+    let appTree = setupConfigFiles(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
@@ -149,116 +155,3 @@ describe('Convert relative imports to mapped imports', () => {
 
 });
 
-function setupConfigFiles(projectName: string, additionalFiles: VirtualFile[] = []): UnitTestTree {
-  const { baseConfigPath, baseConfigContent } = getBaseTypescriptConfig();
-  const { webConfigPath, webConfigContent } = getWebTypescriptConfig();
-  const { angularJsonPath, angularJsonContent } = getAngularProjectConfig(webConfigPath, projectName);
-
-  const files: VirtualFile[] = [
-    {
-      path: baseConfigPath,
-      content: baseConfigContent
-    },
-    {
-      path: webConfigPath,
-      content: webConfigContent
-    },
-    {
-      path: angularJsonPath,
-      content: angularJsonContent
-    },
-    ...additionalFiles
-  ];
-
-  const virtualTree = setupTestTreeWithBase(files);
-
-  return virtualTree;
-}
-
-function getBaseTypescriptConfig() {
-  const baseConfigPath = 'tsconfig.json';
-  const baseConfigObject = {
-    compileOnSave: false,
-    compilerOptions: {
-      outDir: './dist/out-tsc',
-      declaration: false,
-      moduleResolution: 'node',
-      emitDecoratorMetadata: true,
-      experimentalDecorators: true,
-      target: 'es5',
-      typeRoots: [
-        'node_modules/@types'
-      ],
-      lib: [
-        'es2017',
-        'dom',
-        'es6',
-        'es2015.iterable'
-      ],
-      baseUrl: '.',
-      paths: {
-        '~/*': [
-          `${sourceDirectory}/`
-        ]
-      }
-    }
-  };
-  const baseImportRemapKey = `${importPrefix}/*`;
-  const baseImportMap = [
-    `${sourceDirectory}/*.android.ts`,
-    `${sourceDirectory}/*.ios.ts`,
-    `${sourceDirectory}/*.tns.ts`,
-    `${sourceDirectory}/*.web.ts`,
-    `${sourceDirectory}/`
-  ];
-  baseConfigObject.compilerOptions.paths[baseImportRemapKey] = baseImportMap;
-  const baseConfigContent = JSON.stringify(baseConfigObject);
-
-  return { baseConfigPath, baseConfigContent };
-}
-
-function getWebTypescriptConfig() {
-  const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
-  const webImportRemapKey = `${importPrefix}/*`;
-  const webImportMap = [
-    `${sourceDirectory}/*.web.ts`,
-    `${sourceDirectory}/`
-  ];
-  const webConfigObject = {
-    'extends': '../tsconfig.json',
-    compilerOptions: {
-      outDir: './out-tsc/app',
-      'module': 'es2015',
-      types: [],
-      paths: {}
-    }
-  };
-  webConfigObject.compilerOptions.paths[webImportRemapKey] = webImportMap;
-  const webConfigContent = JSON.stringify(webConfigObject);
-
-  return { webConfigPath, webConfigContent };
-}
-
-function getAngularProjectConfig(webConfigPath: string, projectName: string) {
-  const angularJsonPath = 'angular.json';
-
-  const angularJsonObject = {
-    defaultProject: projectName,
-    projects: {}
-  };
-
-  angularJsonObject.projects[projectName] = {
-    projectType: 'application',
-    architect: {
-      build: {
-        options: {
-          tsConfig: webConfigPath
-        }
-      }
-    }
-  };
-
-  const angularJsonContent = JSON.stringify(angularJsonObject);
-
-  return { angularJsonPath, angularJsonContent };
-}
