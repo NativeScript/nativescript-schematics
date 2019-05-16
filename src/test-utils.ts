@@ -1,83 +1,96 @@
-import { UnitTestTree } from "@angular-devkit/schematics/testing";
-import { HostTree } from "@angular-devkit/schematics";
-import { virtualFs, Path } from "@angular-devkit/core";
+import { UnitTestTree } from '@angular-devkit/schematics/testing';
+import { HostTree, FileEntry } from '@angular-devkit/schematics';
+import { virtualFs, Path } from '@angular-devkit/core';
 import { createAppModule } from '@schematics/angular/utility/test';
-import { schematicRunner } from "./utils";
+import { schematicRunner } from './utils';
 
 export interface VirtualFile {
   path: string;
   content: string;
 }
 
+export interface TestProjectSetup {
+  projectName: string;
+  sourceDirectory?: string;
+  importPrefix?: string;
+  webExtension?: string;
+  nsExtension?: string;
+  shared?: boolean;
+}
+
+const defaultProjectSettings: TestProjectSetup = {
+  projectName: 'my-project',
+  sourceDirectory: 'src',
+  importPrefix: '@src',
+  webExtension: '',
+  nsExtension: '.tns',
+  shared: true,
+}
+
+
 export const isInModuleMetadata = (
-    moduleName: string,
-    property: string,
-    value: string,
-    inArray: boolean,
+  moduleName: string,
+  property: string,
+  value: string,
+  inArray: boolean,
 ) =>
-    isInDecoratorMetadata(moduleName, property, value, 'NgModule', inArray);
+  isInDecoratorMetadata(moduleName, property, value, 'NgModule', inArray);
 
 export const isInComponentMetadata = (
-    componentName: string,
-    property: string,
-    value: string,
-    inArray: boolean,
+  componentName: string,
+  property: string,
+  value: string,
+  inArray: boolean,
 ) =>
-    isInDecoratorMetadata(componentName, property, value, 'Component', inArray);
+  isInDecoratorMetadata(componentName, property, value, 'Component', inArray);
 
 export const isInDecoratorMetadata = (
-    moduleName: string,
-    property: string,
-    value: string,
-    decoratorName: string,
-    inArray: boolean,
+  moduleName: string,
+  property: string,
+  value: string,
+  decoratorName: string,
+  inArray: boolean,
 ) =>
-    new RegExp(
-        `@${decoratorName}\\(\\{([^}]*)` +
-            objectContaining(property, value, inArray) +
-            '[^}]*\\}\\)' +
-            '\\s*' +
-        `(export )?class ${moduleName}`
-    );
+  new RegExp(
+    `@${decoratorName}\\(\\{([^}]*)` +
+    objectContaining(property, value, inArray) +
+    '[^}]*\\}\\)' +
+    '\\s*' +
+    `(export )?class ${moduleName}`
+  );
 
 const objectContaining = (
-    property: string,
-    value: string,
-    inArray: boolean,
+  property: string,
+  value: string,
+  inArray: boolean,
 ) =>
-    inArray ?
-        keyValueInArray(property, value) :
-        keyValueString(property, value);
+  inArray ?
+    keyValueInArray(property, value) :
+    keyValueString(property, value);
 
 const keyValueInArray = (
-    property: string,
-    value: string,
+  property: string,
+  value: string,
 ) =>
-    `${property}: \\[` +
-    nonLastValueInArrayMatcher +
-    `${value},?` +
-    nonLastValueInArrayMatcher +
-    lastValueInArrayMatcher +
-    `\\s*]`;
+  `${property}: \\[` +
+  nonLastValueInArrayMatcher +
+  `${value},?` +
+  nonLastValueInArrayMatcher +
+  lastValueInArrayMatcher +
+  `\\s*]`;
 
 const nonLastValueInArrayMatcher = `(\\s*|(\\s*(\\w+,)*)\\s*)*`;
 const lastValueInArrayMatcher = `(\\s*|(\\s*(\\w+)*)\\s*)?`;
 
 const keyValueString = (
-    property: string,
-    value: string,
+  property: string,
+  value: string,
 ) => `${property}: ${value}`;
 
-export function setupTestTreeWithBase(files: VirtualFile[]): UnitTestTree {
-  const memoryFs = setupInMemoryBase(files);
-  const host = new HostTree(memoryFs);
-  const tree = new UnitTestTree(host);
 
-  return tree;
-}
-
-function setupInMemoryBase(files: VirtualFile[]): virtualFs.SimpleMemoryHost {
+function setupTestTree(files: VirtualFile[]): UnitTestTree {
   const memoryFs = new virtualFs.SimpleMemoryHost();
+
   files.forEach(file => {
     const path = file.path as Path;
     // The write method of memoryFs expects an ArrayBuffer.
@@ -87,180 +100,179 @@ function setupInMemoryBase(files: VirtualFile[]): virtualFs.SimpleMemoryHost {
     // const content = stringToArrayBuffer(file.content);
     const content = Buffer.from(file.content);
 
-    (<any>memoryFs).write(path, content).subscribe();
+    memoryFs.write(path, <any>content).subscribe();
   });
 
-  return memoryFs;
+  const host = new HostTree(memoryFs);
+  const tree = new UnitTestTree(host);
+
+  return tree;
 }
 
-function stringToArrayBuffer(text: string): ArrayBuffer {
-  const stringLength = text.length;
+export function createEmptyNsOnlyProject(projectName: string, nsExtension: string = ''): UnitTestTree {
+  return createTestProject({ projectName, nsExtension, shared: false });
+}
 
-  const byteLength = stringLength * 2; // 2 bytes for each character
-  const arrayBuffer = new ArrayBuffer(byteLength);
-  const bufferView = new Uint16Array(arrayBuffer);
+export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
+  return createTestProject({ projectName, webExtension, nsExtension, shared: true });
+}
 
-  for (let i = 0; i < stringLength; i += 1) {
-    bufferView[i] = text.charCodeAt(i);
+export function createTestProject(setup: TestProjectSetup, additionalFiles: VirtualFile[] = []): UnitTestTree {
+  setup = Object.assign(defaultProjectSettings, setup);
+  const files: VirtualFile[] = [];
+  files.push(getBaseTypescriptConfig(setup));
+
+  const { path: webConfigPath, content: webConfigContent } = getWebTypescriptConfig(setup);
+  files.push({ path: webConfigPath, content: webConfigContent });
+  files.push(getAngularProjectConfig(webConfigPath, setup));
+  files.push(getPackageJson(setup));
+
+  files.push(getAppModule(setup.nsExtension));
+
+  if (setup.shared) {
+    files.push(getNsConfig(setup));
+    files.push(getAppModule(setup.webExtension));
   }
 
-  return arrayBuffer;
+  files.push(...additionalFiles);
+
+  const virtualTree = setupTestTree(files);
+
+  return virtualTree;
 }
 
-
-
-// TESTING
-export function createEmptyNsOnlyProject(projectName: string, extension: string = ''): UnitTestTree {
-    let appTree = schematicRunner.runSchematic('angular-json', { name: projectName, sourceRoot: 'src' });
-  
-    appTree = <any>createAppModule(<any>appTree, `/src/app/app.module${extension}.ts`);
-  
-    appTree.create('/package.json', JSON.stringify({
-      nativescript: { id: 'proj' },
+function getPackageJson(setup: TestProjectSetup): VirtualFile {
+  return {
+    path: '/package.json',
+    content: JSON.stringify({
+      nativescript: { id: setup.projectName },
       dependencies: {
         '@angular/core': '^6.1.0'
       },
       devDependencies: {
         '@angular/cli': '^6.2.0'
       },
-    }));
-  
-    return appTree;
+    })
   }
-  
-  export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
-    let tree = createEmptyNsOnlyProject(projectName, nsExtension);
-    const appTree = createAppModule(<any>tree, `/src/app/app.module${webExtension}.ts`);
-  
-    appTree.create('/nsconfig.json', JSON.stringify({
+}
+
+function getNsConfig(setup: TestProjectSetup): VirtualFile {
+  return {
+    path: '/nsconfig.json',
+    content: JSON.stringify({
       'appResourcesPath': 'App_Resources',
-      'appPath': 'src',
-      'nsext': '.tns',
-      'webext': '',
+      'appPath': setup.sourceDirectory,
+      'nsext': setup.nsExtension,
+      'webext': setup.webExtension,
       'shared': true
-    }));
-  
-    return <any>appTree;
+    })
   }
-  
-  
-  export interface ProjectSetup {
-    projectName: string;
-    sourceDirectory: string;
-    importPrefix: string;
-  }
-  
-  export function setupConfigFiles(setup: ProjectSetup, additionalFiles: VirtualFile[] = []): UnitTestTree {
-    const { baseConfigPath, baseConfigContent } = getBaseTypescriptConfig(setup);
-    const { webConfigPath, webConfigContent } = getWebTypescriptConfig(setup);
-    const { angularJsonPath, angularJsonContent } = getAngularProjectConfig(webConfigPath, setup.projectName);
-  
-    const files: VirtualFile[] = [
-        {
-            path: baseConfigPath,
-            content: baseConfigContent
-        },
-        {
-            path: webConfigPath,
-            content: webConfigContent
-        },
-        {
-            path: angularJsonPath,
-            content: angularJsonContent
-        },
-        ...additionalFiles
-    ];
-  
-    const virtualTree = setupTestTreeWithBase(files);
-  
-    return virtualTree;
-  }
-  
-  function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: ProjectSetup) {
-    const baseConfigPath = 'tsconfig.json';
-    const baseConfigObject = {
-        compileOnSave: false,
-        compilerOptions: {
-            outDir: './dist/out-tsc',
-            declaration: false,
-            moduleResolution: 'node',
-            emitDecoratorMetadata: true,
-            experimentalDecorators: true,
-            target: 'es5',
-            typeRoots: [
-                'node_modules/@types'
-            ],
-            lib: [
-                'es2017',
-                'dom',
-                'es6',
-                'es2015.iterable'
-            ],
-            baseUrl: '.',
-            paths: {
-                '~/*': [
-                    `${sourceDirectory}/`
-                ]
-            }
-        }
-    };
-    const baseImportRemapKey = `${importPrefix}/*`;
-    const baseImportMap = [
-        `${sourceDirectory}/*.android.ts`,
-        `${sourceDirectory}/*.ios.ts`,
-        `${sourceDirectory}/*.tns.ts`,
-        `${sourceDirectory}/*.web.ts`,
-        `${sourceDirectory}/`
-    ];
-    baseConfigObject.compilerOptions.paths[baseImportRemapKey] = baseImportMap;
-    const baseConfigContent = JSON.stringify(baseConfigObject);
-  
-    return { baseConfigPath, baseConfigContent };
-  }
-  
-  function getWebTypescriptConfig({ sourceDirectory, importPrefix }: ProjectSetup) {
-    const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
-    const webImportRemapKey = `${importPrefix}/*`;
-    const webImportMap = [
-        `${sourceDirectory}/*.web.ts`,
-        `${sourceDirectory}/`
-    ];
-    const webConfigObject = {
-        'extends': '../tsconfig.json',
-        compilerOptions: {
-            outDir: './out-tsc/app',
-            'module': 'es2015',
-            types: [],
-            paths: {}
-        }
-    };
-    webConfigObject.compilerOptions.paths[webImportRemapKey] = webImportMap;
-    const webConfigContent = JSON.stringify(webConfigObject);
-  
-    return { webConfigPath, webConfigContent };
-  }
-  
-  function getAngularProjectConfig(webConfigPath: string, projectName: string) {
-    const angularJsonPath = 'angular.json';
-  
-    const angularJsonObject = {
-        defaultProject: projectName,
-        projects: {}
-    };
-  
-    angularJsonObject.projects[projectName] = {
+}
+
+function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectSetup): VirtualFile {
+  const baseConfigPath = 'tsconfig.json';
+  const baseConfigObject = {
+    compileOnSave: false,
+    compilerOptions: {
+      outDir: './dist/out-tsc',
+      declaration: false,
+      moduleResolution: 'node',
+      emitDecoratorMetadata: true,
+      experimentalDecorators: true,
+      target: 'es5',
+      typeRoots: [
+        'node_modules/@types'
+      ],
+      lib: [
+        'es2017',
+        'dom',
+        'es6',
+        'es2015.iterable'
+      ],
+      baseUrl: '.',
+      paths: {
+        '~/*': [
+          `${sourceDirectory}/`
+        ]
+      }
+    }
+  };
+  const baseImportRemapKey = `${importPrefix}/*`;
+  const baseImportMap = [
+    `${sourceDirectory}/*.android.ts`,
+    `${sourceDirectory}/*.ios.ts`,
+    `${sourceDirectory}/*.tns.ts`,
+    `${sourceDirectory}/*.web.ts`,
+    `${sourceDirectory}/`
+  ];
+  baseConfigObject.compilerOptions.paths[baseImportRemapKey] = baseImportMap;
+  const baseConfigContent = JSON.stringify(baseConfigObject);
+
+  return { path: baseConfigPath, content: baseConfigContent };
+}
+
+function getWebTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectSetup): VirtualFile {
+  const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
+  const webImportRemapKey = `${importPrefix}/*`;
+  const webImportMap = [
+    `${sourceDirectory}/*.web.ts`,
+    `${sourceDirectory}/`
+  ];
+  const webConfigObject = {
+    'extends': '../tsconfig.json',
+    compilerOptions: {
+      outDir: './out-tsc/app',
+      'module': 'es2015',
+      types: [],
+      paths: {}
+    }
+  };
+  webConfigObject.compilerOptions.paths[webImportRemapKey] = webImportMap;
+  const webConfigContent = JSON.stringify(webConfigObject);
+
+  return { path: webConfigPath, content: webConfigContent };
+}
+
+function getAngularProjectConfig(webConfigPath: string, setup: TestProjectSetup): VirtualFile {
+  const angularJsonPath = 'angular.json';
+
+  const architect = {
+    build: {
+      options: {
+        tsConfig: webConfigPath
+      }
+    }
+  };
+
+  const angularJsonObject = {
+    "$schema": './node_modules/@angular/cli/lib/config/schema.json',
+    version: 1,
+    defaultProject: setup.projectName,
+    projects: {
+      [setup.projectName]: {
         projectType: 'application',
-        architect: {
-            build: {
-                options: {
-                    tsConfig: webConfigPath
-                }
-            }
-        }
-    };
-  
-    const angularJsonContent = JSON.stringify(angularJsonObject);
-  
-    return { angularJsonPath, angularJsonContent };
-  }
-  
+        sourceRoot: setup.sourceDirectory,
+        prefix: 'app',
+        architect: setup.shared ? architect : undefined
+      }
+    }
+  };
+
+  const angularJsonContent = JSON.stringify(angularJsonObject);
+
+  return { path: angularJsonPath, content: angularJsonContent };
+}
+
+function getAppModule(extension?: string): VirtualFile {
+  const path = `/src/app/app.module${extension}.ts`;
+
+  // Ugly ... but we need a tree to call createAppModule()
+  const tree = new UnitTestTree(new HostTree(new virtualFs.SimpleMemoryHost()));
+  createAppModule(tree, path);
+
+  const file = <FileEntry>tree.get(path)
+  return {
+    path,
+    content: file.content.toString()
+  };
+}

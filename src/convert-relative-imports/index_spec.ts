@@ -1,10 +1,9 @@
 import { join } from 'path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
-import { HostTree, Tree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ConvertRelativeImportsOptions } from './schema';
-import { setupConfigFiles, ProjectSetup } from '../test-utils';
+import { createTestProject, TestProjectSetup } from '../test-utils';
 
 const sourceDirectory = 'src';
 const importPrefix = '@src';
@@ -12,7 +11,7 @@ const defaultOptions: ConvertRelativeImportsOptions = {
   project: 'my-app'
 };
 
-const projSetup: ProjectSetup = {
+const projSetup: TestProjectSetup = {
   projectName: defaultOptions.project,
   sourceDirectory,
   importPrefix
@@ -33,7 +32,7 @@ describe('Convert relative imports to mapped imports', () => {
   );
 
   it('should convert the relative imports in a newly generated file', () => {
-    let appTree = setupConfigFiles(projSetup);
+    let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
@@ -55,7 +54,7 @@ describe('Convert relative imports to mapped imports', () => {
       import { AboutComponent } from '${importPrefix}/about/other-about.component';
     `;
 
-    let appTree = setupConfigFiles(projSetup, [{
+    let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: existingContent
     }]);
@@ -68,7 +67,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should convert the relative imports in a created and then renamed file', () => {
-    let appTree = setupConfigFiles(projSetup);
+    let appTree = createTestProject(projSetup);
 
     const renamedFilePath = aboutModulePath.replace(".ts", ".tns.ts");
 
@@ -82,7 +81,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files that weren\'t modified', () => {
-    let appTree = setupConfigFiles(projSetup, [{
+    let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
@@ -94,9 +93,9 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files with extension other than .ts', () => {
-    let appTree = setupConfigFiles(projSetup);
+    let appTree = createTestProject(projSetup);
 
-    const generatedFilePath = `${sourceDirectory}/about/about.module.tsx`;
+    const generatedFilePath = `${sourceDirectory}/about/about.component.tsx`;
 
     appTree.create(generatedFilePath, relativeImportContent);
     appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
@@ -106,7 +105,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files specified as ignored in the invocation options', () => {
-    let appTree = setupConfigFiles(projSetup);
+    let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
 
@@ -118,7 +117,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files that are deleted by previous rules', () => {
-    let appTree = setupConfigFiles(projSetup, [{
+    let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
@@ -130,7 +129,7 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
   it('should not modify files that were created and then deleted by previous rules', () => {
-    let appTree = setupConfigFiles(projSetup);
+    let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree.delete(aboutModulePath);
@@ -141,7 +140,7 @@ describe('Convert relative imports to mapped imports', () => {
 
   it('should not modify files that were modified and then deleted by previous rules', () => {
 
-    let appTree = setupConfigFiles(projSetup, [{
+    let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
