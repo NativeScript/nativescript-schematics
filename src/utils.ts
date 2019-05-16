@@ -10,7 +10,7 @@ import { strings as angularStringUtils } from '@angular-devkit/core';
 import * as ts from 'typescript';
 import { NsConfig } from './models/nsconfig';
 import { UnitTestTree, SchematicTestRunner } from '@angular-devkit/schematics/testing';
-import { createAppModule } from '@schematics/angular/utility/test';
+
 
 const PACKAGE_JSON = 'package.json';
 
@@ -153,40 +153,6 @@ export const renameFilesForce = (paths: FromTo[]) =>
     tree.delete(from);
   });
 
-export function createEmptyNsOnlyProject(projectName: string, extension: string = ''): UnitTestTree {
-  let appTree = schematicRunner.runSchematic('angular-json', { name: projectName, sourceRoot: 'src' });
-
-  appTree = <any>createAppModule(<any>appTree, `/src/app/app.module${extension}.ts`);
-
-  appTree.create('/package.json', JSON.stringify({
-    nativescript: { id: 'proj' },
-    dependencies: {
-      '@angular/core': '^6.1.0'
-    },
-    devDependencies: {
-      '@angular/cli': '^6.2.0'
-    },
-  }));
-
-  return appTree;
-}
-
-export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
-  let tree = createEmptyNsOnlyProject(projectName, nsExtension);
-  const appTree = createAppModule(<any>tree, `/src/app/app.module${webExtension}.ts`);
-
-  appTree.create('/nsconfig.json', JSON.stringify({
-    'appResourcesPath': 'App_Resources',
-    'appPath': 'src',
-    'nsext': '.tns',
-    'webext': '',
-    'shared': true,
-    'useLegacyWorkflow': false
-  }));
-
-  return <any>appTree;
-}
-
 /**
  * Sanitizes a given string by removing all characters that
  * are not letters or digits.
@@ -303,7 +269,7 @@ function callRuleSync<T extends Tree | UnitTestTree>(
   let newTree;
   schematicRunner.callRule(rule, tree).subscribe(tree => newTree = tree);
   if (newTree === undefined) {
-    throw new SchematicsException('The provided rule is asyncronous! Use with `callRule` instead!');
+    throw new SchematicsException('The provided rule is async! Use with `callRule` instead!');
   }
 
   return newTree;
@@ -323,3 +289,5 @@ export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCo
 
   return tsConfigObject;
 }
+
+

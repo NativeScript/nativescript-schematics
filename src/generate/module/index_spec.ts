@@ -4,7 +4,8 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
-import { toNgModuleClassName, createEmptySharedProject, createEmptyNsOnlyProject } from '../../utils';
+import { toNgModuleClassName } from '../../utils';
+import { createEmptySharedProject, createEmptyNsOnlyProject } from '../../test-utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInModuleMetadata } from '../../test-utils';
 

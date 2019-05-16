@@ -4,7 +4,7 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 import { HostTree } from '@angular-devkit/schematics';
 
 import { Schema as MasterDetailOptions } from './schema';
-import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../utils';
+import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../test-utils';
 
 describe('Master-detail schematic', () => {
   const master = 'heroes';

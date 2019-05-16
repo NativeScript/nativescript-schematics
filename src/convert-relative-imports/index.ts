@@ -23,7 +23,7 @@ export default function (options: ConvertRelativeImportsSchema) {
       return tree;
     }
 
-    const tsConfigPath = getTsConfigPath(tree, options.project) || 'tsconfig.json';
+    const tsConfigPath = getTsConfigPath(tree, options.project, logger) || 'tsconfig.json';
     const compilerOptions = getCompilerOptions(tree, tsConfigPath);
 
     if (!compilerOptions) {
@@ -78,17 +78,17 @@ function fixImports(
 }
 
 function applyTslintRuleFixes(rule: IRule, filePath: string, fileContent: string) {
-    const sourceFile = tsquery.ast(fileContent, filePath);
-    const ruleFailures = rule.apply(sourceFile);
-    
-    const fixes = ruleFailures.filter((error) => error.hasFix()).map((error) => error.getFix()!);
+  const sourceFile = tsquery.ast(fileContent, filePath);
+  const ruleFailures = rule.apply(sourceFile);
 
-    const fixedContent = Replacement.applyFixes(fileContent, fixes);
+  const fixes = ruleFailures.filter((error) => error.hasFix()).map((error) => error.getFix()!);
 
-    return fixedContent;
+  const fixedContent = Replacement.applyFixes(fileContent, fixes);
+
+  return fixedContent;
 }
 
-function generateTslintRule(compilerOptions: ts.CompilerOptions) : PreferMappedImportsRule | undefined {
+function generateTslintRule(compilerOptions: ts.CompilerOptions): PreferMappedImportsRule | undefined {
   const remapOptions = parseCompilerOptions(compilerOptions);
   if (!remapOptions) {
     return;
@@ -110,8 +110,13 @@ function generateTslintRule(compilerOptions: ts.CompilerOptions) : PreferMappedI
   return rule;
 }
 
-function getTsConfigPath(tree: Tree, projectName: string): string | undefined {
-  const tsConfig = getTsConfigFromProject(tree, projectName);
+function getTsConfigPath(tree: Tree, projectName: string, logger: LoggerApi): string | undefined {
+  let tsConfig: string | undefined  = undefined;
+  try {
+    tsConfig = getTsConfigFromProject(tree, projectName);
+  } catch (e) {
+    logger.error(e)
+  }
 
   return tsConfig;
 }
