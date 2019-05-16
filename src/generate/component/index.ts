@@ -12,6 +12,7 @@ import {
   url,
   mergeWith,
   schematic,
+  noop,
 } from '@angular-devkit/schematics';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
@@ -112,11 +113,13 @@ export default function (options: ComponentOptions): Rule {
       }
     },
 
-    // () => {
-    //   if (!(platformUse.webOnly || platformUse.nsOnly)) {
-    //     return schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options);
-    //   }
-    // },
+    () => {
+      if (!(platformUse.webOnly || platformUse.nsOnly)) {
+        return schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options);
+      } else {
+        return noop();
+      }
+    },
   ]);
 };
 

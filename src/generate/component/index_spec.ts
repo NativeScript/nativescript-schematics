@@ -3,15 +3,17 @@ import { join } from 'path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
 
-import { toComponentClassName } from '../../utils';
+import { toComponentClassName, getSourceFile } from '../../utils';
 import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../test-utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInComponentMetadata, isInModuleMetadata } from '../../test-utils';
 import { Schema as ComponentOptions } from './schema';
+import { findImports } from '../../ast-utils';
 
 describe('Component Schematic', () => {
   const name = 'foo';
   const project = 'leproj';
+  const importPrefix = '@src';
   const componentClassName = toComponentClassName(name);
 
   const defaultOptions: ComponentOptions = { name, project };
@@ -99,10 +101,10 @@ describe('Component Schematic', () => {
     });
 
     it('should create component in the home folder', () =>
-    expect(appTree.exists(componentPath)).toBeTruthy());
+      expect(appTree.exists(componentPath)).toBeTruthy());
 
     it('should create template in the home folder', () =>
-    expect(appTree.exists(templatePath)).toBeTruthy());
+      expect(appTree.exists(templatePath)).toBeTruthy());
 
     it('should declare the component in the root NgModule for {N} using name FooComponent with the import to home/foo', () => {
       const nsModuleContent = getFileContent(appTree, rootModulePath);
@@ -137,6 +139,22 @@ describe('Component Schematic', () => {
       it('should declare the component in the root NgModule for {N}', () => {
         const nsModuleContent = getFileContent(appTree, rootNsModulePath);
         expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      });
+
+      it('should import the component in the root NgModule for {N} using @src', () => {
+        const source = getSourceFile(appTree, rootModulePath);
+        const imports = findImports(componentClassName, source);
+
+        expect(imports.length).toEqual(1);
+        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`)
+      });
+
+      it('should import the component in the root NgModule for {N} using @src', () => {
+        const source = getSourceFile(appTree, rootNsModulePath);
+        const imports = findImports(componentClassName, source);
+
+        expect(imports.length).toEqual(1);
+        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`)
       });
     })
 

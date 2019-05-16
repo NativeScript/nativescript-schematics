@@ -118,15 +118,16 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
       console.log("NODE MATCHES")
     }
   }
-  
+
   // When we have the module that imports the component
   // else if (!options.skipModule) {
   else if (modulePath) {
     const source = getSourceFile(tree, modulePath);
     const componentImportPath = findImportPath(source, componentClassName);
     console.log(`${componentClassName} import found in its module at: ${componentImportPath}`);
-    
-    componentPath = join(dirname(modulePath), componentImportPath);
+
+    componentPath = projectSettings.tsResolver(componentImportPath, modulePath);
+
     if (!componentPath.endsWith('.ts')) {
       componentPath = componentPath + '.ts';
     }
@@ -147,7 +148,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
 
     // search at src/app/file-name
     if (tree.exists(join(app, fileName))) {
-       componentPath = join(app, fileName);
+      componentPath = join(app, fileName);
     }
     // search at src/app/dasherize(component-name)/file-name
     else if (tree.exists(join(app, dasherize(options.name), fileName))) {
