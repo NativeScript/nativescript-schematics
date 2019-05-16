@@ -23,7 +23,7 @@ describe('Angular JSON Config Schematic', () => {
     })
 
     it('should create angular.json files', () => {
-      expect(tree.files.indexOf(configPath)).toBeGreaterThanOrEqual(0);
+      expect(tree.files).toContain(configPath);
     });
 
     it('should insert the project name', () => {
@@ -53,6 +53,6 @@ describe('Angular JSON Config Schematic', () => {
     const options = { ...defaultOptions, path };
 
     const tree = schematicRunner.runSchematic('angular-json', options);
-    expect(tree.files.indexOf(appJsonPath)).toBeGreaterThanOrEqual(0);
+    expect(tree.files).toContain(appJsonPath);
   });
 });

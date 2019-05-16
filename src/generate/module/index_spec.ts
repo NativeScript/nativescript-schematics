@@ -138,7 +138,7 @@ describe('Module Schematic', () => {
         const options = { ...nsOnlyOptions };
         const tree = schematicRunner.runSchematic('module', options, appTree);
 
-        expect(tree.files.indexOf(nsModulePath)).toBeGreaterThanOrEqual(0);
+        expect(tree.files).toContain(nsModulePath);
         expect(getFileContent(tree, nsModulePath)).toContain('CommonModule');
         expect(getFileContent(tree, nsModulePath)).toContain(`class ${moduleClassName}`);
       });
@@ -177,7 +177,7 @@ describe('Module Schematic', () => {
         const options = { ...webOnlyOptions };
         const tree = schematicRunner.runSchematic('module', options, appTree);
 
-        expect(tree.files.indexOf(webModulePath)).toBeGreaterThanOrEqual(0);
+        expect(tree.files).toContain(webModulePath);
         expect(getFileContent(tree, webModulePath)).toContain('CommonModule');
         expect(getFileContent(tree, webModulePath)).toContain(`class ${moduleClassName}`);
       });
