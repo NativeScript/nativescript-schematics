@@ -12,8 +12,6 @@
 * flag to skip adding auto-generated component on `ng new` and `ng add` ([#171](https://github.com/nativescript/nativescript-schematics/issues/171)) ([6c835b1](https://github.com/nativescript/nativescript-schematics/commit/6c835b1))
 * update ng new/add schematics to use NativeScript 5.2 and Angular 7.2 ([#191](https://github.com/nativescript/nativescript-schematics/issues/191)) ([5e577e4](https://github.com/nativescript/nativescript-schematics/commit/5e577e4))
 * use HMR by default for newly created projects (aligned with the NativeScript 5.4 templates) ([44e6f3b](https://github.com/nativescript/nativescript-schematics/commit/44e6f3b))
-* **ng-new:** add nsconfig.json for non-shared projects ([982d357](https://github.com/nativescript/nativescript-schematics/commit/982d357))
-
 
 
 ## [0.5.2](https://github.com/nativescript/nativescript-schematics/compare/0.5.1...0.5.2) (2019-03-20)
