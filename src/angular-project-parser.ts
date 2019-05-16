@@ -48,6 +48,9 @@ export interface AngularProjectSettings {
 
   /** default: 'app-root'*/
   indexAppRootTag: string;
+
+  /** Typescript resolver for this project */
+  tsResolver: TypescriptResolver;
 }
 
 export interface CoreProjectSettings {
@@ -112,7 +115,9 @@ export function getAngularProjectSettings(tree: Tree, projectName: string): Angu
     entryComponentName: entryComponent.name,
     entryComponentPath: entryComponent.path,
 
-    indexAppRootTag
+    indexAppRootTag,
+
+    tsResolver
   };
 }
 
