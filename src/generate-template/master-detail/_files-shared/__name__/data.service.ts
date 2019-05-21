@@ -5,7 +5,9 @@ export interface Number {
   text: string;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DataService {
   private numbers: Number[] = [
     { id: 1, text: 'one' },

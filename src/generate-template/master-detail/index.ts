@@ -6,20 +6,40 @@ import {
   url,
   template,
   move,
+  chain,
+  noop,
+  schematic,
 } from '@angular-devkit/schematics';
+import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MasterDetailSchema } from './schema';
-import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 import { getNsConfig } from '../../utils';
 import { join } from 'path';
+import { Schema as ConvertRelativeImportsSchema } from '../../convert-relative-imports/schema';
+
+let projectParams: ProjectInfo;
 
 export default function (options: MasterDetailSchema) {
-  return generateTemplate(options);
+  return chain([
+    (tree: Tree) => {
+      projectParams = getProjectInfo(tree);
+    },
+
+    generateTemplate(options),
+    
+    () => {
+      if (projectParams.shared) {
+        return schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options);
+      } else {
+        return noop();
+      }
+    },
+  ]);
 }
 
 const generateTemplate = (options: MasterDetailSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Generating Master Detail template');
-  const projectParams = getProjectInfo(tree);
+
 
   context.logger.info(`Project Params: ${JSON.stringify(projectParams, null, 2)}`);
 
@@ -36,10 +56,10 @@ const generateTemplate = (options: MasterDetailSchema) => (tree: Tree, context: 
   const templatePath = projectParams.shared ? './_files-shared' : './_files-nsonly';
 
   const templateSource = apply(
-    url(templatePath),[
+    url(templatePath), [
       template(templateOptions),
       move(projectParams.appPath)
-  ]);
+    ]);
   return mergeWith(templateSource);
 }
 
@@ -57,7 +77,7 @@ const getProjectInfo = (tree: Tree): ProjectInfo => {
       nsext: nsconfig.nsext
     }
   }
-  
+
   return {
     shared: false,
     appPath: 'app',

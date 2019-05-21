@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 
 import {
   componentDeclarations,
-  providerDeclarations,
   routes,
 } from './<%= master %>.common';
 
@@ -18,9 +17,6 @@ import {
   ],
   declarations: [
     ...componentDeclarations
-  ],
-  providers: [
-    ...providerDeclarations
   ]
 })
 export class <%= masterClassName %>Module { }

@@ -5,7 +5,6 @@ import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
 import { <%= masterClassName %>Component } from './<%= master %>/<%= master %>.component';
 import { <%= detailClassName %>DetailComponent } from './<%= detail %>-detail/<%= detail %>-detail.component';
-import { DataService } from './data.service';
 
 export const routes: Routes = [
   { path: '<%= master %>', component: <%= masterClassName %>Component },
@@ -24,9 +23,6 @@ export const routes: Routes = [
   declarations: [
     <%= masterClassName %>Component,
     <%= detailClassName %>DetailComponent
-  ],
-  providers: [
-    DataService
   ],
   schemas: [
     NO_ERRORS_SCHEMA

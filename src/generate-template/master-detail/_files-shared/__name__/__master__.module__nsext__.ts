@@ -4,7 +4,6 @@ import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
 import {
   componentDeclarations,
-  providerDeclarations,
   routes,
 } from './<%= master %>.common';
 
@@ -19,9 +18,6 @@ import {
   ],
   declarations: [
     ...componentDeclarations
-  ],
-  providers: [
-    ...providerDeclarations
   ],
   schemas: [
     NO_ERRORS_SCHEMA
