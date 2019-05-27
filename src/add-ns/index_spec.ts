@@ -142,10 +142,10 @@ describe('Add {N} schematic', () => {
             expect(paths["@src/*"]).toBeDefined();
 
             const maps = paths["@src/*"];
-            expect(maps).toContain("src/*.ios");
-            expect(maps).toContain("src/*.android");
-            expect(maps).toContain("src/*.tns");
-            expect(maps).toContain("src/*");
+            expect(maps).toContain("src/*.ios.ts");
+            expect(maps).toContain("src/*.android.ts");
+            expect(maps).toContain("src/*.tns.ts");
+            expect(maps).toContain("src/*.ts");
         });
 
         it('should modify the base tsconfig.app.json to include path mappings', () => {
@@ -159,10 +159,10 @@ describe('Add {N} schematic', () => {
             expect(paths["@src/*"]).toBeDefined();
 
             const maps = paths["@src/*"];
-            expect(maps).toContain("src/*.android");
-            expect(maps).toContain("src/*.ios");
-            expect(maps).toContain("src/*.tns");
-            expect(maps).toContain("src/*.web");
+            expect(maps).toContain("src/*.android.ts");
+            expect(maps).toContain("src/*.ios.ts");
+            expect(maps).toContain("src/*.tns.ts");
+            expect(maps).toContain("src/*.web.ts");
             expect(maps).toContain("src/*");
         });
 

@@ -20,11 +20,11 @@
       "baseUrl": ".",
       "paths": {
           "@src/*": [
-              "<%= sourcedir %>/*.android",
-              "<%= sourcedir %>/*.ios",
-              "<%= sourcedir %>/*.tns",
-              "<%= sourcedir %>/*.web",
-              "<%= sourcedir %>/*"
+              "<%= sourcedir %>/*.android.ts",
+              "<%= sourcedir %>/*.ios.ts",
+              "<%= sourcedir %>/*.tns.ts",
+              "<%= sourcedir %>/*.web.ts",
+              "<%= sourcedir %>/*.ts"
           ]
       }
   }

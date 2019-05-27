@@ -280,10 +280,10 @@ const modifyWebTsconfig = (tree: Tree, context: SchematicContext) => {
 
   const basePaths = {
     "@src/*": [
-      `${srcDir}/*.android`,
-      `${srcDir}/*.ios`,
-      `${srcDir}/*.tns`,
-      `${srcDir}/*.web`,
+      `${srcDir}/*.android.ts`,
+      `${srcDir}/*.ios.ts`,
+      `${srcDir}/*.tns.ts`,
+      `${srcDir}/*.web.ts`,
       `${srcDir}/*`]
   };
 

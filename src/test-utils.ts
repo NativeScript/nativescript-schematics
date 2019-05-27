@@ -200,10 +200,10 @@ function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectS
   };
   const baseImportRemapKey = `${importPrefix}/*`;
   const baseImportMap = [
-    `${sourceDirectory}/*.android`,
-    `${sourceDirectory}/*.ios`,
-    `${sourceDirectory}/*.tns`,
-    `${sourceDirectory}/*.web`,
+    `${sourceDirectory}/*.android.ts`,
+    `${sourceDirectory}/*.ios.ts`,
+    `${sourceDirectory}/*.tns.ts`,
+    `${sourceDirectory}/*.web.ts`,
     `${sourceDirectory}/`
   ];
   baseConfigObject.compilerOptions.paths[baseImportRemapKey] = baseImportMap;
