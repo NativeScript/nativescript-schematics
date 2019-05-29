@@ -8,11 +8,16 @@ import { isInModuleMetadata } from '../test-utils';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
 import { Schema as ComponentOptions } from '../generate/component/schema';
-import { moveToRoot } from '../utils';
+import { moveToRoot, getSourceFile } from '../utils';
 import { Schema as MigrateComponentOptions } from './schema';
+import { findImports } from '../ast-utils';
 
 describe('Migrate component schematic', () => {
     const project = 'some-project';
+    const componentName = 'a';
+    const moduleName = 'b';
+    const componentClassName = 'AComponent';
+
     const schematicRunner = new SchematicTestRunner(
         'nativescript-schematics',
         join(__dirname, '../collection.json')
@@ -22,7 +27,7 @@ describe('Migrate component schematic', () => {
     beforeEach(() => {
         appTree = new UnitTestTree(new HostTree());
         appTree = setupProject(appTree, schematicRunner, project);
-     });
+    });
 
     describe('When the name of existing component is provided', () => {
         const componentName = 'a';
@@ -52,8 +57,17 @@ describe('Migrate component schematic', () => {
             const nsModulePath = `/src/app/app.module.tns.ts`;
             const content = getFileContent(appTree, nsModulePath);
 
-            const matcher = isInModuleMetadata('AppModule', 'declarations', 'AComponent', true);
+            const matcher = isInModuleMetadata('AppModule', 'declarations', componentClassName, true);
             expect(content).toMatch(matcher);
+        });
+
+        it('should import the component in the correct NgModule using @src', () => {
+            const nsModulePath = `/src/app/app.module.tns.ts`;
+            const source = getSourceFile(appTree, nsModulePath);
+            const imports = findImports(componentClassName, source);
+
+            expect(imports.length).toEqual(1);
+            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`)
         });
 
         it('should put the original web template in the {N} markup file', () => {
@@ -65,9 +79,8 @@ describe('Migrate component schematic', () => {
     });
 
     describe('When component imported in another module is provided', () => {
-        const componentName = 'a';
-        const moduleName = 'b';
-        const options : MigrateComponentOptions= {
+
+        const options: MigrateComponentOptions = {
             project,
             name: componentName,
             module: moduleName,
@@ -102,8 +115,17 @@ describe('Migrate component schematic', () => {
             const nsModulePath = `/src/app/${moduleName}/${moduleName}.module.tns.ts`;
             const content = getFileContent(appTree, nsModulePath);
 
-            const matcher = isInModuleMetadata("BModule", 'declarations', 'AComponent', true);
+            const matcher = isInModuleMetadata("BModule", 'declarations', componentClassName, true);
             expect(content).toMatch(matcher);
+        });
+
+        it('should import the component in the correct NgModule using @src', () => {
+            const nsModulePath = `/src/app/${moduleName}/${moduleName}.module.tns.ts`;
+            const source = getSourceFile(appTree, nsModulePath);
+            const imports = findImports(componentClassName, source);
+
+            expect(imports.length).toEqual(1);
+            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`)
         });
 
         it('should put the original web template in the {N} markup file', () => {

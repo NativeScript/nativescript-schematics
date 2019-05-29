@@ -217,6 +217,16 @@ export const addExtension = (path: string, extension: string) => {
  * @param to path to the imported file
  */
 export const findRelativeImportPath = (from, to): string => {
+  // Make sure that if one of the paths starts with '/', the other one does too
+  const toStartsWithSlash = to.startsWith('/');
+  const fromStartsWithSlash = from.startsWith('/');
+  
+  if (toStartsWithSlash && !fromStartsWithSlash) {
+    from = '/' + from;
+  } else if (!toStartsWithSlash && fromStartsWithSlash) {
+    to = '/' + to;
+  }
+
   let relativePath = relative(from, to);
 
   // if starts with ../../ then relative is going to skip one folder too many

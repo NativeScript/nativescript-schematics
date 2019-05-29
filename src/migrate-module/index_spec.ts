@@ -12,6 +12,7 @@ import { Schema as ComponentOptions } from '../generate/component/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
 import { getSourceFile, moveToRoot } from '../utils';
 import { isInModuleMetadata } from '../test-utils';
+import { findImports } from '../ast-utils';
 
 describe('Migrate module Schematic', () => {
   const project = 'some-project';
@@ -73,7 +74,7 @@ describe('Migrate module Schematic', () => {
         project,
         nativescript: false,
       }, appTree);
-      
+
       originalWebModuleContent = getFileContent(appTree, webModulePath);
 
       const options: MigrateModuleOptions = { ...defaultOptions };
@@ -91,6 +92,14 @@ describe('Migrate module Schematic', () => {
 
       const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
       expect(content).toMatch(matcher);
+    });
+
+    it('should import the component in the mobile module using @src', () => {
+      const source = getSourceFile(appTree, nsModulePath);
+      const imports = findImports('AComponent', source);
+
+      expect(imports.length).toEqual(1);
+      expect(imports[0].getFullText()).toContain(`@src/app/a/a.component`)
     });
   });
 
@@ -120,10 +129,10 @@ describe('Migrate module Schematic', () => {
 });
 
 const setupProject = (
-    appTree: UnitTestTree,
-    schematicRunner: SchematicTestRunner,
-    project: string,
-    moduleName: string,
+  appTree: UnitTestTree,
+  schematicRunner: SchematicTestRunner,
+  project: string,
+  moduleName: string,
 ) => {
   appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
     name: project,

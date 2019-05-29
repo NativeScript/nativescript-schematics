@@ -29,5 +29,10 @@ export interface Schema {
   * Allows specification of the project to be updated.
   * The default option is the smart default 'projectName' provided by the Angular CLI.
   */
-  project: string
+  project: string,
+
+  /**
+  * Skips converting relative imports to mapped (a.k.a. `@src`) imports
+  */
+  skipConvertRelativeImports?: boolean
 }
