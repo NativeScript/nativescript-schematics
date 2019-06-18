@@ -15,11 +15,11 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "~7.3.9",
-    "@angular-devkit/schematics": "~7.3.9",
+    "@angular-devkit/core": "~8.0.0",
+    "@angular-devkit/schematics": "~8.0.0",
     "@nativescript/tslint-rules": "~0.0.1",
     "@phenomnomnominal/tsquery": "^3.0.0",
-    "@schematics/angular": "~7.3.9",
+    "@schematics/angular": "~8.0.0",
     "tslint": "^5.16.0"
   },
   "devDependencies": {
