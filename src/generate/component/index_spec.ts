@@ -60,12 +60,12 @@ describe('Component Schematic', () => {
     expect(content).toMatch(/Button/);
   };
 
-  describe('when in ns-only project', () => {
-    beforeAll(() => {
+  describe('when in ns-only project', async () => {
+    beforeAll(async () => {
       appTree = createEmptyNsOnlyProject(project);
 
       const options = { ...defaultOptions, nativescript: true, web: false };
-      appTree = schematicRunner.runSchematic('component', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
     });
 
     it('should create template without extension', () =>
@@ -93,11 +93,11 @@ describe('Component Schematic', () => {
     const componentPath = `src/app/${homeDir}/${name}/${name}.component.ts`;
     const templatePath = `src/app/${homeDir}/${name}/${name}.component.html`;
 
-    beforeAll(() => {
+    beforeAll(async () => {
       appTree = createEmptyNsOnlyProject(project);
 
       const options = { ...defaultOptions, name: componentName, nativescript: true, web: false };
-      appTree = schematicRunner.runSchematic('component', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
     });
 
     it('should create component in the home folder', () =>
@@ -114,11 +114,11 @@ describe('Component Schematic', () => {
 
   describe('when in ns+web project', () => {
     describe('executing ns+web schematic', () => {
-      beforeAll(() => {
+      beforeAll(async () => {
         appTree = createEmptySharedProject(project);
 
         const options = { ...defaultOptions, web: true, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
       });
 
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
@@ -159,11 +159,11 @@ describe('Component Schematic', () => {
     })
 
     describe('executing ns-only schematic', () => {
-      beforeAll(() => {
+      beforeAll(async () => {
         appTree = createEmptySharedProject(project);
 
         const options = { ...defaultOptions, web: false, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
       });
 
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
@@ -183,11 +183,11 @@ describe('Component Schematic', () => {
     })
 
     describe('executing web-only schematic', () => {
-      beforeAll(() => {
+      beforeAll(async () => {
         appTree = createEmptySharedProject(project);
 
         const options = { ...defaultOptions, web: true, nativescript: false };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
       });
 
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
@@ -212,9 +212,9 @@ describe('Component Schematic', () => {
         appTree = createEmptyNsOnlyProject(project, customExtension);
       });
 
-      it('should respect specified {N} extension', () => {
+      it('should respect specified {N} extension', async () => {
         const options = { ...defaultOptions, nsExtension: customExtension, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
         const componentTemplatePath = getTemplatePath(customExtension);
         expect(appTree.exists(componentTemplatePath)).toBeTruthy();
@@ -223,10 +223,10 @@ describe('Component Schematic', () => {
         expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
       });
 
-      it('should respect specified style extension', () => {
+      it('should respect specified style extension', async () => {
         const styleext = 'scss';
         const options = { ...defaultOptions, nsExtension: customExtension, styleext, nativescript: true };
-        appTree = schematicRunner.runSchematic('component', options, appTree);
+        appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
         const componentStylesheetPath = getStylesheetPath(customExtension, styleext);
         expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
@@ -242,17 +242,17 @@ describe('Component Schematic', () => {
           appTree = createEmptySharedProject(project, customExtension, '.tns');
         });
 
-        it('should create the files with this extension', () => {
+        it('should create the files with this extension', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const componentTemplatePath = getTemplatePath(customExtension);
           expect(appTree.exists(componentTemplatePath)).toBeTruthy();
         });
 
-        it('should declare in NgModule', () => {
+        it('should declare in NgModule', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const webModulePath = `src/app/app.module${customExtension}.ts`;
           const nsModulePath = `src/app/app.module.tns.ts`;
@@ -265,18 +265,18 @@ describe('Component Schematic', () => {
           expect(nsModuleContent).toMatch(matcher);
         });
 
-        it('should respect the module option', () => {
+        it('should respect the module option', async () => {
           const moduleName = 'random';
           const webModulePath = `src/app/${moduleName}/${moduleName}.module${customExtension}.ts`;
           const nsModulePath = `src/app/${moduleName}/${moduleName}.module.tns.ts`;
-          appTree = schematicRunner.runSchematic('module', {
+          appTree = await schematicRunner.runSchematicAsync('module', {
             project,
             name: moduleName,
             webExtension: customExtension,
-          }, appTree);
+          }, appTree).toPromise();
 
           const options = { ...componentOptions, module: moduleName };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
 
@@ -296,9 +296,9 @@ describe('Component Schematic', () => {
           appTree = createEmptySharedProject(project, '', customExtension);
         });
 
-        it('should create the files with this extension', () => {
+        it('should create the files with this extension', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const componentTemplatePath = getTemplatePath(customExtension);
           expect(appTree.exists(componentTemplatePath)).toBeTruthy();
@@ -307,9 +307,9 @@ describe('Component Schematic', () => {
           expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
         });
 
-        it('should declare in NgModule', () => {
+        it('should declare in NgModule', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const webModulePath = `src/app/app.module.ts`;
           const nsModulePath = `src/app/app.module${customExtension}.ts`;
@@ -322,18 +322,18 @@ describe('Component Schematic', () => {
           expect(nsModuleContent).toMatch(matcher);
         });
 
-        it('should respect the module option', () => {
+        it('should respect the module option', async () => {
           const moduleName = 'random';
           const webModulePath = `src/app/${moduleName}/${moduleName}.module.ts`;
           const nsModulePath = `src/app/${moduleName}/${moduleName}.module${customExtension}.ts`;
-          appTree = schematicRunner.runSchematic('module', {
+          appTree = await schematicRunner.runSchematicAsync('module', {
             project,
             name: moduleName,
             nsExtension: customExtension,
-          }, appTree);
+          }, appTree).toPromise();
 
           const options = { ...componentOptions, module: moduleName };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
 
@@ -354,9 +354,9 @@ describe('Component Schematic', () => {
           appTree = createEmptySharedProject(project, webExtension, nsExtension);
         });
 
-        it('should create the files with these extensions', () => {
+        it('should create the files with these extensions', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const nsTemplate = getTemplatePath(nsExtension);
           const webTemplate = getTemplatePath(webExtension);
@@ -369,9 +369,9 @@ describe('Component Schematic', () => {
           expect(appTree.exists(webStylesheet)).toBeTruthy();
         });
 
-        it('should declare in NgModule', () => {
+        it('should declare in NgModule', async () => {
           const options = { ...componentOptions };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const webModulePath = `src/app/app.module${webExtension}.ts`;
           const nsModulePath = `src/app/app.module${nsExtension}.ts`;
@@ -384,19 +384,19 @@ describe('Component Schematic', () => {
           expect(nsModuleContent).toMatch(matcher);
         });
 
-        it('should respect the module option', () => {
+        it('should respect the module option', async () => {
           const moduleName = 'random';
           const webModulePath = `src/app/${moduleName}/${moduleName}.module${webExtension}.ts`;
           const nsModulePath = `src/app/${moduleName}/${moduleName}.module${nsExtension}.ts`;
-          appTree = schematicRunner.runSchematic('module', {
+          appTree = await schematicRunner.runSchematicAsync('module', {
             project,
             name: moduleName,
             webExtension,
             nsExtension,
-          }, appTree);
+          }, appTree).toPromise();
 
           const options = { ...componentOptions, module: moduleName };
-          appTree = schematicRunner.runSchematic('component', options, appTree);
+          appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
           const matcher = isInModuleMetadata('RandomModule', 'declarations', componentClassName, true);
 

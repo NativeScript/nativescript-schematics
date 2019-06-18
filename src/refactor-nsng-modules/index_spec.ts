@@ -35,9 +35,10 @@ describe('Refactor NsNg Modules Schematic', () => {
 
   describe('when no changes are required', () => {
     let tree;
-    beforeEach(() => {
+    beforeEach(async () => {
       const appTree = initAppTree();
-      tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
+      tree = await schematicRunner.runSchematicAsync('refactor-nsng-modules', defaultOptions, appTree)
+        .toPromise();
     });
 
     it('should not change the tree', () => {
@@ -54,7 +55,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     let tree;
     let featureModuleContent;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
         import { NativeScriptModule } from "nativescript-angular/nativescript.module";
@@ -79,7 +80,8 @@ describe('Refactor NsNg Modules Schematic', () => {
         export class ${featureModuleName} { }
       `);
 
-      tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
+      tree = await schematicRunner.runSchematicAsync('refactor-nsng-modules', defaultOptions, appTree)
+        .toPromise();
       featureModuleContent = getFileContent(tree, featureModulePath);
     });
 
@@ -109,7 +111,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     let tree;
     let featureModuleContent;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
         import { NativeScriptAnimationsModule } from "nativescript-angular/animations";
@@ -124,7 +126,8 @@ describe('Refactor NsNg Modules Schematic', () => {
         export class ${featureModuleName} { }
       `);
 
-      tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
+      tree = await schematicRunner.runSchematicAsync('refactor-nsng-modules', defaultOptions, appTree)
+        .toPromise();
       featureModuleContent = getFileContent(tree, featureModulePath);
     });
 
@@ -151,7 +154,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     let tree;
     let featureModuleContent;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
         import { NativeScriptModule } from "nativescript-angular/nativescript.module";
@@ -168,7 +171,8 @@ describe('Refactor NsNg Modules Schematic', () => {
         export class ${featureModuleName} { }
       `);
 
-      tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
+      tree = await schematicRunner.runSchematicAsync('refactor-nsng-modules', defaultOptions, appTree)
+        .toPromise();
       featureModuleContent = getFileContent(tree, featureModulePath);
     });
 

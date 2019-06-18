@@ -31,17 +31,17 @@ describe('Convert relative imports to mapped imports', () => {
     join(__dirname, '../collection.json')
   );
 
-  it('should convert the relative imports in a newly generated file', () => {
+  it('should convert the relative imports in a newly generated file', async () => {
     let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
     const actual = getFileContent(appTree, aboutModulePath);
 
     expect(actual).toEqual(fixedImportContent);
   });
 
-  it('should convert the relative imports in a modified file', () => {
+  it('should convert the relative imports in a modified file', async () => {
     const existingContent = `
       import { AboutComponent } from '${importPrefix}/about/about.component';
     `;
@@ -60,13 +60,13 @@ describe('Convert relative imports to mapped imports', () => {
     }]);
 
     appTree.overwrite(aboutModulePath, modifiedContent);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
     const actual = getFileContent(appTree, aboutModulePath);
 
     expect(actual).toEqual(expected);
   });
 
-  it('should convert the relative imports in a created and then renamed file', () => {
+  it('should convert the relative imports in a created and then renamed file', async () => {
     let appTree = createTestProject(projSetup);
 
     const renamedFilePath = aboutModulePath.replace(".ts", ".tns.ts");
@@ -74,71 +74,71 @@ describe('Convert relative imports to mapped imports', () => {
     appTree.create(aboutModulePath, relativeImportContent);
     appTree.rename(aboutModulePath, renamedFilePath);
 
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
     const actual = getFileContent(appTree, renamedFilePath);
 
     expect(actual).toEqual(fixedImportContent);
   });
 
-  it('should not modify files that weren\'t modified', () => {
+  it('should not modify files that weren\'t modified', async () => {
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
 
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
     const actual = getFileContent(appTree, aboutModulePath);
 
     expect(actual).toEqual(relativeImportContent);
   });
 
-  it('should not modify files with extension other than .ts', () => {
+  it('should not modify files with extension other than .ts', async () => {
     let appTree = createTestProject(projSetup);
 
     const generatedFilePath = `${sourceDirectory}/about/about.component.tsx`;
 
     appTree.create(generatedFilePath, relativeImportContent);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
     const actual = getFileContent(appTree, generatedFilePath);
 
     expect(actual).toEqual(relativeImportContent);
   });
 
-  it('should not modify files specified as ignored in the invocation options', () => {
+  it('should not modify files specified as ignored in the invocation options', async () => {
     let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
 
     const options: ConvertRelativeImportsOptions = { ...defaultOptions, filesToIgnore: [aboutModulePath] };
-    appTree = schematicRunner.runSchematic('convert-relative-imports', options, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', options, appTree).toPromise();
     const actual = getFileContent(appTree, aboutModulePath);
 
     expect(actual).toEqual(relativeImportContent);
   });
 
-  it('should not modify files that are deleted by previous rules', () => {
+  it('should not modify files that are deleted by previous rules', async () => {
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
       content: relativeImportContent
     }]);
 
     appTree.delete(aboutModulePath);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
 
     expect(appTree.get(aboutModulePath)).toBeNull();
   });
 
-  it('should not modify files that were created and then deleted by previous rules', () => {
+  it('should not modify files that were created and then deleted by previous rules', async () => {
     let appTree = createTestProject(projSetup);
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree.delete(aboutModulePath);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
 
     expect(appTree.get(aboutModulePath)).toBeNull();
   });
 
-  it('should not modify files that were modified and then deleted by previous rules', () => {
+  it('should not modify files that were modified and then deleted by previous rules', async () => {
 
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
@@ -147,7 +147,7 @@ describe('Convert relative imports to mapped imports', () => {
 
     appTree.overwrite(aboutModulePath, relativeImportContent + '\nconsole.log(\'modified\');\n');
     appTree.delete(aboutModulePath);
-    appTree = schematicRunner.runSchematic('convert-relative-imports', defaultOptions, appTree);
+    appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
 
     expect(appTree.get(aboutModulePath)).toBeNull();
   });

@@ -12,7 +12,7 @@ describe('Styling Schematic', () => {
     path.join(__dirname, '../collection.json'),
   );
 
-  const appPath = 'foo';
+  const appPath = '';
   const sourceDir = 'app';
   const defaultOptions: StylingOptions = {
     appPath,
@@ -23,7 +23,7 @@ describe('Styling Schematic', () => {
   let appTree: Tree;
 
   beforeEach(() => {
-    appTree = createEmptyNsOnlyProject("project");
+    appTree = createEmptyNsOnlyProject(sourceDir);
   });
 
   describe('when css is used', () => {
