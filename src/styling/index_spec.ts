@@ -1,9 +1,10 @@
+import * as path from 'path';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
-import * as path from 'path';
+import { Tree } from '@angular-devkit/schematics';
 
+import { createEmptyNsOnlyProject } from '../test-utils';
 import { Schema as StylingOptions } from './schema';
-import { VirtualTree, Tree } from '@angular-devkit/schematics';
 
 describe('Styling Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
@@ -22,8 +23,7 @@ describe('Styling Schematic', () => {
   let appTree: Tree;
 
   beforeEach(() => {
-    appTree = new VirtualTree();
-    appTree.create(`${appPath}/package.json`, '{}');
+    appTree = createEmptyNsOnlyProject("project");
   });
 
   describe('when css is used', () => {

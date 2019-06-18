@@ -1,9 +1,8 @@
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
-import { VirtualTree } from '@angular-devkit/schematics';
 import * as path from 'path';
 
-import { isInModuleMetadata } from '../test-utils';
+import { isInModuleMetadata, createEmptyNsOnlyProject } from '../test-utils';
 import { Schema } from './schema';
 
 describe('Refactor NsNg Modules Schematic', () => {
@@ -29,17 +28,7 @@ describe('Refactor NsNg Modules Schematic', () => {
   `;
 
   const initAppTree = () => {
-    const appTree = new VirtualTree();
-    appTree.create(`${sourceDir}/package.json`, `{ "main": "main.js" }`);
-    appTree.create(`${sourceDir}/main.ts`, `
-        import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
-        import { AppModule } from './app.module';
-
-        platformNativeScriptDynamic().bootstrapModule(AppModule);
-    `);
-
-    appTree.create(rootModulePath, rootModuleContent);
-
+    const appTree = createEmptyNsOnlyProject("project");
     return appTree;
   };
 
