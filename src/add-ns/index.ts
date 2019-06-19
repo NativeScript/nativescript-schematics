@@ -251,13 +251,18 @@ const modifyWebTsconfig = (tree: Tree, context: SchematicContext) => {
   const tsConfigPath = projectSettings.tsConfig;
   const tsConfig: any = getJsonFile(tree, tsConfigPath);
 
+  const srcDir = projectSettings.sourceRoot;
+
   // files
-  const defaultFiles = ["main.ts", "polyfills.ts"];
+  const defaultFiles = [
+    `${srcDir}/main.ts`,
+    `${srcDir}/polyfills.ts`,
+  ];
+
   tsConfig.files = tsConfig.files || [];
   tsConfig.files.push(...defaultFiles);
 
   // paths
-  const srcDir = projectSettings.sourceRoot;
   const webPaths = {
     "@src/*": [
       `${srcDir}/*.web`,
