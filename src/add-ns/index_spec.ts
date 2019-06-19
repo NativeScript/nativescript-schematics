@@ -263,7 +263,7 @@ async function setupProject(
         'workspace',
         {
             name: 'workspace',
-            version: '7.0.0',
+            version: '8.0.0',
             newProjectRoot: ''
         }
     ).toPromise();
