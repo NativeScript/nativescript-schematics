@@ -219,14 +219,14 @@ function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectS
 }
 
 function getWebTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectSetup): VirtualFile {
-  const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
+  const webConfigPath = 'tsconfig.app.json';
   const webImportRemapKey = `${importPrefix}/*`;
   const webImportMap = [
     `${sourceDirectory}/*.web`,
     `${sourceDirectory}/`
   ];
   const webConfigObject = {
-    'extends': '../tsconfig.json',
+    'extends': './tsconfig.json',
     compilerOptions: {
       outDir: './out-tsc/app',
       'module': 'es2015',

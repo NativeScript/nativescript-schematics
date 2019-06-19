@@ -108,7 +108,7 @@ describe('Add {N} schematic', () => {
             expect(nativescript['id']).toEqual('org.nativescript.ngsample');
         });
 
-        it('should modify the tsconfig.app.json(web) to include files and path mappings', () => {
+        it('should modify the tsconfig.app.json (web) to include files and path mappings', () => {
             const webTsConfigPath = '/tsconfig.app.json';
             expect(appTree.files).toContain(webTsConfigPath);
 
@@ -116,8 +116,8 @@ describe('Add {N} schematic', () => {
             const files = webTsconfig.files;
 
             expect(files).toBeDefined();
-            expect(files.includes('main.ts')).toBeTruthy();
-            expect(files.includes('polyfills.ts')).toBeTruthy();
+            expect(files.includes('src/main.ts')).toBeTruthy();
+            expect(files.includes('src/polyfills.ts')).toBeTruthy();
 
             const paths = webTsconfig.compilerOptions.paths;
             expect(paths).toBeDefined();
@@ -149,7 +149,7 @@ describe('Add {N} schematic', () => {
             expect(maps).toContain("src/*.ts");
         });
 
-        it('should modify the base tsconfig.app.json to include path mappings', () => {
+        it('should modify the base tsconfig.json to include path mappings', () => {
             const baseTsConfigPath = '/tsconfig.json';
             expect(appTree.files).toContain(baseTsConfigPath);
 

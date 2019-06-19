@@ -24,7 +24,7 @@
             "index": "<%= sourcedir %>/index.html",
             "main": "<%= sourcedir %>/main.ts",
             "polyfills": "<%= sourcedir %>/polyfills.ts",
-            "tsConfig": "<%= sourcedir %>/tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json",
             "assets": [
               "<%= sourcedir %>/favicon.ico",
               "<%= sourcedir %>/assets"
@@ -76,8 +76,8 @@
           "options": {
             "main": "<%= sourcedir %>/test.ts",
             "polyfills": "<%= sourcedir %>/polyfills.ts",
-            "tsConfig": "<%= sourcedir %>/tsconfig.spec.json",
-            "karmaConfig": "<%= sourcedir %>/karma.conf.js",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
             "styles": [
               "<%= sourcedir %>/styles.<%= style %>"
             ],
@@ -92,8 +92,8 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "<%= sourcedir %>/tsconfig.app.json",
-              "<%= sourcedir %>/tsconfig.spec.json"
+              "tsconfig.app.json",
+              "tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
