@@ -10,6 +10,7 @@ import {
   mergeWith,
   SchematicsException,
   noop,
+  schematic,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
@@ -22,9 +23,11 @@ import { getSourceFile, addExtension, findRelativeImportPath, getFileContents } 
 import { ComponentInfo, parseComponentInfo } from './component-info-utils';
 import { getNsConfigExtension, Extensions } from '../generate/utils';
 
+import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-imports/schema';
+
 let extensions: Extensions;
 
-export default function(options: MigrateComponentSchema): Rule {
+export default function (options: MigrateComponentSchema): Rule {
   let componentInfo: ComponentInfo;
   return chain([
     (tree: Tree) => {
@@ -37,7 +40,7 @@ export default function(options: MigrateComponentSchema): Rule {
     (tree: Tree, context: SchematicContext) => {
       componentInfo = parseComponentInfo(options)(tree, context);
     },
-    
+
     (tree: Tree, context: SchematicContext) =>
       addNsFiles(componentInfo, options)(tree, context),
 
@@ -45,7 +48,9 @@ export default function(options: MigrateComponentSchema): Rule {
       addNsStyle(componentInfo, options)(tree, context),
 
     (tree: Tree) =>
-      addComponentToNsModuleProviders(componentInfo, options)(tree)
+      addComponentToNsModuleProviders(componentInfo, options)(tree),
+
+    options.skipConvertRelativeImports ? noop() : schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options)
   ]);
 }
 
@@ -58,7 +63,7 @@ const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchem
   const templateOptions = {
     path: dirname(componentInfo.componentHtmlPath),
     htmlFileName: basename(componentInfo.componentHtmlPath),
-    
+
     addNsExtension: (path: string) => addExtension(path, extensions.ns),
 
     componentName: options.name,
@@ -66,7 +71,7 @@ const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchem
     webTemplate
   };
   const templateSource = apply(url('./_ns-files'), [
-      template(templateOptions)
+    template(templateOptions)
   ]);
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
@@ -83,9 +88,9 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
   if (options.skipModule) {
     return;
   }
-  
+
   const nsModulePath = addExtension(componentInfo.modulePath, extensions.ns);
-  
+
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
     throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
@@ -100,7 +105,7 @@ or if you just want to update the component without updating its module, then re
     componentInfo.className,
     findRelativeImportPath(nsModulePath, componentInfo.componentPath)
   );
-    
+
   // Save changes
   const recorder = tree.beginUpdate(nsModulePath);
   changes.forEach((change: InsertChange) =>
@@ -119,12 +124,12 @@ const addNsStyle = (componentInfo: ComponentInfo, options: MigrateComponentSchem
   const templateOptions = {
     path: dirname(componentInfo.componentHtmlPath),
     styleFileName: basename(componentInfo.componentStylePath),
-    
+
     addNsExtension: (path: string) => addExtension(path, extensions.ns),
   };
 
   const templateSource = apply(url('./_ns-style'), [
-      template(templateOptions)
+    template(templateOptions)
   ]);
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 }

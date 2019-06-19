@@ -24,21 +24,21 @@ describe('Application Schematic', () => {
 
     const tree = schematicRunner.runSchematic('application', options);
     const files = tree.files;
-    expect(files.indexOf('/foo/angular.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/nsconfig.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.css')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/angular.json');
+    expect(files).toContain('/foo/nsconfig.json');
+    expect(files).toContain('/foo/.gitignore');
+    expect(files).toContain('/foo/package.json');
+    expect(files).toContain('/foo/tsconfig.json');
+    expect(files).toContain('/foo/app/app.css');
 
-    expect(files.indexOf('/foo/app/package.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/main.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.module.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/app.component.ts')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/app/package.json');
+    expect(files).toContain('/foo/app/main.ts');
+    expect(files).toContain('/foo/app/app.module.ts');
+    expect(files).toContain('/foo/app/app.component.ts');
 
-    expect(files.indexOf('/foo/app/home/home.component.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/home/home.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/app/home/home.component.css')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/app/home/home.component.ts');
+    expect(files).toContain('/foo/app/home/home.component.html');
+    expect(files).toContain('/foo/app/home/home.component.css');
   });
 
   it('should create root NgModule with bootstrap information', () => {
@@ -63,9 +63,9 @@ describe('Application Schematic', () => {
       .not.toThrow();
 
     if (tree) {
-      const files = tree! .files;
-      expect(files.indexOf('/foo/tsconfig.json')).toBeGreaterThanOrEqual(0);
-      expect(files.indexOf('/foo/some/custom/path/app.module.ts')).toBeGreaterThanOrEqual(0);
+      const files = tree!.files;
+      expect(files).toContain('/foo/tsconfig.json');
+      expect(files).toContain('/foo/some/custom/path/app.module.ts');
     }
   });
 
@@ -78,11 +78,11 @@ describe('Application Schematic', () => {
       .not
       .toMatch(new RegExp('class="h1 text-center"'));
 
-     expect(getFileContent(tree, appComponent))
+    expect(getFileContent(tree, appComponent))
       .not
       .toMatch(new RegExp('class="btn btn-primary btn-active"'));
 
-     expect(getFileContent(tree, appComponent))
+    expect(getFileContent(tree, appComponent))
       .not
       .toMatch(new RegExp('class="h2 text-center"'));
   });
@@ -96,21 +96,21 @@ describe('Application Schematic', () => {
       .not
       .toMatch(new RegExp('nativescript-dev-webpack'));
 
-      const files = tree! .files;
-      expect(files.indexOf('/foo/webpack.config.js')).toEqual(-1);
+    const files = tree!.files;
+    expect(files).not.toContain('/foo/webpack.config.js');
   });
 
   it('should generate correct files when different style extension is specified', () => {
     const options = { ...defaultOptions, style: 'scss' };
     const tree = schematicRunner.runSchematic('application', options);
 
-    const files = tree! .files;
+    const files = tree!.files;
 
-    expect(files.indexOf('/foo/app/app.css')).toEqual(-1);
-    expect(files.indexOf('/foo/app/app.android.scss')).toBeGreaterThan(-1);
-    expect(files.indexOf('/foo/app/app.ios.scss')).toBeGreaterThan(-1);
+    expect(files).not.toContain('/foo/app/app.css');
+    expect(files).toContain('/foo/app/app.android.scss');
+    expect(files).toContain('/foo/app/app.ios.scss');
 
-    expect(files.indexOf('/foo/app/home/home.component.css')).toEqual(-1);
-    expect(files.indexOf('/foo/app/home/home.component.scss')).toBeGreaterThan(-1);
+    expect(files).not.toContain('/foo/app/home/home.component.css');
+    expect(files).toContain('/foo/app/home/home.component.scss');
   });
 }); 

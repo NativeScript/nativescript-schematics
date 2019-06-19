@@ -3,6 +3,16 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "module": "es2015",
-    "types": []
-  }
+    "types": [],
+    "paths": {
+      "@src/*": [
+        "<%= sourcedir %>/*.web",
+        "<%= sourcedir %>/*"
+      ]
+    }
+  },
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ]
 }

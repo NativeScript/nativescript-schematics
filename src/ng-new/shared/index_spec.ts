@@ -22,23 +22,23 @@ describe('Shared Application Schematic', () => {
 
     const tree = schematicRunner.runSchematic('shared', options);
     const files = tree.files;
-    expect(files.indexOf('/foo/angular.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/nsconfig.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/.gitignore')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/package.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/tsconfig.tns.json')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/angular.json');
+    expect(files).toContain('/foo/nsconfig.json');
+    expect(files).toContain('/foo/.gitignore');
+    expect(files).toContain('/foo/package.json');
+    expect(files).toContain('/foo/tsconfig.tns.json');
 
-    expect(files.indexOf('/foo/src/package.json')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/main.tns.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/app.module.ts')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/package.json');
+    expect(files).toContain('/foo/src/main.tns.ts');
+    expect(files).toContain('/foo/src/app/app.module.ts');
 
-    expect(files.indexOf('/foo/src/app/app.component.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/app.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/app.component.tns.html')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/app/app.component.ts');
+    expect(files).toContain('/foo/src/app/app.component.html');
+    expect(files).toContain('/foo/src/app/app.component.tns.html');
 
-    expect(files.indexOf('/foo/src/app/home/home.component.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/home/home.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/home/home.component.css')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/app/home/home.component.ts');
+    expect(files).toContain('/foo/src/app/home/home.component.html');
+    expect(files).toContain('/foo/src/app/home/home.component.css');
   });
 
   it('should create all sample files when the sample flag is provided', () => {
@@ -46,19 +46,19 @@ describe('Shared Application Schematic', () => {
 
     const tree = schematicRunner.runSchematic('shared', options);
     const files = tree.files;
-    expect(files.indexOf('/foo/src/app/barcelona/barcelona.common.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/barcelona.module.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/barcelona.module.tns.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/player.service.ts')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/player.ts')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/app/barcelona/barcelona.common.ts');
+    expect(files).toContain('/foo/src/app/barcelona/barcelona.module.ts');
+    expect(files).toContain('/foo/src/app/barcelona/barcelona.module.tns.ts');
+    expect(files).toContain('/foo/src/app/barcelona/player.service.ts');
+    expect(files).toContain('/foo/src/app/barcelona/player.model.ts');
 
-    expect(files.indexOf('/foo/src/app/barcelona/players/players.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/players/players.component.tns.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/players/players.component.ts')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/app/barcelona/players/players.component.html');
+    expect(files).toContain('/foo/src/app/barcelona/players/players.component.tns.html');
+    expect(files).toContain('/foo/src/app/barcelona/players/players.component.ts');
 
-    expect(files.indexOf('/foo/src/app/barcelona/player-detail/player-detail.component.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/player-detail/player-detail.component.tns.html')).toBeGreaterThanOrEqual(0);
-    expect(files.indexOf('/foo/src/app/barcelona/player-detail/player-detail.component.ts')).toBeGreaterThanOrEqual(0);
+    expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.html');
+    expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.tns.html');
+    expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.ts');
   });
 
   it('should generate correct files when different style extension is specified', () => {
@@ -67,11 +67,11 @@ describe('Shared Application Schematic', () => {
 
     const files = tree! .files;
 
-    expect(files.indexOf('/foo/src/app.css')).toEqual(-1);
-    expect(files.indexOf('/foo/src/app.android.scss')).toBeGreaterThan(-1);
-    expect(files.indexOf('/foo/src/app.ios.scss')).toBeGreaterThan(-1);
+    expect(files).not.toContain('/foo/src/app.css');
+    expect(files).toContain('/foo/src/app.android.scss');
+    expect(files).toContain('/foo/src/app.ios.scss');
 
-    expect(files.indexOf('/foo/src/home/home.component.css')).toEqual(-1);
-    expect(files.indexOf('/foo/src/home/home.component.scss')).toBeGreaterThan(-1);
+    expect(files).not.toContain('/foo/src/home/home.component.css');
+    expect(files).toContain('/foo/src/home/home.component.scss');
   });
 });

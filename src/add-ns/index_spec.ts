@@ -34,7 +34,7 @@ describe('Add {N} schematic', () => {
 
         it('should add dependency to NativeScript schematics', () => {
             const configFile = '/angular.json';
-            expect(appTree.files.includes(configFile)).toBeTruthy();
+            expect(appTree.files).toContain(configFile);
             const configFileContent = JSON.parse(getFileContent(appTree, configFile));
 
             expect(configFileContent.cli.defaultCollection).toEqual('@nativescript/schematics');
@@ -43,35 +43,35 @@ describe('Add {N} schematic', () => {
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
-            expect(files.includes('/nsconfig.json')).toBeTruthy();
-            expect(files.includes('/tsconfig.tns.json')).toBeTruthy();
-            expect(files.includes('/foo/src/app.css')).toBeTruthy();
-            expect(files.includes('/foo/src/main.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/package.json')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.module.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.component.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/app.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/nsconfig.json');
+            expect(files).toContain('/tsconfig.tns.json');
+            expect(files).toContain('/src/app.css');
+            expect(files).toContain('/src/main.tns.ts');
+            expect(files).toContain('/src/package.json');
+            expect(files).toContain('/src/app/app.module.tns.ts');
+            expect(files).toContain('/src/app/app.component.tns.ts');
+            expect(files).toContain('/src/app/app.component.tns.html');
         });
 
         it('should add native app resources', () => {
-            expect(appTree.files.includes('/App_Resources/Android/app.gradle')).toBeTruthy();
-            expect(appTree.files.includes('/App_Resources/iOS/Info.plist')).toBeTruthy();
+            expect(appTree.files).toContain('/App_Resources/Android/app.gradle');
+            expect(appTree.files).toContain('/App_Resources/iOS/Info.plist');
         });
 
         it('should add {N} specifics to gitignore', () => {
             const gitignorePath = '/.gitignore';
-            expect(appTree.files.includes(gitignorePath)).toBeTruthy();
+            expect(appTree.files).toContain(gitignorePath);
             const gitignore = getFileContent(appTree, gitignorePath);
 
             expect(gitignore.includes('node_modules/')).toBeTruthy();
             expect(gitignore.includes('platforms/')).toBeTruthy();
             expect(gitignore.includes('hooks/')).toBeTruthy();
-            expect(gitignore.includes('foo/src/**/*.js')).toBeTruthy();
+            expect(gitignore.includes('src/**/*.js')).toBeTruthy();
         });
 
         it('should add all required dependencies to the package.json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { dependencies, devDependencies } = packageJson;
@@ -80,14 +80,14 @@ describe('Add {N} schematic', () => {
             expect(dependencies['nativescript-theme-core']).toBeDefined();
             expect(dependencies['tns-core-modules']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
-            
+
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
             expect(devDependencies['@nativescript/schematics']).toBeDefined();
         });
 
         it('should add run scripts to the package json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { scripts } = packageJson;
@@ -98,7 +98,7 @@ describe('Add {N} schematic', () => {
 
         it('should add NativeScript key to the package json', () => {
             const packageJsonPath = '/package.json';
-            expect(appTree.files.includes(packageJsonPath)).toBeTruthy();
+            expect(appTree.files).toContain(packageJsonPath);
 
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { nativescript } = packageJson;
@@ -107,28 +107,74 @@ describe('Add {N} schematic', () => {
             expect(nativescript['id']).toEqual('org.nativescript.ngsample');
         });
 
-        it('should exclude {N} files from the web TS compilation', () => {
-            const webTsconfigPath = '/foo/tsconfig.app.json';
-            expect(appTree.files.includes(webTsconfigPath)).toBeTruthy();
+        it('should modify the tsconfig.app.json(web) to include files and path mappings', () => {
+            const webTsConfigPath = '/src/tsconfig.app.json';
+            expect(appTree.files).toContain(webTsConfigPath);
 
-            const webTsconfig = JSON.parse(getFileContent(appTree, webTsconfigPath));
-            const { exclude } = webTsconfig;
+            const webTsconfig = JSON.parse(getFileContent(appTree, webTsConfigPath));
+            const files = webTsconfig.files;
 
-            expect(exclude).toBeDefined();
-            expect(exclude.includes('**/*.tns.ts')).toBeTruthy();
-            expect(exclude.includes('**/*.android.ts')).toBeTruthy();
-            expect(exclude.includes('**/*.ios.ts')).toBeTruthy();
+            expect(files).toBeDefined();
+            expect(files.includes('main.ts')).toBeTruthy();
+            expect(files.includes('polyfills.ts')).toBeTruthy();
+
+            const paths = webTsconfig.compilerOptions.paths;
+            expect(paths).toBeDefined();
+            expect(paths["@src/*"]).toBeDefined();
+
+            const maps = paths["@src/*"];
+            expect(maps).toContain("src/*.web");
+            expect(maps).toContain("src/*");
+        });
+
+        it('should create the tsconfig.tns.json with files and path mappings', () => {
+            const nsTsConfigPath = '/tsconfig.tns.json';
+            expect(appTree.files).toContain(nsTsConfigPath);
+
+            const nsTsConfig = JSON.parse(getFileContent(appTree, nsTsConfigPath));
+            const files = nsTsConfig.files;
+
+            expect(files).toBeDefined();
+            expect(files).toContain('src/main.tns.ts');
+
+            const paths = nsTsConfig.compilerOptions.paths;
+            expect(paths).toBeDefined();
+            expect(paths["@src/*"]).toBeDefined();
+
+            const maps = paths["@src/*"];
+            expect(maps).toContain("src/*.ios.ts");
+            expect(maps).toContain("src/*.android.ts");
+            expect(maps).toContain("src/*.tns.ts");
+            expect(maps).toContain("src/*.ts");
+        });
+
+        it('should modify the base tsconfig.app.json to include path mappings', () => {
+            const baseTsConfigPath = '/tsconfig.json';
+            expect(appTree.files).toContain(baseTsConfigPath);
+
+            const baseTsConfig = JSON.parse(getFileContent(appTree, baseTsConfigPath));
+
+            const paths = baseTsConfig.compilerOptions.paths;
+            expect(paths).toBeDefined();
+            expect(paths["@src/*"]).toBeDefined();
+
+            const maps = paths["@src/*"];
+            expect(maps).toContain("src/*.android.ts");
+            expect(maps).toContain("src/*.ios.ts");
+            expect(maps).toContain("src/*.tns.ts");
+            expect(maps).toContain("src/*.web.ts");
+            expect(maps).toContain("src/*");
         });
 
         it('should generate a sample shared component', () => {
             const { files } = appTree;
-            const appRoutingModuleContent = appTree.readContent('/foo/src/app/app-routing.module.tns.ts');
-            const appComponentTemplate = appTree.readContent('/foo/src/app/app.component.tns.html');
-            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.ts');
-            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.html');
-            expect(files).toContain('/foo/src/app/auto-generated/auto-generated.component.tns.html');
+            const appRoutingModuleContent = appTree.readContent('/src/app/app-routing.module.tns.ts');
+            const appComponentTemplate = appTree.readContent('/src/app/app.component.tns.html');
+            expect(files).toContain('/src/app/auto-generated/auto-generated.component.ts');
+            expect(files).toContain('/src/app/auto-generated/auto-generated.component.html');
+            expect(files).toContain('/src/app/auto-generated/auto-generated.component.tns.html');
             expect(appRoutingModuleContent).toMatch(
-                /import { AutoGeneratedComponent } from '.\/auto-generated\/auto-generated.component'/
+                /import { AutoGeneratedComponent } from '@src\/app\/auto-generated\/auto-generated.component'/
             );
             expect(appRoutingModuleContent).toMatch(
                 /{\s+path: 'auto-generated',\s+component: AutoGeneratedComponent,\s+},/g
@@ -151,11 +197,11 @@ describe('Add {N} schematic', () => {
 
         it('should not add a sample shared component', () => {
             const { files } = appTree;
-            const appRoutingModuleContent = appTree.readContent('/foo/src/app/app-routing.module.tns.ts');
-            const appComponentTemplate = appTree.readContent('/foo/src/app/app.component.tns.html');
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.css')).toBeFalsy();
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.html')).toBeFalsy();
-            expect(files.includes('/foo/src/app/auto-generated/auto-generated.component.ts')).toBeFalsy();
+            const appRoutingModuleContent = appTree.readContent('/src/app/app-routing.module.tns.ts');
+            const appComponentTemplate = appTree.readContent('/src/app/app.component.tns.html');
+            expect(files).not.toContain('/src/app/auto-generated/auto-generated.component.css');
+            expect(files).not.toContain('/src/app/auto-generated/auto-generated.component.html');
+            expect(files).not.toContain('/src/app/auto-generated/auto-generated.component.ts');
             expect(appRoutingModuleContent).not.toMatch(
                 /import { AutoGeneratedComponent } from '.\/auto-generated\/auto-generated.component'/
             );
@@ -181,23 +227,23 @@ describe('Add {N} schematic', () => {
         it('should generate sample files', () => {
             const { files } = appTree;
 
-            expect(files.includes('/foo/src/app/barcelona/barcelona.common.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/barcelona.module.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/barcelona.module.tns.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player.service.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player.ts')).toBeTruthy();
+            expect(files).toContain('/src/app/barcelona/barcelona.common.ts');
+            expect(files).toContain('/src/app/barcelona/barcelona.module.ts');
+            expect(files).toContain('/src/app/barcelona/barcelona.module.tns.ts');
+            expect(files).toContain('/src/app/barcelona/player.service.ts');
+            expect(files).toContain('/src/app/barcelona/player.model.ts');
 
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.html')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/players/players.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/src/app/barcelona/players/players.component.ts');
+            expect(files).toContain('/src/app/barcelona/players/players.component.html');
+            expect(files).toContain('/src/app/barcelona/players/players.component.tns.html');
 
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.ts')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.html')).toBeTruthy();
-            expect(files.includes('/foo/src/app/barcelona/player-detail/player-detail.component.tns.html')).toBeTruthy();
+            expect(files).toContain('/src/app/barcelona/player-detail/player-detail.component.ts');
+            expect(files).toContain('/src/app/barcelona/player-detail/player-detail.component.html');
+            expect(files).toContain('/src/app/barcelona/player-detail/player-detail.component.tns.html');
         });
 
         it('should configure routing for redirection', () => {
-            const appRoutingModuleContent = appTree.readContent('/foo/src/app/app-routing.module.tns.ts');
+            const appRoutingModuleContent = appTree.readContent('/src/app/app-routing.module.tns.ts');
             expect(appRoutingModuleContent).toMatch(
                 /{\s+path: '',\s+redirectTo: '\/players',\s+pathMatch: 'full',\s+},/g
             );
@@ -216,7 +262,7 @@ function setupProject(
         'workspace',
         {
             name: 'workspace',
-            version: '6.0.0',
+            version: '7.0.0',
             newProjectRoot: ''
         }
     );
@@ -224,7 +270,10 @@ function setupProject(
     tree = schematicRunner.runExternalSchematic(
         '@schematics/angular',
         'application',
-        { name },
+        {
+            name,
+            projectRoot: ''
+        },
         tree
     );
 

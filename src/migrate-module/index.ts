@@ -18,6 +18,8 @@ import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { getNsConfigExtension } from '../generate/utils';
 
+import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-imports/schema';
+
 let nsext: string;
 let moduleInfo: ModuleInfo;
 
@@ -38,7 +40,9 @@ export default function(options: MigrateModuleSchema): Rule {
     addModuleFile(options.name, options.project),
 
     (tree, context) => migrateComponents(moduleInfo, options)(tree, context),
-    migrateProviders()
+    migrateProviders(),
+
+    schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options),
   ]);
 }
 
@@ -65,7 +69,8 @@ const migrateComponents = (moduleInfo: ModuleInfo, options: MigrateModuleSchema)
         modulePath: moduleInfo.modulePath,
         nsext,
         project: options.project,
-        style: options.style
+        style: options.style,
+        skipConvertRelativeImports: true
       }
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),

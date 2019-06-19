@@ -38,6 +38,10 @@
       "$default": {
         "$source": "projectName"
       }
+    },
+    "skipConvertRelativeImports": {
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [

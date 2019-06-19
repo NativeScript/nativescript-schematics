@@ -12,7 +12,7 @@ import {
   imports: [
     NativeScriptCommonModule,
     NativeScriptRouterModule,
-    NativeScriptRouterModule.forRoot(routes)
+    NativeScriptRouterModule.forChild(routes)
   ],
   exports: [
     NativeScriptRouterModule

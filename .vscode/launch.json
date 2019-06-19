@@ -17,7 +17,8 @@
             ],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
-            ]
+            ],
+            "preLaunchTask": "npm-build"
         }
     ]
 }

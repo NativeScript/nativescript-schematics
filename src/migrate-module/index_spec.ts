@@ -12,6 +12,7 @@ import { Schema as ComponentOptions } from '../generate/component/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
 import { getSourceFile, moveToRoot } from '../utils';
 import { isInModuleMetadata } from '../test-utils';
+import { findImports } from '../ast-utils';
 
 describe('Migrate module Schematic', () => {
   const project = 'some-project';
@@ -41,11 +42,11 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should create a mobile module file', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.module.tns.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.module.tns.ts');
     });
 
     it('should create a common file', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.common.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.common.ts');
     });
   });
 
@@ -56,11 +57,11 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should create the module file with that extension', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.module.mobile.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.module.mobile.ts');
     });
 
     it('should create a common file without the extension', () => {
-      expect(appTree.files.includes('/src/app/admin/admin.common.ts')).toBeTruthy();
+      expect(appTree.files).toContain('/src/app/admin/admin.common.ts');
     });
   });
 
@@ -73,7 +74,7 @@ describe('Migrate module Schematic', () => {
         project,
         nativescript: false,
       }, appTree);
-      
+
       originalWebModuleContent = getFileContent(appTree, webModulePath);
 
       const options: MigrateModuleOptions = { ...defaultOptions };
@@ -81,16 +82,24 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should keep the web module untouched', () => {
-      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(webModulePath);
       expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
     });
 
     it('should declare the component in the mobile module', () => {
-      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(nsModulePath);
       const content = getFileContent(appTree, nsModulePath);
 
       const matcher = isInModuleMetadata('AdminModule', 'declarations', 'AComponent', true);
       expect(content).toMatch(matcher);
+    });
+
+    it('should import the component in the mobile module using @src', () => {
+      const source = getSourceFile(appTree, nsModulePath);
+      const imports = findImports('AComponent', source);
+
+      expect(imports.length).toEqual(1);
+      expect(imports[0].getFullText()).toContain(`@src/app/a/a.component`)
     });
   });
 
@@ -105,12 +114,12 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should keep the web module untouched', () => {
-      expect(appTree.files.includes(webModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(webModulePath);
       expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
     });
 
     it('should provide the service in the mobile module', () => {
-      expect(appTree.files.includes(nsModulePath)).toBeTruthy();
+      expect(appTree.files).toContain(nsModulePath);
       const content = getFileContent(appTree, nsModulePath);
 
       const matcher = isInModuleMetadata('AdminModule', 'providers', provider, true);
@@ -120,10 +129,10 @@ describe('Migrate module Schematic', () => {
 });
 
 const setupProject = (
-    appTree: UnitTestTree,
-    schematicRunner: SchematicTestRunner,
-    project: string,
-    moduleName: string,
+  appTree: UnitTestTree,
+  schematicRunner: SchematicTestRunner,
+  project: string,
+  moduleName: string,
 ) => {
   appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
     name: project,

@@ -4,14 +4,23 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 import { HostTree } from '@angular-devkit/schematics';
 
 import { Schema as MasterDetailOptions } from './schema';
-import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../utils';
+import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../test-utils';
+import { getSourceFile, toComponentClassName } from '../../utils';
+import { findImports } from '../../ast-utils';
 
 describe('Master-detail schematic', () => {
   const master = 'heroes';
   const detail = 'hero';
+  const project = 'some-project';
+  const importPrefix = '@src';
+
+  const masterClassName = toComponentClassName(master);
+  const detailClassName = toComponentClassName(detail + "Detail");
+
   const defaultOptions: MasterDetailOptions = {
     master,
     detail,
+    project,
   };
 
   const schematicRunner = new SchematicTestRunner(
@@ -23,19 +32,19 @@ describe('Master-detail schematic', () => {
   describe('When in {N}-only project', () => {
     beforeEach(() => {
       appTree = new UnitTestTree(new HostTree);
-      appTree = createEmptyNsOnlyProject('some-project');
+      appTree = createEmptyNsOnlyProject(project);
       appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
     });
 
     it('should create all necessary files', () => {
       const { files } = appTree;
 
-      expect(files.includes(`/app/${master}/${master}.module.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/data.service.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${detail}-detail/${detail}-detail.component.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${detail}-detail/${detail}-detail.component.html`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${master}/${master}.component.ts`)).toBeTruthy();
-      expect(files.includes(`/app/${master}/${master}/${master}.component.html`)).toBeTruthy();
+      expect(files).toContain(`/app/${master}/${master}.module.ts`);
+      expect(files).toContain(`/app/${master}/data.service.ts`);
+      expect(files).toContain(`/app/${master}/${detail}-detail/${detail}-detail.component.ts`);
+      expect(files).toContain(`/app/${master}/${detail}-detail/${detail}-detail.component.html`);
+      expect(files).toContain(`/app/${master}/${master}/${master}.component.ts`);
+      expect(files).toContain(`/app/${master}/${master}/${master}.component.html`);
     });
 
   });
@@ -43,28 +52,38 @@ describe('Master-detail schematic', () => {
   describe('When in web+{N} project', () => {
     beforeEach(() => {
       appTree = new UnitTestTree(new HostTree);
-      appTree = createEmptySharedProject('some-project');
+      appTree = createEmptySharedProject(project);
       appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
     });
 
     it('should create all necessary files', () => {
       const { files } = appTree;
 
-      expect(files.includes(`/src/app/${master}/${master}.module.tns.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}.module.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}.common.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/data.service.ts`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${master}.module.tns.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}.module.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}.common.ts`);
+      expect(files).toContain(`/src/app/${master}/data.service.ts`);
 
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.html`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${detail}-detail/${detail}-detail.component.tns.html`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.ts`);
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.html`);
+      expect(files).toContain(`/src/app/${master}/${detail}-detail/${detail}-detail.component.tns.html`);
 
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.ts`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.html`)).toBeTruthy();
-      expect(files.includes(`/src/app/${master}/${master}/${master}.component.tns.html`)).toBeTruthy();
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.ts`);
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.html`);
+      expect(files).toContain(`/src/app/${master}/${master}/${master}.component.tns.html`);
     });
 
+    it('should import the components in common module using @src', () => {
+      const source = getSourceFile(appTree, `/src/app/${master}/${master}.common.ts`);
 
+      const masterImports = findImports(masterClassName, source);
+      expect(masterImports.length).toEqual(1);
+      expect(masterImports[0].getFullText()).toContain(`${importPrefix}/app/${master}/${master}/${master}.component`);
+
+      const detailImports = findImports(detailClassName, source);
+      expect(detailImports.length).toEqual(1);
+      expect(detailImports[0].getFullText()).toContain(`${importPrefix}/app/${master}/${detail}-detail/${detail}-detail.component`);
+    });
   });
-
+  
 });

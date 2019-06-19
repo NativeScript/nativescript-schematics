@@ -60,6 +60,7 @@ export default function (options: ModuleOptions): Rule {
   return branchAndMerge(chain([
     // Filter existing modules with the same names so that they don't
     // cause merge conflicts before the files are renamed.
+    // TODO: Fix. Huge performance hit! Filter goes trough node_modules + platforms. 
     filter(fileName => {
       const {
         moduleName,

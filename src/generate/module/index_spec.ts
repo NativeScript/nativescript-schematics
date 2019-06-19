@@ -1,10 +1,11 @@
 import { join } from 'path';
 
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
-import { getFileContent, createAppModule } from '@schematics/angular/utility/test';
+import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
-import { toNgModuleClassName, createEmptySharedProject, createEmptyNsOnlyProject } from '../../utils';
+import { toNgModuleClassName } from '../../utils';
+import { createEmptySharedProject, createEmptyNsOnlyProject } from '../../test-utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
 import { isInModuleMetadata } from '../../test-utils';
 
@@ -137,7 +138,7 @@ describe('Module Schematic', () => {
         const options = { ...nsOnlyOptions };
         const tree = schematicRunner.runSchematic('module', options, appTree);
 
-        expect(tree.files.indexOf(nsModulePath)).toBeGreaterThanOrEqual(0);
+        expect(tree.files).toContain(nsModulePath);
         expect(getFileContent(tree, nsModulePath)).toContain('CommonModule');
         expect(getFileContent(tree, nsModulePath)).toContain(`class ${moduleClassName}`);
       });
@@ -176,7 +177,7 @@ describe('Module Schematic', () => {
         const options = { ...webOnlyOptions };
         const tree = schematicRunner.runSchematic('module', options, appTree);
 
-        expect(tree.files.indexOf(webModulePath)).toBeGreaterThanOrEqual(0);
+        expect(tree.files).toContain(webModulePath);
         expect(getFileContent(tree, webModulePath)).toContain('CommonModule');
         expect(getFileContent(tree, webModulePath)).toContain(`class ${moduleClassName}`);
       });
