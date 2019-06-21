@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "module": "es2015",
@@ -12,7 +12,7 @@
     }
   },
   "files": [
-    "main.ts",
-    "polyfills.ts"
+    "<%= sourcedir %>/main.ts",
+    "<%= sourcedir %>/polyfills.ts"
   ]
 }

@@ -19,10 +19,10 @@ describe('Application Schematic', () => {
     webpack: true,
   };
 
-  it('should create all files of an application', () => {
+  it('should create all files of an application', async () => {
     const options = { ...defaultOptions };
 
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
     expect(files).toContain('/foo/nsconfig.json');
@@ -41,9 +41,9 @@ describe('Application Schematic', () => {
     expect(files).toContain('/foo/app/home/home.component.css');
   });
 
-  it('should create root NgModule with bootstrap information', () => {
+  it('should create root NgModule with bootstrap information', async () => {
     const options = { ...defaultOptions };
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
     const content = getFileContent(tree, '/foo/app/app.module.ts');
 
     expect(content).toMatch(isInModuleMetadata('AppModule', 'bootstrap', 'AppComponent', true));

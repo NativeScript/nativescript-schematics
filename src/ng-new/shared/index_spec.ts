@@ -17,10 +17,10 @@ describe('Shared Application Schematic', () => {
     sample: false,
   };
 
-  it('should create all files of an application', () => {
+  it('should create all files of an application', async () => {
     const options = { ...defaultOptions };
 
-    const tree = schematicRunner.runSchematic('shared', options);
+    const tree = await schematicRunner.runSchematicAsync('shared', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
     expect(files).toContain('/foo/nsconfig.json');
@@ -41,10 +41,10 @@ describe('Shared Application Schematic', () => {
     expect(files).toContain('/foo/src/app/home/home.component.css');
   });
 
-  it('should create all sample files when the sample flag is provided', () => {
+  it('should create all sample files when the sample flag is provided', async () => {
     const options = { ...defaultOptions, sample: true };
 
-    const tree = schematicRunner.runSchematic('shared', options);
+    const tree = await schematicRunner.runSchematicAsync('shared', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/src/app/barcelona/barcelona.common.ts');
     expect(files).toContain('/foo/src/app/barcelona/barcelona.module.ts');
@@ -61,9 +61,9 @@ describe('Shared Application Schematic', () => {
     expect(files).toContain('/foo/src/app/barcelona/player-detail/player-detail.component.ts');
   });
 
-  it('should generate correct files when different style extension is specified', () => {
+  it('should generate correct files when different style extension is specified', async () => {
     const options = { ...defaultOptions, style: 'scss' };
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
 
     const files = tree! .files;
 

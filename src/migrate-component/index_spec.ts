@@ -39,13 +39,14 @@ describe('Migrate component schematic', () => {
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;
 
-        beforeEach(() => {
-            appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
+        beforeEach(async () => {
+            appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
                 name: componentName,
                 nativescript: false,
                 web: true,
                 project,
-            }, appTree);
+            }, appTree)
+            .toPromise();
             appTree = schematicRunner.runSchematic('migrate-component', options, appTree);
         });
 
@@ -89,19 +90,21 @@ describe('Migrate component schematic', () => {
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;
 
-        beforeEach(() => {
-            appTree = schematicRunner.runSchematic('module', <ModuleOptions>{
+        beforeEach(async () => {
+            appTree = await schematicRunner.runSchematicAsync('module', <ModuleOptions>{
                 project,
                 name: moduleName,
-            }, appTree);
+            }, appTree)
+            .toPromise();
 
-            appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
+            appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
                 project,
                 nativescript: false,
                 web: true,
                 name: componentName,
                 module: moduleName,
-            }, appTree);
+            }, appTree)
+            .toPromise();
 
             appTree = schematicRunner.runSchematic('migrate-component', { ...options }, appTree);
 

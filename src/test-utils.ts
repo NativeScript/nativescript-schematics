@@ -25,8 +25,7 @@ const defaultProjectSettings: TestProjectSetup = {
   webExtension: '',
   nsExtension: '.tns',
   shared: true,
-}
-
+};
 
 export const isInModuleMetadata = (
   moduleName: string,
@@ -110,11 +109,23 @@ function setupTestTree(files: VirtualFile[]): UnitTestTree {
 }
 
 export function createEmptyNsOnlyProject(projectName: string, nsExtension: string = ''): UnitTestTree {
-  return createTestProject({ projectName, nsExtension, shared: false });
+  const setup = { ...defaultProjectSettings, projectName, nsExtension };
+  const additionalFiles = [
+    getNsPackageJson(setup),
+    getNsEntryPoint(setup)
+  ];
+
+  return createTestProject(setup, additionalFiles);
 }
 
 export function createEmptySharedProject(projectName: string, webExtension: string = '', nsExtension: string = '.tns'): UnitTestTree {
-  return createTestProject({ projectName, webExtension, nsExtension, shared: true });
+  const setup = { ...defaultProjectSettings, projectName, webExtension, nsExtension };
+  const additionalFiles = [
+    getNsConfig(setup),
+    getAppModule(setup.webExtension),
+  ];
+
+  return createTestProject(setup, additionalFiles);
 }
 
 export function createTestProject(setup: TestProjectSetup, additionalFiles: VirtualFile[] = []): UnitTestTree {
@@ -128,11 +139,6 @@ export function createTestProject(setup: TestProjectSetup, additionalFiles: Virt
   files.push(getPackageJson(setup));
 
   files.push(getAppModule(setup.nsExtension));
-
-  if (setup.shared) {
-    files.push(getNsConfig(setup));
-    files.push(getAppModule(setup.webExtension));
-  }
 
   files.push(...additionalFiles);
 
@@ -213,14 +219,14 @@ function getBaseTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectS
 }
 
 function getWebTypescriptConfig({ sourceDirectory, importPrefix }: TestProjectSetup): VirtualFile {
-  const webConfigPath = `${sourceDirectory}/tsconfig.app.json`;
+  const webConfigPath = 'tsconfig.app.json';
   const webImportRemapKey = `${importPrefix}/*`;
   const webImportMap = [
     `${sourceDirectory}/*.web`,
     `${sourceDirectory}/`
   ];
   const webConfigObject = {
-    'extends': '../tsconfig.json',
+    'extends': './tsconfig.json',
     compilerOptions: {
       outDir: './out-tsc/app',
       'module': 'es2015',
@@ -275,5 +281,29 @@ function getAppModule(extension?: string): VirtualFile {
   return {
     path,
     content: file.content.toString()
+  };
+}
+
+function getNsEntryPoint(setup: TestProjectSetup): VirtualFile {
+  return {
+    path: `${setup.sourceDirectory}/main.ts`,
+    content: `
+      import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
+      import { AppModule } from './app/app.module';
+
+      platformNativeScriptDynamic().bootstrapModule(AppModule);
+    `
+  };
+}
+
+function getNsPackageJson(setup: TestProjectSetup): VirtualFile {
+  return {
+    path: `${setup.sourceDirectory}/package.json`,
+    content: JSON.stringify({
+      android: {
+        v8Flags: '--expose_gc'
+      },
+      main: 'main.js'
+    })
   };
 }

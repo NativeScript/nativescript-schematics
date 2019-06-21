@@ -1,9 +1,8 @@
-import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 import { getFileContent } from '@schematics/angular/utility/test';
-import { VirtualTree } from '@angular-devkit/schematics';
 import * as path from 'path';
 
-import { isInModuleMetadata } from '../test-utils';
+import { isInModuleMetadata, createEmptyNsOnlyProject, VirtualFile } from '../test-utils';
 import { Schema } from './schema';
 
 describe('Refactor NsNg Modules Schematic', () => {
@@ -15,44 +14,29 @@ describe('Refactor NsNg Modules Schematic', () => {
   const sourceDir = 'src';
   const defaultOptions: Schema = { sourceDir };
 
-  const rootModulePath = `${sourceDir}/app.module.ts`;
-  const rootModuleContent = `
-    import { NgModule } from "@angular/core";
-    import { NativeScriptModule } from "nativescript-angular/nativescript.module";
-
-    @NgModule({
-        imports: [
-            NativeScriptModule,
-        ],
-    })
-    export class AppModule { }
-  `;
+  const rootModulePath = `${sourceDir}/app/app.module.ts`;
+  const getRootModuleContent = (tree: UnitTestTree) => {
+    const buffer = tree.read(rootModulePath) || '';
+    return buffer.toString();
+  };
 
   const initAppTree = () => {
-    const appTree = new VirtualTree();
-    appTree.create(`${sourceDir}/package.json`, `{ "main": "main.js" }`);
-    appTree.create(`${sourceDir}/main.ts`, `
-        import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
-        import { AppModule } from './app.module';
-
-        platformNativeScriptDynamic().bootstrapModule(AppModule);
-    `);
-
-    appTree.create(rootModulePath, rootModuleContent);
+    const appTree = createEmptyNsOnlyProject('project');
 
     return appTree;
   };
 
-
   describe('when no changes are required', () => {
-    let tree;
+    let appTree;
+    let rootModuleContent;
     beforeEach(() => {
-      const appTree = initAppTree();
-      tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
+      appTree = initAppTree();
+      rootModuleContent = getRootModuleContent(appTree);
     });
 
-    it('should not change the tree', () => {
-      expect(tree.files.length).toEqual(3);
+    it('should not change the tree', async () => {
+      const tree = await schematicRunner.runSchematicAsync('refactor-nsng-modules', defaultOptions, appTree)
+        .toPromise();
       expect(tree.exists(rootModulePath)).toEqual(true);
       expect(getFileContent(tree, rootModulePath)).toEqual(rootModuleContent);
     });
@@ -64,6 +48,7 @@ describe('Refactor NsNg Modules Schematic', () => {
 
     let tree;
     let featureModuleContent;
+    let rootModuleContent;
 
     beforeEach(() => {
       const appTree = initAppTree();
@@ -90,6 +75,7 @@ describe('Refactor NsNg Modules Schematic', () => {
         export class ${featureModuleName} { }
       `);
 
+      rootModuleContent = getRootModuleContent(appTree);
       tree = schematicRunner.runSchematic('refactor-nsng-modules', defaultOptions, appTree);
       featureModuleContent = getFileContent(tree, featureModulePath);
     });

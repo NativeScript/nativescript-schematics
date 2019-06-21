@@ -30,15 +30,16 @@ describe('Migrate module Schematic', () => {
   );
 
   let appTree: UnitTestTree;
-  beforeEach(() => {
+  beforeEach(async () => {
     appTree = new UnitTestTree(new HostTree);
-    appTree = setupProject(appTree, schematicRunner, project, moduleName);
+    appTree = await setupProject(appTree, schematicRunner, project, moduleName);
   });
 
   describe('When the name of existing module is provided', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const options = { ...defaultOptions };
-      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('migrate-module', options, appTree)
+        .toPromise();
     });
 
     it('should create a mobile module file', () => {
@@ -51,9 +52,10 @@ describe('Migrate module Schematic', () => {
   });
 
   describe('When a custom mobile extension is provided', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const options: MigrateModuleOptions = { ...defaultOptions, nsext: 'mobile' };
-      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('migrate-module', options, appTree)
+        .toPromise();
     });
 
     it('should create the module file with that extension', () => {
@@ -67,18 +69,20 @@ describe('Migrate module Schematic', () => {
 
   describe('When the module has a component', () => {
     let originalWebModuleContent: string;
-    beforeEach(() => {
-      appTree = schematicRunner.runSchematic('component', <ComponentOptions>{
+    beforeEach(async () => {
+      appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
         name: 'a',
         module: moduleName,
         project,
         nativescript: false,
-      }, appTree);
+      }, appTree)
+      .toPromise();
 
       originalWebModuleContent = getFileContent(appTree, webModulePath);
 
       const options: MigrateModuleOptions = { ...defaultOptions };
-      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('migrate-module', options, appTree)
+        .toPromise();
     });
 
     it('should keep the web module untouched', () => {
@@ -106,11 +110,12 @@ describe('Migrate module Schematic', () => {
   describe('When the module has a provider', () => {
     const provider = 'SomeProvider';
     let originalWebModuleContent: string;
-    beforeEach(() => {
+    beforeEach(async () => {
       appTree = insertProviderInMetadata(appTree, webModulePath, provider);
       originalWebModuleContent = getFileContent(appTree, webModulePath);
       const options: MigrateModuleOptions = { ...defaultOptions };
-      appTree = schematicRunner.runSchematic('migrate-module', options, appTree);
+      appTree = await schematicRunner.runSchematicAsync('migrate-module', options, appTree)
+        .toPromise();
     });
 
     it('should keep the web module untouched', () => {
@@ -128,28 +133,30 @@ describe('Migrate module Schematic', () => {
   });
 });
 
-const setupProject = (
+const setupProject = async (
   appTree: UnitTestTree,
   schematicRunner: SchematicTestRunner,
   project: string,
   moduleName: string,
 ) => {
-  appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
+  appTree = await schematicRunner.runSchematicAsync('shared', <ApplicationOptions>{
     name: project,
     prefix: '',
     sourceDir: 'src',
     style: 'css',
     theme: true,
     sample: false,
-  }, appTree);
+  }, appTree)
+  .toPromise();
 
   appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
-  appTree = schematicRunner.runSchematic('module', <ModuleOptions>{
+  appTree = await schematicRunner.runSchematicAsync('module', <ModuleOptions>{
     name: moduleName,
     nativescript: false,
     web: true,
     project,
-  }, appTree);
+  }, appTree)
+  .toPromise();
 
   return appTree;
 };
