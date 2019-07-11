@@ -1,3 +1,4 @@
+import { dirname, basename } from 'path';
 import {
   Rule,
   SchematicContext,
@@ -15,15 +16,13 @@ import {
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
 
-import { dirname, basename } from 'path';
-
-import { Schema as MigrateComponentSchema } from './schema';
-
-import { getSourceFile, addExtension, findRelativeImportPath, getFileContents } from '../utils';
-import { ComponentInfo, parseComponentInfo } from './component-info-utils';
+import { addExtension, findRelativeImportPath, getFileContents } from '../utils';
 import { getNsConfigExtension, Extensions } from '../generate/utils';
-
 import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-imports/schema';
+import { getSourceFile } from '../ts-utils';
+
+import { ComponentInfo, parseComponentInfo } from './component-info-utils';
+import { Schema as MigrateComponentSchema } from './schema';
 
 let extensions: Extensions;
 

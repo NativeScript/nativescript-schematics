@@ -6,8 +6,7 @@ import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { addEntryComponentToModule, addExportToModule, addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
 import { Schema as ComponentOptions } from './schema';
-import { getSourceFile } from '../../utils';
-import { addSymbolToDecoratorMetadata } from '../../ast-utils';
+import { addSymbolToDecoratorMetadata, getSourceFile } from '../../ts-utils';
 
 export const insertModuleId = (tree: Tree, component: string) => {
   const componentSource = getSourceFile(tree, component);

@@ -5,8 +5,8 @@ import { HostTree } from '@angular-devkit/schematics';
 
 import { Schema as MasterDetailOptions } from './schema';
 import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../test-utils';
-import { getSourceFile, toComponentClassName } from '../../utils';
-import { findImports } from '../../ast-utils';
+import { toComponentClassName } from '../../utils';
+import { getSourceFile, findImports } from '../../ts-utils';
 
 describe('Master-detail schematic', () => {
   const master = 'heroes';

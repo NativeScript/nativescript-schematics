@@ -9,8 +9,8 @@ import {
   findBootstrapModulePath,
 } from '@schematics/angular/utility/ng-ast-utils';
 
-import { getSourceFile, safeGet } from './utils';
-import { findNode, findImportPath } from './ast-utils';
+import { safeGet } from './utils';
+import { findNode, findImportPath, getSourceFile } from './ts-utils';
 
 export interface AngularProjectSettings {
   /** default: '' */

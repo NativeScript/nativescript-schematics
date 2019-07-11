@@ -6,8 +6,7 @@ import { join, dirname } from 'path';
 import * as ts from 'typescript';
 
 import { AngularProjectSettings, getAngularProjectSettings } from '../angular-project-parser';
-import { getSourceFile } from '../utils';
-import { findImportPath, findMatchingNodes } from '../ast-utils';
+import { findImportPath, findMatchingNodes, getSourceFile } from '../ts-utils';
 import { findDecoratorPropertyNode } from '../decorator-utils';
 
 export interface ComponentInfo {

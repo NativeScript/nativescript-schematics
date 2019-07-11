@@ -3,7 +3,8 @@ import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
-import { toComponentClassName, Node, getSourceFile, removeNode } from './utils';
+import { toComponentClassName, Node, removeNode, getFileContents, getJsonFile } from './utils';
+import { dirname } from 'path';
 
 class RemoveContent implements Node {
   constructor(private pos: number, private end: number) {
@@ -616,4 +617,32 @@ export const replaceTextInNode = (tree: Tree, node: ts.Node, oldText: string, ne
   recorder.remove(index, oldText.length);
   recorder.insertLeft(index, newText);
   tree.commitUpdate(recorder);
+}
+
+export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
+  const config = getJsonFile(tree, tsConfigPath);
+  const host: ts.ParseConfigHost = {
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
+    readDirectory: ts.sys.readDirectory,
+    fileExists: (file: string) => tree.exists(file),
+    readFile: (file: string) => getFileContents(tree, file)
+  };
+  const basePath = dirname(tsConfigPath);
+
+  const tsConfigObject = ts.parseJsonConfigFileContent(config, host, basePath);
+
+  return tsConfigObject;
+}
+
+export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
+  const buffer = host.read(path);
+  if (!buffer) {
+    throw new SchematicsException(
+      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`
+    );
+  }
+  const content = buffer.toString();
+  const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
+
+  return source;
 }

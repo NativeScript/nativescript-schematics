@@ -10,9 +10,9 @@ import { Schema as MigrateModuleOptions } from './schema';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
 import { Schema as ComponentOptions } from '../generate/component/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
-import { getSourceFile, moveToRoot } from '../utils';
+import { moveToRoot } from '../utils';
 import { isInModuleMetadata } from '../test-utils';
-import { findImports } from '../ast-utils';
+import { findImports, getSourceFile } from '../ts-utils';
 
 describe('Migrate module Schematic', () => {
   const project = 'some-project';

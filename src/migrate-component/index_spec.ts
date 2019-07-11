@@ -8,9 +8,9 @@ import { isInModuleMetadata } from '../test-utils';
 import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
 import { Schema as ModuleOptions } from '../generate/module/schema';
 import { Schema as ComponentOptions } from '../generate/component/schema';
-import { moveToRoot, getSourceFile } from '../utils';
+import { moveToRoot } from '../utils';
+import { findImports, getSourceFile } from '../ts-utils';
 import { Schema as MigrateComponentOptions } from './schema';
-import { findImports } from '../ast-utils';
 
 describe('Migrate component schematic', () => {
     const project = 'some-project';
