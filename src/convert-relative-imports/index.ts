@@ -6,7 +6,8 @@ import { LoggerApi } from '@angular-devkit/core/src/logger';
 import { PreferMappedImportsRule } from '@nativescript/tslint-rules';
 import { parseCompilerOptions } from '@nativescript/tslint-rules/dist/preferMappedImportsRule';
 
-import { parseTsConfigFile, getFileContents } from '../utils';
+import { parseTsConfigFile } from '../ts-utils';
+import { getFileContents } from '../utils';
 import { getTsConfigFromProject } from '../angular-project-parser';
 import { Schema as ConvertRelativeImportsSchema } from './schema';
 

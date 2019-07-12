@@ -7,7 +7,7 @@ import {
 import { insertImport } from '../route-utils';
 
 import { Schema } from './schema';
-import { getJsonFile, getSourceFile, removeNode } from '../utils';
+import { getJsonFile, removeNode } from '../utils';
 import {
   collectDeepNodes,
   filterByChildNode,
@@ -18,7 +18,8 @@ import {
   getSymbolsToAddToObject,
   removeImport,
   getDecoratedClass,
-} from '../ast-utils';
+  getSourceFile,
+} from '../ts-utils';
 
 import * as ts from 'typescript';
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';

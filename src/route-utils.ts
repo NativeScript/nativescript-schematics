@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { Change, NoopChange } from '@schematics/angular/utility/change';
 import { findNodes } from '@schematics/angular/utility/ast-utils';
-import { insertBeforeFirstOccurence } from './ast-utils';
+import { insertBeforeFirstOccurence } from './ts-utils';
 
 /**
 * Add Import `import { symbolName } from fileName` if the import doesn't exit

@@ -16,6 +16,7 @@ jsconfig.json
 node_modules/
 npm-debug.log*
 yarn-error.log*
+package-lock.json
 
 # Mac OSX Finder files.
 **/.DS_Store

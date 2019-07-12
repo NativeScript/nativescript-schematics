@@ -1,4 +1,4 @@
-import { relative, join, dirname } from 'path';
+import { relative, join } from 'path';
 
 import {
   SchematicsException,
@@ -7,10 +7,8 @@ import {
   move,
 } from '@angular-devkit/schematics';
 import { strings as angularStringUtils } from '@angular-devkit/core';
-import * as ts from 'typescript';
 import { NsConfig } from './models/nsconfig';
 import { UnitTestTree, SchematicTestRunner } from '@angular-devkit/schematics/testing';
-
 
 const PACKAGE_JSON = 'package.json';
 
@@ -42,19 +40,6 @@ export const schematicRunner = new SchematicTestRunner(
   'nativescript-schematics',
   join(__dirname, 'collection.json'),
 );
-
-export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
-  const buffer = host.read(path);
-  if (!buffer) {
-    throw new SchematicsException(
-      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`
-    );
-  }
-  const content = buffer.toString();
-  const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
-
-  return source;
-}
 
 export const removeNode = (node: Node, filePath: string, tree: Tree) => {
   const recorder = tree.beginUpdate(filePath);
@@ -284,20 +269,3 @@ function callRuleSync<T extends Tree | UnitTestTree>(
 
   return newTree;
 }
-
-export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
-  const config = getJsonFile(tree, tsConfigPath);
-  const host: ts.ParseConfigHost = {
-    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
-    readDirectory: ts.sys.readDirectory,
-    fileExists: (file: string) => tree.exists(file),
-    readFile: (file: string) => getFileContents(tree, file)
-  };
-  const basePath = dirname(tsConfigPath);
-
-  const tsConfigObject = ts.parseJsonConfigFileContent(config, host, basePath);
-
-  return tsConfigObject;
-}
-
-

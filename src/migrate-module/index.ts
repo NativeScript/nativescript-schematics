@@ -6,19 +6,18 @@ import {
   schematic,
   SchematicsException
 } from '@angular-devkit/schematics';
-
-import { addExtension, getSourceFile } from '../utils';
-
-import { Schema as MigrateModuleSchema } from './schema';
-import { Schema as ModuleSchema } from '../generate/module/schema';
-import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
-
-import { parseModuleInfo, ModuleInfo } from './module-info-utils';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { getNsConfigExtension } from '../generate/utils';
 
+import { addExtension } from '../utils';
+import { getSourceFile } from '../ts-utils';
+import { getNsConfigExtension } from '../generate/utils';
+import { parseModuleInfo, ModuleInfo } from './module-info-utils';
+
+import { Schema as ModuleSchema } from '../generate/module/schema';
+import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
 import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-imports/schema';
+import { Schema as MigrateModuleSchema } from './schema';
 
 let nsext: string;
 let moduleInfo: ModuleInfo;

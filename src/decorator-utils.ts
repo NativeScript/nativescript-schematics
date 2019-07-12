@@ -1,8 +1,7 @@
 import * as ts from 'typescript';
-import { findNode, findMatchingNodes, findImportPath } from './ast-utils';
 import { Tree } from '@angular-devkit/schematics';
-import { getSourceFile } from './utils';
 
+import { findNode, findMatchingNodes, findImportPath, getSourceFile } from './ts-utils';
 
 export interface ClassImport {
   name: string;

@@ -16,14 +16,12 @@ import { InsertChange } from '@schematics/angular/utility/change';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 import { Schema as ModuleOptions } from './schema';
-import {
-  getSourceFile,
-  copy,
-} from '../../utils';
+import { copy } from '../../utils';
 import {
   removeImport,
   removeMetadataArrayValue,
-} from '../../ast-utils';
+  getSourceFile,
+} from '../../ts-utils';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension, validateGenerateOptions } from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
