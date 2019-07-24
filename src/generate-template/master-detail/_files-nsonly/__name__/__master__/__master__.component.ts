@@ -4,7 +4,6 @@ import { DataService, Number } from '../data.service';
 
 @Component({
   selector: '<%= prefix %>-<%= master %>',
-  moduleId: module.id,
   templateUrl: './<%= master %>.component.html',
 })
 export class <%= masterClassName %>Component implements OnInit {

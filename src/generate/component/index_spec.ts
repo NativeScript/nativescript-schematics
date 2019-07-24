@@ -40,12 +40,6 @@ describe('Component Schematic', () => {
 
   let appTree: UnitTestTree;
 
-  const hasModuleId = () => {
-    const content = getFileContent(appTree, componentPath);
-    const matcher = isInComponentMetadata(componentClassName, 'moduleId', 'module.id', false);
-    return content.match(matcher);
-  };
-
   const ensureWebTemplate = (tree: UnitTestTree, path: string) => {
     expect(tree.exists(path)).toBeTruthy();
 
@@ -78,8 +72,6 @@ describe('Component Schematic', () => {
       expect(appTree.exists(noExtensionStylesheetPath)).toBeTruthy());
     it('should not create stylesheet with {N} extension', () =>
       expect(appTree.exists(nsStylesheetPath)).toBeFalsy());
-
-    it('should add module id', () => expect(hasModuleId()).toBeTruthy());
 
     it('should declare the component in the root NgModule for {N}', () => {
       const nsModuleContent = getFileContent(appTree, rootModulePath);
@@ -129,8 +121,6 @@ describe('Component Schematic', () => {
       it('should add {N}-specific stylesheet file', () =>
         expect(appTree.exists(nsStylesheetPath)).toBeTruthy());
 
-      it('should add module id', () => expect(hasModuleId()).toBeFalsy());
-
       it('should declare the component in the the root NgModule for web', () => {
         const webModuleContent = getFileContent(appTree, rootModulePath);
         expect(webModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
@@ -169,7 +159,6 @@ describe('Component Schematic', () => {
       it('should add {N}-specific markup file', () => ensureNsTemplate(appTree, nsTemplatePath));
       it('should add {N}-specific stylesheet file', () =>
         expect(appTree.exists(nsStylesheetPath)).toBeTruthy());
-      it('should add module id', () => expect(hasModuleId()).toBeFalsy());
 
       it('should not declare the component in the the root NgModule for web', () => {
         const webModuleContent = getFileContent(appTree, rootModulePath);
@@ -191,7 +180,6 @@ describe('Component Schematic', () => {
       });
 
       it('should add web-specific markup file', () => ensureWebTemplate(appTree, webTemplatePath));
-      it('should add module id', () => expect(hasModuleId()).toBeFalsy());
 
       it('should declare the component in the the root NgModule for web', () => {
         const webModuleContent = getFileContent(appTree, rootModulePath);

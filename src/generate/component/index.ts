@@ -20,7 +20,7 @@ import { Path, TemplateOptions } from '@angular-devkit/core';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
 import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
-import { addDeclarationToNgModule, insertModuleId } from './ast-utils';
+import { addDeclarationToNgModule } from './ast-utils';
 import { Schema as ComponentOptions } from './schema';
 import { findModule } from './find-module';
 
@@ -83,12 +83,6 @@ export default function (options: ComponentOptions): Rule {
       }
 
       return tree;
-    },
-
-    (tree: Tree) => {
-      if (platformUse.nsOnly) {
-        insertModuleId(tree, componentInfo.classPath);
-      }
     },
 
     (tree: Tree, context: SchematicContext) => {
