@@ -5,7 +5,6 @@ import { DataService, Number } from '../data.service';
 
 @Component({
   selector: '<%= prefix %>-details',
-  moduleId: module.id,
   templateUrl: './<%= detail %>-detail.component.html',
 })
 export class <%= detailClassName %>DetailComponent implements OnInit {

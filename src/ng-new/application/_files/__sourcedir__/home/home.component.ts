@@ -3,8 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: '<%= prefix %>-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.<%= style %>'],
-  moduleId: module.id,
+  styleUrls: ['./home.component.<%= style %>']
 })
 export class HomeComponent {
   title = '<%= name %>';

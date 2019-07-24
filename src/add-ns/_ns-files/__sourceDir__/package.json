@@ -1,6 +1,7 @@
 {
+  "main": "<%= main %><%= nsext %>.js",
   "android": {
-    "v8Flags": "--expose_gc"
-  },
-  "main": "<%= main %><%= nsext %>.js"
+    "v8Flags": "--expose_gc",
+    "markingMode": "none"
+  }
 }

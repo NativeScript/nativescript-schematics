@@ -1,4 +1,4 @@
-import { getDecoratorMetadata, addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata, findNodes } from '@schematics/angular/utility/ast-utils';
+import { addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata, findNodes } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
@@ -21,27 +21,6 @@ class RemoveContent implements Node {
   public getEnd() {
     return this.end;
   }
-}
-
-// Almost identical to addSymbolToNgModuleMetadata from @schematics/angular/utility/ast-utils
-// the method can be refactored so that it can be used with custom decorators
-export function addSymbolToDecoratorMetadata(
-  source: ts.SourceFile,
-  componentPath: string,
-  metadataField: string,
-  symbolName: string,
-  decoratorName: string,
-  decoratorPackage: string,
-): Change[] {
-  const nodes = getDecoratorMetadata(source, decoratorName, decoratorPackage);
-  let node: any = nodes[0];  // tslint:disable-line:no-any
-
-  // Find the decorator declaration.
-  if (!node) {
-    return [];
-  }
-
-  return getSymbolsToAddToObject(componentPath, node, metadataField, symbolName);
 }
 
 export function getSymbolsToAddToObject(path: string, node: any, metadataField: string, symbolName: string) {
