@@ -52,6 +52,11 @@
       "type": "boolean",
       "description": "Specifies whether a sample master detail should be generated.",
       "default": false
+    },
+    "skipInstall": {
+      "description": "When true, does not install packages for dependencies.",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
