@@ -8,14 +8,14 @@ import { createTestProject, TestProjectSetup } from '../test-utils';
 const sourceDirectory = 'src';
 const importPrefix = '@src';
 const defaultOptions: ConvertRelativeImportsOptions = {
-  project: 'my-app'
+  project: 'my-app',
 };
 
 const projSetup: TestProjectSetup = {
   projectName: defaultOptions.project,
   sourceDirectory,
-  importPrefix
-}
+  importPrefix,
+};
 
 const aboutModulePath = `${sourceDirectory}/about/about.module.ts`;
 const relativeImportContent = `
@@ -28,7 +28,7 @@ const fixedImportContent = `
 describe('Convert relative imports to mapped imports', () => {
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
-    join(__dirname, '../collection.json')
+    join(__dirname, '../collection.json'),
   );
 
   it('should convert the relative imports in a newly generated file', async () => {
@@ -56,7 +56,7 @@ describe('Convert relative imports to mapped imports', () => {
 
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
-      content: existingContent
+      content: existingContent,
     }]);
 
     appTree.overwrite(aboutModulePath, modifiedContent);
@@ -69,7 +69,7 @@ describe('Convert relative imports to mapped imports', () => {
   it('should convert the relative imports in a created and then renamed file', async () => {
     let appTree = createTestProject(projSetup);
 
-    const renamedFilePath = aboutModulePath.replace(".ts", ".tns.ts");
+    const renamedFilePath = aboutModulePath.replace('.ts', '.tns.ts');
 
     appTree.create(aboutModulePath, relativeImportContent);
     appTree.rename(aboutModulePath, renamedFilePath);
@@ -83,7 +83,7 @@ describe('Convert relative imports to mapped imports', () => {
   it('should not modify files that weren\'t modified', async () => {
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
-      content: relativeImportContent
+      content: relativeImportContent,
     }]);
 
     appTree = await schematicRunner.runSchematicAsync('convert-relative-imports', defaultOptions, appTree).toPromise();
@@ -119,7 +119,7 @@ describe('Convert relative imports to mapped imports', () => {
   it('should not modify files that are deleted by previous rules', async () => {
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
-      content: relativeImportContent
+      content: relativeImportContent,
     }]);
 
     appTree.delete(aboutModulePath);
@@ -142,7 +142,7 @@ describe('Convert relative imports to mapped imports', () => {
 
     let appTree = createTestProject(projSetup, [{
       path: aboutModulePath,
-      content: relativeImportContent
+      content: relativeImportContent,
     }]);
 
     appTree.overwrite(aboutModulePath, relativeImportContent + '\nconsole.log(\'modified\');\n');
@@ -153,4 +153,3 @@ describe('Convert relative imports to mapped imports', () => {
   });
 
 });
-

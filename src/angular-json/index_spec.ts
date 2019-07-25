@@ -15,12 +15,11 @@ describe('Angular JSON Config Schematic', () => {
   };
   const configPath = `/angular.json`;
 
-
   describe('with default options (name only)', () => {
     let tree: UnitTestTree;
     beforeAll(async () => {
       tree = await schematicRunner.runSchematicAsync('angular-json', defaultOptions).toPromise();
-    })
+    });
 
     it('should create angular.json files', () => {
       expect(tree.files).toContain(configPath);
@@ -33,7 +32,7 @@ describe('Angular JSON Config Schematic', () => {
     it('should insert "." as sourceRoot', () => {
       expect(getFileContent(tree, configPath)).toContain(`"sourceRoot": "."`);
     });
-  })
+  });
 
   it('should insert the prefix option', async () => {
     const prefix = 'custom-prefix';
@@ -48,9 +47,9 @@ describe('Angular JSON Config Schematic', () => {
   });
 
   it('should create files inside path when specified', async () => {
-    const path = '/path/to/my/app';
-    const appJsonPath = `${path}/angular.json`;
-    const options = { ...defaultOptions, path };
+    const projectPath = '/path/to/my/app';
+    const appJsonPath = `${projectPath}/angular.json`;
+    const options = { ...defaultOptions, path: projectPath };
 
     const tree = await schematicRunner.runSchematicAsync('angular-json', options).toPromise();
     expect(tree.files).toContain(appJsonPath);

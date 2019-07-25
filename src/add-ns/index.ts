@@ -27,10 +27,10 @@ import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-impo
 let extensions: Extensions;
 let projectSettings: AngularProjectSettings;
 
-export default function (options: MigrationOptions): Rule {
+export default function(options: MigrationOptions): Rule {
   extensions = {
     ns: (options.nsExtension.length > 0) ? '.' + options.nsExtension : '',
-    web: (options.webExtension.length > 0) ? '.' + options.webExtension : ''
+    web: (options.webExtension.length > 0) ? '.' + options.webExtension : '',
   };
 
   return chain([
@@ -72,7 +72,9 @@ export default function (options: MigrationOptions): Rule {
  */
 const validateOptions = (options: MigrationOptions) => () => {
   if (options.nsExtension === options.webExtension) {
-    throw new SchematicsException(`nsExtension "${options.nsExtension}" and webExtension "${options.webExtension}" should have different values`);
+    throw new SchematicsException(
+      `nsExtension "${options.nsExtension}" and webExtension "${options.webExtension}" should have different values`,
+    );
   }
 };
 
@@ -98,10 +100,10 @@ ${JSON.stringify(angularJson.cli, null, 2)}
 ${JSON.stringify(angularJson.cli, null, 2)}`);
   }
 
-  angularJson.cli = { 'defaultCollection': defaultCollection };
+  angularJson.cli = { defaultCollection };
 
   tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
-}
+};
 
 const addNsFiles = (options: MigrationOptions) => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
@@ -126,11 +128,12 @@ const addNsFiles = (options: MigrationOptions) => (_tree: Tree, context: Schemat
     entryComponentName: projectSettings.entryComponentName,
     entryComponentImportPath: projectSettings.entryComponentImportPath,
 
-    indexAppRootTag: projectSettings.indexAppRootTag
+    indexAppRootTag: projectSettings.indexAppRootTag,
   };
   const templateSource = apply(url('./_ns-files'), [
-    template(templateOptions)
+    template(templateOptions),
   ]);
+
   return mergeWith(templateSource);
 };
 
@@ -156,9 +159,10 @@ const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
 const addSampleComponent = (nsExtension: string, webExtension: string, project: string) =>
   (_tree, context: SchematicContext) => {
     context.logger.info('Adding Sample Shared Component');
+
     return schematic('component', {
-      nsExtension: nsExtension,
-      webExtension: webExtension,
+      nsExtension,
+      webExtension,
       web: true,
       nativescript: true,
       name: 'auto-generated',
@@ -171,8 +175,9 @@ const addSampleComponent = (nsExtension: string, webExtension: string, project: 
 
 const addAppResources = () => (_tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding App_Resources');
+
   return schematic('app-resources', {
-    path: ''
+    path: '',
   });
 };
 
@@ -195,7 +200,7 @@ const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
     'platforms/',
     'hooks/',
     `${projectSettings.sourceRoot}/**/*.js`,
-  ].filter(line => !gitignore.includes(line));
+  ].filter((line) => !gitignore.includes(line));
 
   const nsGitignoreContent =
     `# NativeScript` +
@@ -207,7 +212,7 @@ const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
   recorder.insertLeft(0, nsGitignoreContent);
 
   tree.commitUpdate(recorder);
-}
+};
 
 /**
  * Adds {N} npm run scripts to package.json
@@ -223,24 +228,23 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
     android: 'tns run android --bundle',
     ios: 'tns run ios --bundle',
     mobile: 'tns run --bundle',
-    preview: 'tns preview --bundle'
+    preview: 'tns preview --bundle',
   };
-  packageJson.scripts = Object.assign({}, scriptsToAdd, packageJson.scripts);
+  packageJson.scripts = {...scriptsToAdd, ...packageJson.scripts};
 
   overwritePackageJson(tree, packageJson);
-}
+};
 
 const addNativeScriptProjectId = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding NativeScript Project ID to package.json');
   const packageJson: any = getJsonFile(tree, 'package.json');
 
   packageJson.nativescript = packageJson.nativescript || {};
-  packageJson.nativescript = Object.assign({
-    id: 'org.nativescript.ngsample'
-  }, packageJson.nativescript);
+  packageJson.nativescript = {
+    id: 'org.nativescript.ngsample', ...packageJson.nativescript};
 
   tree.overwrite('package.json', JSON.stringify(packageJson, null, 2));
-}
+};
 
 /**
  * Add web-specific path mappings and files
@@ -264,42 +268,42 @@ const modifyWebTsconfig = (tree: Tree, context: SchematicContext) => {
 
   // paths
   const webPaths = {
-    "@src/*": [
+    '@src/*': [
       `${srcDir}/*.web`,
-      `${srcDir}/*`]
+      `${srcDir}/*`],
   };
   tsConfig.compilerOptions = tsConfig.compilerOptions || {};
   tsConfig.compilerOptions.paths = {
     ...tsConfig.compilerOptions.paths,
-    ...webPaths
-  }
+    ...webPaths,
+  };
 
   tree.overwrite(tsConfigPath, JSON.stringify(tsConfig, null, 2));
 
   if (!tsConfig.extends) {
-    return
+    return;
   }
 
   const baseTsConfigPath = join(dirname(tsConfigPath), tsConfig.extends);
   const baseTsConfig: any = getJsonFile(tree, baseTsConfigPath);
 
   const basePaths = {
-    "@src/*": [
+    '@src/*': [
       `${srcDir}/*.android.ts`,
       `${srcDir}/*.ios.ts`,
       `${srcDir}/*.tns.ts`,
       `${srcDir}/*.web.ts`,
-      `${srcDir}/*`]
+      `${srcDir}/*`],
   };
 
   baseTsConfig.compilerOptions = baseTsConfig.compilerOptions || {};
   baseTsConfig.compilerOptions.paths = {
     ...baseTsConfig.compilerOptions.paths,
-    ...basePaths
-  }
+    ...basePaths,
+  };
 
   tree.overwrite(baseTsConfigPath, JSON.stringify(baseTsConfig, null, 2));
-}
+};
 
 const addDependencies = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding npm dependencies');
@@ -310,15 +314,15 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
     'nativescript-angular': '~8.0.1',
     'nativescript-theme-core': '~1.0.4',
     'reflect-metadata': '~0.1.12',
-    'tns-core-modules': '~5.4.0'
+    'tns-core-modules': '~5.4.0',
   };
-  packageJson.dependencies = Object.assign({}, depsToAdd, packageJson.dependencies);
+  packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
     'nativescript-dev-webpack': '~0.24.0',
     '@nativescript/schematics': '~0.6.0',
   };
-  packageJson.devDependencies = Object.assign({}, devDepsToAdd, packageJson.devDependencies);
+  packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
 
   overwritePackageJson(tree, packageJson);
-}
+};

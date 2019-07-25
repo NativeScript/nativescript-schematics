@@ -18,17 +18,22 @@ const findDecoratorNode = (source: ts.Node, className: string, decoratorName: st
   ]);
 
   return node;
-}
+};
 
 /**
-* Can be used to retrieve the metada from @Component, @NgModule etc. decorators
-* @param source source node, use => getSourceFile(tree, filePath)
-* @param className name of the parent class
-* @param decoratorName name of the decorator. No need to add the @ symbol
-* @param propertyName name of the property to be extracted from the decorator
-* @returns node containing the property value. You can parse it to either ArrayLiteralExpression or StringLiteral 
-*/
-export const findDecoratorPropertyNode = (source: ts.Node, className: string, decoratorName: string, propertyName: string): ts.Expression | null => {
+ * Can be used to retrieve the metada from @Component, @NgModule etc. decorators
+ * @param source source node, use => getSourceFile(tree, filePath)
+ * @param className name of the parent class
+ * @param decoratorName name of the decorator. No need to add the @ symbol
+ * @param propertyName name of the property to be extracted from the decorator
+ * @returns node containing the property value. You can parse it to either ArrayLiteralExpression or StringLiteral
+ */
+export const findDecoratorPropertyNode = (
+  source: ts.Node,
+  className: string,
+  decoratorName: string,
+  propertyName: string,
+): ts.Expression | null => {
  const decoratorNode = findDecoratorNode(source, className, decoratorName);
 
  const propertyNodes = findMatchingNodes<ts.PropertyAssignment>(decoratorNode, [
@@ -40,13 +45,19 @@ export const findDecoratorPropertyNode = (source: ts.Node, className: string, de
  Class: ${className}
  Decorator: ${decoratorName}
  in ${source.getSourceFile().fileName}`);
+
    return null;
  }
 
  return propertyNodes[0].initializer;
-}
+};
 
-export const getNgModuleProperties = (modulePath: string, className: string, propertyName: string, tree: Tree): ClassImport[] => {
+export const getNgModuleProperties = (
+  modulePath: string,
+  className: string,
+  propertyName: string,
+  tree: Tree,
+): Array<ClassImport> => {
   const source = getSourceFile(tree, modulePath);
 
   const node = findDecoratorPropertyNode(source, className, 'NgModule', propertyName);
@@ -55,15 +66,12 @@ export const getNgModuleProperties = (modulePath: string, className: string, pro
     return [];
   }
 
-  const items = node.elements.filter(ts.isIdentifier).map(element => element.text);
+  const items = node.elements.filter(ts.isIdentifier).map((element) => element.text);
 
-  return items.map(className => {
+  return items.map((currentClassName) => {
     return {
-      name: className,
-      importPath: findImportPath(source, className)
-    }
-  })
-
-  // const spreadOperator: string[] = node.elements.filter(ts.isSpreadElement).map(element => element.getText());
-}
-
+      name: currentClassName,
+      importPath: findImportPath(source, currentClassName),
+    };
+  });
+};

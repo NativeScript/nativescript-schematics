@@ -1,6 +1,6 @@
 import { Schema as MigrateModuleSchema } from './schema';
 
-import { dasherize, classify, } from '@angular-devkit/core/src/utils/strings';
+import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 import { SchematicsException, Tree, SchematicContext } from '@angular-devkit/schematics';
 import { join } from 'path';
 
@@ -10,13 +10,16 @@ import { ClassImport, getNgModuleProperties } from '../decorator-utils';
 export interface ModuleInfo {
   className: string;
   modulePath: string;
-  providers: ClassImport[];
-  declarations: ClassImport[];
+  providers: Array<ClassImport>;
+  declarations: Array<ClassImport>;
 }
 
 let projectSettings: AngularProjectSettings;
 
-export const parseModuleInfo = (options: MigrateModuleSchema) => (tree: Tree, context: SchematicContext): ModuleInfo => {
+export const parseModuleInfo = (options: MigrateModuleSchema) => (
+  tree: Tree,
+  context: SchematicContext,
+): ModuleInfo => {
   projectSettings = getAngularProjectSettings(tree, options.project);
 
   const className = classify(`${options.name}Module`);
@@ -29,14 +32,14 @@ export const parseModuleInfo = (options: MigrateModuleSchema) => (tree: Tree, co
     className,
     modulePath,
     providers,
-    declarations
-  }
+    declarations,
+  };
 
   context.logger.info(`ModuleInfo
   ${JSON.stringify(moduleInfo, null, 2)}`);
 
   return moduleInfo;
-}
+};
 
 const findModulePath = (options: MigrateModuleSchema, tree: Tree): string => {
   let modulePath = '';
@@ -50,14 +53,12 @@ const findModulePath = (options: MigrateModuleSchema, tree: Tree): string => {
   File cannot be found at ${modulePath}
   Expecting something like: module-name/module-name.module.ts`);
     }
-  }
-  // When a specified Module has been provided
-  else {
+  } else {
     modulePath = join(
       projectSettings.sourceRoot,             // src/
       'app',                                  // app/
       dasherize(options.name),                // some-name/
-      dasherize(options.name) + '.module.ts'  // some-name.module.ts
+      dasherize(options.name) + '.module.ts',  // some-name.module.ts
     );
 
     if (!tree.exists(modulePath)) {
@@ -66,4 +67,4 @@ const findModulePath = (options: MigrateModuleSchema, tree: Tree): string => {
   }
 
   return modulePath;
-}
+};

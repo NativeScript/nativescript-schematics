@@ -7,30 +7,32 @@ import { Schema as ModuleOptions } from './module/schema';
 type Options = ComponentOptions | ModuleOptions;
 
 export interface Extensions {
-  web: string,
-  ns: string,
-};
+  web: string;
+  ns: string;
+}
 
 export const DEFAULT_SHARED_EXTENSIONS: Extensions = {
   web: '',
-  ns: '.tns'
+  ns: '.tns',
 };
 
 const isNs = (tree: Tree) => {
   const packageJson = getPackageJson(tree);
 
   return !!packageJson.nativescript;
-}
+};
 
 const isWeb = (tree: Tree) => {
   if (!tree.exists('nsconfig.json')) {
     console.log(`nsconfig.json not found. Assuming this is a {N} only project`);
+
     return false;
   }
 
   const config = getNsConfig(tree);
+
   return config.webext != null;
-}
+};
 
 export interface PlatformUse {
   /** Dictates if the project has {N} configuration */
@@ -42,9 +44,9 @@ export interface PlatformUse {
   /** Dictates if this is a webOnly project */
   webOnly: boolean;
   /** Dictates if the schematic should include {N} scripts */
-  useNs: boolean,
+  useNs: boolean;
   /** Dictates if the schematic should include web scripts */
-  useWeb: boolean
+  useWeb: boolean;
 }
 
 export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
@@ -62,9 +64,9 @@ export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
     nsOnly,
     webOnly,
     useNs,
-    useWeb
-  }
-}
+    useWeb,
+  };
+};
 
 export const getExtensions = (tree: Tree, options: Options): Extensions => {
   let ns = options.nsExtension;
@@ -78,15 +80,15 @@ export const getExtensions = (tree: Tree, options: Options): Extensions => {
 
     if (ns === web) {
       ns = DEFAULT_SHARED_EXTENSIONS.ns;
-      web = DEFAULT_SHARED_EXTENSIONS.web
+      web = DEFAULT_SHARED_EXTENSIONS.web;
     }
   }
 
   return {
     ns: parseExtension(ns || ''),
-    web: parseExtension(web || '')
-  }
-}
+    web: parseExtension(web || ''),
+  };
+};
 
 const parseExtension = (ext: string): string => {
   // don't change, if the extension is empty or it already starts with a .
@@ -95,39 +97,41 @@ const parseExtension = (ext: string): string => {
   }
 
   return '.' + ext;
-}
+};
 
 export const getNsConfigExtension = (tree: Tree): Extensions => {
   if (!tree.exists('nsconfig.json')) {
     console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
+
     return {
       ns: '.tns',
-      web: ''
+      web: '',
     };
   }
 
   const nsconfig = getNsConfig(tree);
+
   return {
     ns: nsconfig.nsext || '.tns',
-    web: nsconfig.webext || ''
-  }
-}
+    web: nsconfig.webext || '',
+  };
+};
 
 export const removeNsSchemaOptions = (options: Options) => {
   const duplicate = { ...options };
-  delete duplicate['web'];
-  delete duplicate['nativescript'];
-  delete duplicate['nsExtension'];
-  delete duplicate['webExtension'];
-  delete duplicate['common'];
+  delete duplicate.web;
+  delete duplicate.nativescript;
+  delete duplicate.nsExtension;
+  delete duplicate.webExtension;
 
   return duplicate;
 };
 
 export const addExtension = (fileName: string, ext: string) => {
   const fileExtension = extname(fileName);
+
   return fileName.replace(fileExtension, `${ext}${fileExtension}`);
-}
+};
 
 export const validateGenerateOptions = (platformUse: PlatformUse, options: Options) => {
   if (!options.nativescript && !options.web) {

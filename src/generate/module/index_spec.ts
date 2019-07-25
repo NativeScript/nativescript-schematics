@@ -5,9 +5,12 @@ import { getFileContent } from '@schematics/angular/utility/test';
 
 import { Schema as ModuleOptions } from './schema';
 import { toNgModuleClassName } from '../../utils';
-import { createEmptySharedProject, createEmptyNsOnlyProject } from '../../test-utils';
+import {
+  createEmptySharedProject,
+  createEmptyNsOnlyProject,
+  isInModuleMetadata,
+} from '../../test-utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
-import { isInModuleMetadata } from '../../test-utils';
 
 describe('Module Schematic', () => {
   const name = 'foo';
@@ -15,7 +18,7 @@ describe('Module Schematic', () => {
   const moduleClassName = toNgModuleClassName(name);
   const defaultOptions: ModuleOptions = {
     project,
-    name
+    name,
   };
   const schematicRunner = new SchematicTestRunner(
     'nativescript-schematics',
@@ -39,7 +42,7 @@ describe('Module Schematic', () => {
       appTree = createEmptyNsOnlyProject(project);
     });
 
-    var tree: UnitTestTree;
+    let tree: UnitTestTree;
     describe('with default options', () => {
       beforeEach(async () => {
         tree = await schematicRunner.runSchematicAsync('module', defaultOptions, appTree).toPromise();
@@ -80,33 +83,33 @@ describe('Module Schematic', () => {
         expect(content).toMatch(
           isInModuleMetadata(moduleClassName, 'schemas', 'NO_ERRORS_SCHEMA', true));
       });
-    })
+    });
 
     it('should respect passed extension', async () => {
       const customExtension = '.mobile';
       const options = { ...defaultOptions, routing: true, nsExtension: customExtension };
-      tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
+      const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
       const modulePath = getModulePath(customExtension);
-      expect(tree.exists(modulePath)).toBeTruthy();
+      expect(testTree.exists(modulePath)).toBeTruthy();
 
       const routingModulePath = getRoutingModulePath(customExtension);
-      expect(tree.exists(routingModulePath)).toBeTruthy();
+      expect(testTree.exists(routingModulePath)).toBeTruthy();
     });
 
     it('should not have NativeScriptCommonModule imported if that is specified explicitly', async () => {
       const options = { ...defaultOptions, commonModule: false };
-      const tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
+      const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
-      const content = getFileContent(tree, noExtensionModulePath);
+      const content = getFileContent(testTree, noExtensionModulePath);
       expect(content).not.toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
     });
 
     it('should not have RouterModule imported in the routing module', async () => {
       const options = { ...defaultOptions, routing: true };
-      const tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
+      const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
-      const content = getFileContent(tree, noExtensionModulePath);
+      const content = getFileContent(testTree, noExtensionModulePath);
       expect(content).not.toMatch(`import { RouterModule } from '@angular/router'`);
 
       expect(content).not.toMatch(
@@ -118,9 +121,9 @@ describe('Module Schematic', () => {
 
     it('should have NativeScriptRouterModule imported', async () => {
       const options = { ...defaultOptions, routing: true };
-      const tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
+      const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
-      const content = getFileContent(tree, noExtensionRoutingModulePath);
+      const content = getFileContent(testTree, noExtensionRoutingModulePath);
       expect(content).toMatch(`import { NativeScriptRouterModule } from 'nativescript-angular/router'`);
     });
 
@@ -243,15 +246,18 @@ describe('Module Schematic', () => {
         const options = { ...nsWebOptions, nsExtension, webExtension, routing: true };
         const tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
-        const webModulePath = getModulePath(webExtension);
-        const nsModulePath = getModulePath(nsExtension);
-        expect(tree.exists(webModulePath)).toBeTruthy();
-        expect(tree.exists(nsModulePath)).toBeTruthy();
+        const customWebModulePath = getModulePath(webExtension);
+        const customNsModulePath = getModulePath(nsExtension);
+        expect(tree.exists(customWebModulePath)).toBeTruthy();
+        expect(tree.exists(customNsModulePath)).toBeTruthy();
 
-        const webRoutingModulePath = getRoutingModulePath(webExtension);
-        const nsRoutingModulePath = getRoutingModulePath(nsExtension);
-        expect(tree.exists(webRoutingModulePath)).toBeTruthy();
-        expect(tree.exists(nsRoutingModulePath)).toBeTruthy();
+        expect(tree.exists(customWebModulePath)).toBeTruthy();
+        expect(tree.exists(customNsModulePath)).toBeTruthy();
+
+        const customWebRoutingModulePath = getRoutingModulePath(webExtension);
+        const customNsRoutingModulePath = getRoutingModulePath(nsExtension);
+        expect(tree.exists(customWebRoutingModulePath)).toBeTruthy();
+        expect(tree.exists(customNsRoutingModulePath)).toBeTruthy();
       });
     });
   });

@@ -15,7 +15,7 @@ describe('Master-detail schematic', () => {
   const importPrefix = '@src';
 
   const masterClassName = toComponentClassName(master);
-  const detailClassName = toComponentClassName(detail + "Detail");
+  const detailClassName = toComponentClassName(detail + 'Detail');
 
   const defaultOptions: MasterDetailOptions = {
     master,
@@ -31,7 +31,7 @@ describe('Master-detail schematic', () => {
   let appTree: UnitTestTree;
   describe('When in {N}-only project', () => {
     beforeEach(() => {
-      appTree = new UnitTestTree(new HostTree);
+      appTree = new UnitTestTree(new HostTree());
       appTree = createEmptyNsOnlyProject(project);
       appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
     });
@@ -51,7 +51,7 @@ describe('Master-detail schematic', () => {
 
   describe('When in web+{N} project', () => {
     beforeEach(() => {
-      appTree = new UnitTestTree(new HostTree);
+      appTree = new UnitTestTree(new HostTree());
       appTree = createEmptySharedProject(project);
       appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
     });
@@ -82,7 +82,12 @@ describe('Master-detail schematic', () => {
 
       const detailImports = findImports(detailClassName, source);
       expect(detailImports.length).toEqual(1);
-      expect(detailImports[0].getFullText()).toContain(`${importPrefix}/app/${master}/${detail}-detail/${detail}-detail.component`);
+
+      expect(
+        detailImports[0].getFullText(),
+      ).toContain(
+        `${importPrefix}/app/${master}/${detail}-detail/${detail}-detail.component`,
+      );
     });
   });
   

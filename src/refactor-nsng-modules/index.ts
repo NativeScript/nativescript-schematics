@@ -25,7 +25,7 @@ import * as ts from 'typescript';
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 import { InsertChange } from '@schematics/angular/utility/change';
 
-export default function (options: Schema) {
+export default function(options: Schema) {
   const { sourceDir } = options;
 
   return chain([
@@ -34,7 +34,7 @@ export default function (options: Schema) {
       const { rootModule, rootModulePath } = getBootstrappedModule(tree, entry, sourceDir);
 
       let animationModuleIsUsed = false;
-      tree.visit(path => {
+      tree.visit((path) => {
         if (
           path.startsWith('/node_modules') ||
           path.startsWith('/platforms') ||
@@ -46,7 +46,7 @@ export default function (options: Schema) {
 
         const ngModules = getDecoratedClasses(tree, path, 'NgModule');
         const metadataObjects = ngModules
-          .map(m => ({
+          .map((m) => ({
             metadataObject: getDecoratorMetadataFromClass(m, 'NgModule') as ts.ObjectLiteralExpression,
             classNode: m,
           }))
@@ -61,7 +61,7 @@ export default function (options: Schema) {
           }
 
           metadataObject = refetchMetadata(tree, path, classNode);
-          const animationsModuleRemoved = 
+          const animationsModuleRemoved =
             removeImportedNgModule(tree, path, metadataObject, 'NativeScriptAnimationsModule');
           animationModuleIsUsed = animationModuleIsUsed || animationsModuleRemoved;
         });
@@ -70,16 +70,18 @@ export default function (options: Schema) {
       });
 
       if (animationModuleIsUsed) {
-        const rootModuleMetadata = getDecoratorMetadataFromClass(rootModule !, 'NgModule') as ts.ObjectLiteralExpression;
+        const rootModuleMetadata =
+          getDecoratorMetadataFromClass(rootModule !, 'NgModule') as ts.ObjectLiteralExpression;
+
         importNgModule(
           tree,
           rootModulePath,
           rootModuleMetadata,
           'NativeScriptAnimationsModule',
-          'nativescript-angular/animations'
+          'nativescript-angular/animations',
         );
       }
-    }
+    },
   ]);
 }
 
@@ -94,12 +96,12 @@ const getEntryModule = (tree: Tree, sourceDir: string) => {
 const getBootstrappedModule = (tree: Tree, path: string, sourceDir: string) => {
   const entrySource = getSourceFile(tree, path);
   const bootstrappedModules = collectDeepNodes<ts.CallExpression>(entrySource, ts.SyntaxKind.CallExpression)
-    .filter(node => filterByChildNode(node, (child: ts.Node) =>
+    .filter((node) => filterByChildNode(node, (child: ts.Node) =>
         child.kind === ts.SyntaxKind.PropertyAccessExpression &&
         ['bootstrapModule', 'bootstrapModuleNgFactory'].includes(
-          (<ts.PropertyAccessExpression>child).name.getFullText()
-        )
-      )
+          (<ts.PropertyAccessExpression>child).name.getFullText(),
+        ),
+      ),
     )
     .map((node: ts.CallExpression) => node.arguments[0]);
 
@@ -115,7 +117,7 @@ const getBootstrappedModule = (tree: Tree, path: string, sourceDir: string) => {
   
   const rootModulePath = join(sourceDir, moduleRelativePath);
   const rootModule = getDecoratedClasses(tree, rootModulePath, 'NgModule')
-    .find(c => !!(c.name && c.name.getText() === moduleName));
+    .find((c) => !!(c.name && c.name.getText() === moduleName));
 
   return { rootModule, rootModulePath };
 };
@@ -132,12 +134,12 @@ const importNgModule = (
   path: string,
   metadataObject: ts.ObjectLiteralExpression,
   name: string,
-  importPath: string
+  importPath: string,
 ) => {
   const nodesToAdd = getSymbolsToAddToObject(path, metadataObject, 'imports', name);
   const recorder = tree.beginUpdate(path);
-  nodesToAdd.forEach(change => {
-    recorder.insertRight(change.pos, change.toAdd)
+  nodesToAdd.forEach((change) => {
+    recorder.insertRight(change.pos, change.toAdd);
   });
   tree.commitUpdate(recorder);
 
@@ -154,7 +156,7 @@ const removeImportedNgModule = (
   tree: Tree,
   path: string,
   metadataObject: ts.ObjectLiteralExpression,
-  name: string
+  name: string,
 ) => {
     const removed = removeNgModuleFromMetadata(tree, path, metadataObject, name);
     if (removed) {
@@ -168,13 +170,13 @@ const removeNgModuleFromMetadata = (
   tree: Tree,
   path: string,
   metadataObject: ts.ObjectLiteralExpression,
-  name: string
+  name: string,
 ): boolean => {
   const metadataImports = getNodesToRemoveFromNestedArray([metadataObject], 'imports', name);
   const isInMetadata = !!metadataImports.length;
   if (isInMetadata) {
-    metadataImports.forEach(declaration => {
-      removeNode(declaration, path, tree)
+    metadataImports.forEach((declaration) => {
+      removeNode(declaration, path, tree);
     });
   }
 

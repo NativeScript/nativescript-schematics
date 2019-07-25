@@ -4,10 +4,19 @@ import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { classify } from '@angular-devkit/core/src/utils/strings';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
-import { addEntryComponentToModule, addExportToModule, addDeclarationToModule } from '@schematics/angular/utility/ast-utils';
+import {
+  addEntryComponentToModule,
+  addExportToModule,
+  addDeclarationToModule,
+} from '@schematics/angular/utility/ast-utils';
 import { Schema as ComponentOptions } from './schema';
 
-export function addDeclarationToNgModule(tree: Tree, options: ComponentOptions, componentPath: string, modulePath: string) {
+export function addDeclarationToNgModule(
+  tree: Tree,
+  options: ComponentOptions,
+  componentPath: string,
+  modulePath: string,
+) {
   const source = readIntoSourceFile(tree, modulePath);
   const relativePath = buildRelativePath(modulePath, componentPath);
   const classifiedName = classify(`${options.name}Component`);
@@ -21,9 +30,9 @@ export function addDeclarationToNgModule(tree: Tree, options: ComponentOptions, 
   tree.commitUpdate(declarationRecorder);
   if (options.export) {
     // Need to refresh the AST because we overwrote the file in the host.
-    const source = readIntoSourceFile(tree, modulePath);
+    const src = readIntoSourceFile(tree, modulePath);
     const exportRecorder = tree.beginUpdate(modulePath);
-    const exportChanges = addExportToModule(source, modulePath, classify(`${options.name}Component`), relativePath);
+    const exportChanges = addExportToModule(src, modulePath, classify(`${options.name}Component`), relativePath);
     for (const change of exportChanges) {
       if (change instanceof InsertChange) {
         exportRecorder.insertLeft(change.pos, change.toAdd);
@@ -33,9 +42,15 @@ export function addDeclarationToNgModule(tree: Tree, options: ComponentOptions, 
   }
   if (options.entryComponent) {
     // Need to refresh the AST because we overwrote the file in the host.
-    const source = readIntoSourceFile(tree, modulePath);
+    const src = readIntoSourceFile(tree, modulePath);
     const entryComponentRecorder = tree.beginUpdate(modulePath);
-    const entryComponentChanges = addEntryComponentToModule(source, modulePath, classify(`${options.name}Component`), relativePath);
+    const entryComponentChanges = addEntryComponentToModule(
+      src,
+      modulePath,
+      classify(`${options.name}Component`),
+      relativePath,
+    );
+
     for (const change of entryComponentChanges) {
       if (change instanceof InsertChange) {
         entryComponentRecorder.insertLeft(change.pos, change.toAdd);

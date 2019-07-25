@@ -4,9 +4,12 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { toComponentClassName } from '../../utils';
-import { createEmptyNsOnlyProject, createEmptySharedProject } from '../../test-utils';
+import {
+  createEmptyNsOnlyProject,
+  createEmptySharedProject,
+  isInModuleMetadata,
+} from '../../test-utils';
 import { DEFAULT_SHARED_EXTENSIONS } from '../utils';
-import { isInComponentMetadata, isInModuleMetadata } from '../../test-utils';
 import { Schema as ComponentOptions } from './schema';
 import { findImports, getSourceFile } from '../../ts-utils';
 
@@ -22,7 +25,6 @@ describe('Component Schematic', () => {
     join(__dirname, '../../collection.json'),
   );
 
-  const componentPath = `src/app/${name}/${name}.component.ts`;
   const rootModulePath = `src/app/app.module.ts`;
   const rootNsModulePath = `src/app/app.module.tns.ts`;
 
@@ -80,7 +82,7 @@ describe('Component Schematic', () => {
   });
 
   describe('when in ns-only project, create a component in /home folder', () => {
-    const homeDir = 'home'
+    const homeDir = 'home';
     const componentName = `${homeDir}/${name}`;
     const componentPath = `src/app/${homeDir}/${name}/${name}.component.ts`;
     const templatePath = `src/app/${homeDir}/${name}/${name}.component.html`;
@@ -98,10 +100,13 @@ describe('Component Schematic', () => {
     it('should create template in the home folder', () =>
       expect(appTree.exists(templatePath)).toBeTruthy());
 
-    it('should declare the component in the root NgModule for {N} using name FooComponent with the import to home/foo', () => {
-      const nsModuleContent = getFileContent(appTree, rootModulePath);
-      expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
-    });
+    it(
+      'should declare the component in the root NgModule for {N} using name FooComponent with the import to home/foo',
+      () => {
+        const nsModuleContent = getFileContent(appTree, rootModulePath);
+        expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
+      },
+    );
   });
 
   describe('when in ns+web project', () => {
@@ -136,7 +141,7 @@ describe('Component Schematic', () => {
         const imports = findImports(componentClassName, source);
 
         expect(imports.length).toEqual(1);
-        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`)
+        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`);
       });
 
       it('should import the component in the root NgModule for {N} using @src', () => {
@@ -144,9 +149,9 @@ describe('Component Schematic', () => {
         const imports = findImports(componentClassName, source);
 
         expect(imports.length).toEqual(1);
-        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`)
+        expect(imports[0].getFullText()).toContain(`${importPrefix}/app/${name}/${name}.component`);
       });
-    })
+    });
 
     describe('executing ns-only schematic', () => {
       beforeAll(async () => {
@@ -169,7 +174,7 @@ describe('Component Schematic', () => {
         const nsModuleContent = getFileContent(appTree, rootNsModulePath);
         expect(nsModuleContent).toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
       });
-    })
+    });
 
     describe('executing web-only schematic', () => {
       beforeAll(async () => {
@@ -190,7 +195,7 @@ describe('Component Schematic', () => {
         const nsModuleContent = getFileContent(appTree, rootNsModulePath);
         expect(nsModuleContent).not.toMatch(isInModuleMetadata('AppModule', 'declarations', componentClassName, true));
       });
-    })
+    });
   });
 
   describe('specifying custom extension', () => {
@@ -395,6 +400,6 @@ describe('Component Schematic', () => {
           expect(nsModuleContent).toMatch(matcher);
         });
       });
-    })
+    });
   });
 });

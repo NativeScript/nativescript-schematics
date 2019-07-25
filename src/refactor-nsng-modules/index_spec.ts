@@ -17,6 +17,7 @@ describe('Refactor NsNg Modules Schematic', () => {
   const rootModulePath = `${sourceDir}/app/app.module.ts`;
   const getRootModuleContent = (tree: UnitTestTree) => {
     const buffer = tree.read(rootModulePath) || '';
+
     return buffer.toString();
   };
 
@@ -83,14 +84,14 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";'
+        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";',
       );
     });
 
     it('should add the NativeScriptCommonModule to the module metadata', () => {
       expect(featureModuleContent)
         .toMatch(
-          isInModuleMetadata(featureModuleName, 'imports', 'NativeScriptCommonModule', true)
+          isInModuleMetadata(featureModuleName, 'imports', 'NativeScriptCommonModule', true),
         );
     });
 
@@ -128,7 +129,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptAnimationsModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptAnimationsModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";'
+        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
       );
     });
 
@@ -136,7 +137,7 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";'
+        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
       );
     });
   });
@@ -172,7 +173,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptAnimationsModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptAnimationsModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";'
+        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
       );
     });
 
@@ -180,7 +181,7 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";'
+        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
       );
     });
 
@@ -188,14 +189,14 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";'
+        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
       );
     });
 
     it('should remove the NativeScriptModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";'
+        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";',
       );
     });
 

@@ -16,10 +16,16 @@ import {
 } from '@angular-devkit/schematics';
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { Path, TemplateOptions } from '@angular-devkit/core';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
-import { Extensions, getExtensions, removeNsSchemaOptions, PlatformUse, getPlatformUse, validateGenerateOptions } from '../utils';
+import {
+  Extensions,
+  getExtensions,
+  removeNsSchemaOptions,
+  PlatformUse,
+  getPlatformUse,
+  validateGenerateOptions,
+} from '../utils';
 import { addDeclarationToNgModule } from './ast-utils';
 import { Schema as ComponentOptions } from './schema';
 import { findModule } from './find-module';
@@ -31,13 +37,11 @@ class ComponentInfo {
   templatePath: string;
   stylesheetPath: string;
   name: string;
-
-  constructor() { }
 }
 
 let extensions: Extensions;
 
-export default function (options: ComponentOptions): Rule {
+export default function(options: ComponentOptions): Rule {
   let platformUse: PlatformUse;
   let componentInfo: ComponentInfo;
 
@@ -55,7 +59,11 @@ export default function (options: ComponentOptions): Rule {
       return tree;
     },
 
-    () => externalSchematic('@schematics/angular', 'component', removeNsSchemaOptions({ ...options, skipImport: true })),
+    () => externalSchematic(
+      '@schematics/angular',
+      'component',
+      removeNsSchemaOptions({ ...options, skipImport: true }),
+    ),
 
     (tree: Tree) => {
       extensions = getExtensions(tree, options);
@@ -115,7 +123,7 @@ export default function (options: ComponentOptions): Rule {
       }
     },
   ]);
-};
+}
 
 const validateGenerateComponentOptions = (platformUse: PlatformUse, options: ComponentOptions) => {
   if (platformUse.webReady && options.inlineTemplate) {
@@ -138,7 +146,7 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
     }
 
     return action.path;
-  }
+  };
 
   const className = `/${component.name}.component.ts`;
   component.classPath = getGeneratedFilePath(className);
@@ -147,23 +155,25 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
   component.templatePath = getGeneratedFilePath(templateName);
 
   const stylesheetName = `/${component.name}.component.${options.styleext}`;
-  component.stylesheetPath = getGeneratedFilePath(stylesheetName)
+  component.stylesheetPath = getGeneratedFilePath(stylesheetName);
 
   return component;
-}
+};
 
 const addWebExtension = (tree: Tree, filePath: string) => {
   if (extensions.web) {
     const webName = insertExtension(filePath, extensions.web);
     tree.rename(filePath, webName);
   }
+
   return tree;
 };
 
 const removeFile = (tree: Tree, filePath: string) => {
   tree.delete(filePath);
+
   return tree;
-}
+};
 
 const addNativeScriptFiles = (component: ComponentInfo) => {
   const parsedTemplate = parseName('', component.templatePath);
@@ -173,7 +183,7 @@ const addNativeScriptFiles = (component: ComponentInfo) => {
   const nsStylesheetName = insertExtension(stylesheetName, extensions.ns);
 
   const templateSource = apply(url('./_files'), [
-    template(<TemplateOptions>{
+    template({
       name: component.name,
       path: parsedTemplate.path,
       templateName: nsTemplateName,
@@ -192,4 +202,4 @@ const insertExtension = (fileName: string, extension: string) => {
     fileName.substr(extensionStart);
 
   return newFilename;
-}
+};
