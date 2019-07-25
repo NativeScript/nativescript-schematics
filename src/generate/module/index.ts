@@ -23,7 +23,15 @@ import {
   getSourceFile,
 } from '../../ts-utils';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { removeNsSchemaOptions, getExtensions, PlatformUse, getPlatformUse, Extensions, addExtension, validateGenerateOptions } from '../utils';
+import {
+  removeNsSchemaOptions,
+  getExtensions,
+  PlatformUse,
+  getPlatformUse,
+  Extensions,
+  addExtension,
+  validateGenerateOptions,
+} from '../utils';
 import { parseName } from '@schematics/angular/utility/parse-name';
 
 class ModuleInfo {
@@ -47,25 +55,25 @@ class ModuleInfo {
 let extensions: Extensions;
 
 interface FileNameChange {
-  from: string,
-  to: string
+  from: string;
+  to: string;
 }
 
-export default function (options: ModuleOptions): Rule {
+export default function(options: ModuleOptions): Rule {
   let platformUse: PlatformUse;
   let moduleInfo: ModuleInfo;
 
   return branchAndMerge(chain([
     // Filter existing modules with the same names so that they don't
     // cause merge conflicts before the files are renamed.
-    // TODO: Fix. Huge performance hit! Filter goes trough node_modules + platforms. 
-    filter(fileName => {
+    // TODO: Fix. Huge performance hit! Filter goes trough node_modules + platforms.
+    filter((fileName) => {
       const {
         moduleName,
-        routingName
+        routingName,
       } = getParsedName(options);
 
-      return ![moduleName, routingName].some(modName => fileName.endsWith(modName));
+      return ![moduleName, routingName].some((modName) => fileName.endsWith(modName));
     }),
 
     (tree: Tree) => {
@@ -79,8 +87,9 @@ export default function (options: ModuleOptions): Rule {
     },
 
     () => {
-      let opts = removeNsSchemaOptions(options);
-      return externalSchematic('@schematics/angular', 'module', opts)
+      const opts = removeNsSchemaOptions(options);
+
+      return externalSchematic('@schematics/angular', 'module', opts);
     },
 
     (tree: Tree) => {
@@ -115,9 +124,9 @@ export default function (options: ModuleOptions): Rule {
     },
 
     (tree: Tree) => shouldCreateCommonFile(platformUse, options.common) ?
-      addCommonFile(moduleInfo) : tree
+      addCommonFile(moduleInfo) : tree,
   ]));
-};
+}
 
 const shouldCreateCommonFile = (platformUse: PlatformUse, useCommon?: boolean) =>
   !!useCommon || // the common flag is raised or
@@ -128,12 +137,12 @@ const addCommonFile = (moduleInfo: ModuleInfo) => {
   return mergeWith(
     apply(url('./_files'), [
       template({
-        name: moduleInfo.name
+        name: moduleInfo.name,
       }),
-      move(moduleInfo.path)
+      move(moduleInfo.path),
     ]),
-  )
-}
+  );
+};
 
 const getParsedName = (options: ModuleOptions): { name: string, moduleName: string, routingName: string } => {
   const parsedPath = parseName(options.path || '', options.name);
@@ -142,21 +151,21 @@ const getParsedName = (options: ModuleOptions): { name: string, moduleName: stri
   return {
     name,
     moduleName: `/${name}.module.ts`,
-    routingName: `/${name}-routing.module.ts`
-  }
-}
+    routingName: `/${name}-routing.module.ts`,
+  };
+};
 
 const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   const {
     name,
     moduleName,
-    routingName
-  } = getParsedName(options)
+    routingName,
+  } = getParsedName(options);
 
   const moduleInfo = new ModuleInfo();
   moduleInfo.name = name;
 
-  tree.actions.forEach(action => {
+  tree.actions.forEach((action) => {
     if (action.path.endsWith(moduleName)) {
       const file = action.path;
       moduleInfo.moduleFilePath = file;
@@ -173,25 +182,28 @@ const parseModuleInfo = (tree: Tree, options: ModuleOptions): ModuleInfo => {
   });
 
   if (!moduleInfo.moduleFilePath) {
-    throw new SchematicsException(`Failed to find generated module files from @schematics/angular. Please contact the @nativescript/schematics author.`);
+    throw new SchematicsException(
+      `Failed to find generated module files from @schematics/angular. ` +
+      `Please contact the @nativescript/schematics author.`,
+    );
   }
 
   moduleInfo.path = parseName('', moduleInfo.moduleFilePath).path;
 
   return moduleInfo;
-}
+};
 
 const renameWebModules = (moduleInfo: ModuleInfo) =>
   (tree: Tree) => {
     const files = [{
       from: moduleInfo.moduleFilePath,
-      to: moduleInfo.webModuleFilePath
+      to: moduleInfo.webModuleFilePath,
     }];
 
     if (moduleInfo.nsRoutingFilePath) {
       files.push({
         from: moduleInfo.routingFilePath,
-        to: moduleInfo.webRoutingFilePath
+        to: moduleInfo.webRoutingFilePath,
       });
     }
 
@@ -199,24 +211,24 @@ const renameWebModules = (moduleInfo: ModuleInfo) =>
   };
 
 const prepareNsModulesUpdates = (moduleInfo: ModuleInfo) => {
-  const updates: FileNameChange[] = [];
+  const updates: Array<FileNameChange> = [];
 
   if (moduleInfo.moduleFilePath !== moduleInfo.nsModuleFilePath) {
     updates.push({
       from: moduleInfo.moduleFilePath,
-      to: moduleInfo.nsModuleFilePath
+      to: moduleInfo.nsModuleFilePath,
     });
   }
 
   if (moduleInfo.routingFilePath && moduleInfo.routingFilePath !== moduleInfo.nsRoutingFilePath) {
     updates.push({
       from: moduleInfo.routingFilePath,
-      to: moduleInfo.nsRoutingFilePath
+      to: moduleInfo.nsRoutingFilePath,
     });
   }
 
   return updates;
-}
+};
 
 const performNsModifications = (moduleInfo: ModuleInfo, options: ModuleOptions) =>
   (tree: Tree) => {
@@ -242,7 +254,7 @@ const ensureNsRouting = (tree: Tree, path: string) => {
 
   const importFrom = `, NativeScriptRouterModule } from '@angular/router';`;
   const importTo = ` } from '@angular/router';
-import { NativeScriptRouterModule } from 'nativescript-angular/router';`
+import { NativeScriptRouterModule } from 'nativescript-angular/router';`;
 
   const newText = fileText.replace(/RouterModule/g, 'NativeScriptRouterModule')
     .replace(importFrom, importTo);
@@ -251,13 +263,13 @@ import { NativeScriptRouterModule } from 'nativescript-angular/router';`
   recorder.remove(0, fileText.length);
   recorder.insertLeft(0, newText);
   tree.commitUpdate(recorder);
-}
+};
 
-const copyFiles = (paths: FileNameChange[]) =>
+const copyFiles = (paths: Array<FileNameChange>) =>
   (tree: Tree) =>
     paths.forEach(({ from, to }) => copy(tree, from, to));
 
-const renameFiles = (paths: FileNameChange[]) =>
+const renameFiles = (paths: Array<FileNameChange>) =>
   (tree: Tree) =>
     paths.forEach(({ from, to }) => tree.rename(from, to));
 
@@ -327,7 +339,7 @@ const addSchema = (modulePath: string) =>
       '@angular/core');
 
     metadataChange.forEach((change: InsertChange) =>
-      recorder.insertRight(change.pos, change.toAdd)
+      recorder.insertRight(change.pos, change.toAdd),
     );
     tree.commitUpdate(recorder);
 
@@ -352,7 +364,7 @@ const addNSCommonModule = (tree: Tree, modulePath: string) => {
     'nativescript-angular/common');
 
   metadataChange.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd)
+    recorder.insertRight(change.pos, change.toAdd),
   );
   tree.commitUpdate(recorder);
 

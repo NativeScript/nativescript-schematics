@@ -7,5 +7,5 @@ export interface Schema {
   /**
    * Array with paths to the files that shouldn't be modified by the schematic.
    */
-  filesToIgnore?: string[];
+  filesToIgnore?: Array<string>;
 }

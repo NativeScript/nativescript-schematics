@@ -19,7 +19,7 @@ import { Schema as ConvertRelativeImportsSchema } from '../../convert-relative-i
 
 let projectParams: ProjectInfo;
 
-export default function (options: MasterDetailSchema) {
+export default function(options: MasterDetailSchema) {
   return chain([
     (tree: Tree) => {
       projectParams = getProjectInfo(tree);
@@ -40,17 +40,16 @@ export default function (options: MasterDetailSchema) {
 const generateTemplate = (options: MasterDetailSchema) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Generating Master Detail template');
 
-
   context.logger.info(`Project Params: ${JSON.stringify(projectParams, null, 2)}`);
 
   const templateOptions = {
-    prefix: 'app', //options.prefix,
+    prefix: 'app', // options.prefix,
     name: dasherize(options.master),
     master: dasherize(options.master),
     detail: dasherize(options.detail),
     masterClassName: classify(options.master),
     detailClassName: classify(options.detail),
-    nsext: projectParams.nsext
+    nsext: projectParams.nsext,
   };
 
   const templatePath = projectParams.shared ? './_files-shared' : './_files-nsonly';
@@ -58,10 +57,11 @@ const generateTemplate = (options: MasterDetailSchema) => (tree: Tree, context: 
   const templateSource = apply(
     url(templatePath), [
       template(templateOptions),
-      move(projectParams.appPath)
+      move(projectParams.appPath),
     ]);
+
   return mergeWith(templateSource);
-}
+};
 
 interface ProjectInfo {
   shared: boolean;
@@ -71,16 +71,17 @@ interface ProjectInfo {
 const getProjectInfo = (tree: Tree): ProjectInfo => {
   if (tree.exists('nsconfig.json')) {
     const nsconfig = getNsConfig(tree);
+
     return {
       shared: nsconfig.shared,
       appPath: join(nsconfig.appPath, 'app'),
-      nsext: nsconfig.nsext
-    }
+      nsext: nsconfig.nsext,
+    };
   }
 
   return {
     shared: false,
     appPath: 'app',
-    nsext: ''
-  }
-}
+    nsext: '',
+  };
+};

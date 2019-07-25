@@ -9,7 +9,6 @@ import {
   schematic,
   Rule,
 } from '@angular-devkit/schematics';
-import { TemplateOptions } from '@angular-devkit/core';
 
 import { stringUtils } from '../../utils';
 import { Schema as ApplicationOptions } from './schema';
@@ -18,14 +17,14 @@ import { Schema as AngularJsonOptions } from '../../angular-json/schema';
 import { Schema as AppResourcesOptions } from '../../app-resources/schema';
 import { Schema as StylingOptions } from '../../styling/schema';
 
-export default function (options: ApplicationOptions) {
+export default function(options: ApplicationOptions) {
   const appPath = options.name;
   const sourcedir = options.sourceDir;
 
   return chain([
     mergeWith(
       apply(url('./_files'), [
-        template(<TemplateOptions>{
+        template({
           ...options as any,
           utils: stringUtils,
           sourcedir,
@@ -39,7 +38,7 @@ export default function (options: ApplicationOptions) {
     runAngularJsonSchematic({
       path: options.name,
       name: options.name,
-      prefix: options.prefix
+      prefix: options.prefix,
     }),
 
     runAppResourcesSchematic({
@@ -51,15 +50,15 @@ export default function (options: ApplicationOptions) {
       sourceDir: sourcedir,
       extension: options.style,
       theme: options.theme,
-    })
-  ])
+    }),
+  ]);
 }
 
 const runAngularJsonSchematic = (options: AngularJsonOptions): Rule =>
-  schematic('angular-json', options)
+  schematic('angular-json', options);
 
 const runAppResourcesSchematic = (options: AppResourcesOptions): Rule =>
-  schematic('app-resources', options)
+  schematic('app-resources', options);
 
 const runStylingSchematic = (options: StylingOptions): Rule =>
-  schematic('styling', options)
+  schematic('styling', options);

@@ -7,9 +7,6 @@ import { InsertChange } from '@schematics/angular/utility/change';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
 
 import { Schema as MigrateModuleOptions } from './schema';
-import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
-import { Schema as ComponentOptions } from '../generate/component/schema';
-import { Schema as ModuleOptions } from '../generate/module/schema';
 import { moveToRoot } from '../utils';
 import { isInModuleMetadata } from '../test-utils';
 import { findImports, getSourceFile } from '../ts-utils';
@@ -20,7 +17,7 @@ describe('Migrate module Schematic', () => {
   const defaultOptions: MigrateModuleOptions = {
     name: moduleName,
     project,
-    style: true
+    style: true,
   };
   const nsModulePath = '/src/app/admin/admin.module.tns.ts';
   const webModulePath = '/src/app/admin/admin.module.ts';
@@ -31,7 +28,7 @@ describe('Migrate module Schematic', () => {
 
   let appTree: UnitTestTree;
   beforeEach(async () => {
-    appTree = new UnitTestTree(new HostTree);
+    appTree = new UnitTestTree(new HostTree());
     appTree = await setupProject(appTree, schematicRunner, project, moduleName);
   });
 
@@ -70,7 +67,7 @@ describe('Migrate module Schematic', () => {
   describe('When the module has a component', () => {
     let originalWebModuleContent: string;
     beforeEach(async () => {
-      appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
+      appTree = await schematicRunner.runSchematicAsync('component', {
         name: 'a',
         module: moduleName,
         project,
@@ -87,7 +84,7 @@ describe('Migrate module Schematic', () => {
 
     it('should keep the web module untouched', () => {
       expect(appTree.files).toContain(webModulePath);
-      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
+      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent);
     });
 
     it('should declare the component in the mobile module', () => {
@@ -103,7 +100,7 @@ describe('Migrate module Schematic', () => {
       const imports = findImports('AComponent', source);
 
       expect(imports.length).toEqual(1);
-      expect(imports[0].getFullText()).toContain(`@src/app/a/a.component`)
+      expect(imports[0].getFullText()).toContain(`@src/app/a/a.component`);
     });
   });
 
@@ -120,7 +117,7 @@ describe('Migrate module Schematic', () => {
 
     it('should keep the web module untouched', () => {
       expect(appTree.files).toContain(webModulePath);
-      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent)
+      expect(getFileContent(appTree, webModulePath)).toEqual(originalWebModuleContent);
     });
 
     it('should provide the service in the mobile module', () => {
@@ -139,7 +136,7 @@ const setupProject = async (
   project: string,
   moduleName: string,
 ) => {
-  appTree = await schematicRunner.runSchematicAsync('shared', <ApplicationOptions>{
+  appTree = await schematicRunner.runSchematicAsync('shared', {
     name: project,
     prefix: '',
     sourceDir: 'src',
@@ -150,7 +147,7 @@ const setupProject = async (
   .toPromise();
 
   appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
-  appTree = await schematicRunner.runSchematicAsync('module', <ModuleOptions>{
+  appTree = await schematicRunner.runSchematicAsync('module', {
     name: moduleName,
     nativescript: false,
     web: true,
@@ -167,11 +164,11 @@ const insertProviderInMetadata = (tree, path, providerName): UnitTestTree => {
 
   // Insert a provider in the NgModule metadata
   const metadataChange = addSymbolToNgModuleMetadata(
-    source, path, 'providers', providerName, 'somepath'
-  )
+    source, path, 'providers', providerName, 'somepath',
+  );
 
   metadataChange.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd)
+    recorder.insertRight(change.pos, change.toAdd),
   );
   tree.commitUpdate(recorder);
 

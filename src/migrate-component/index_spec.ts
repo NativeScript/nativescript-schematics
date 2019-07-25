@@ -5,9 +5,6 @@ import { HostTree } from '@angular-devkit/schematics';
 import { getFileContent } from '@schematics/angular/utility/test';
 
 import { isInModuleMetadata } from '../test-utils';
-import { Schema as ApplicationOptions } from '../ng-new/shared/schema';
-import { Schema as ModuleOptions } from '../generate/module/schema';
-import { Schema as ComponentOptions } from '../generate/component/schema';
 import { moveToRoot } from '../utils';
 import { findImports, getSourceFile } from '../ts-utils';
 import { Schema as MigrateComponentOptions } from './schema';
@@ -20,7 +17,7 @@ describe('Migrate component schematic', () => {
 
     const schematicRunner = new SchematicTestRunner(
         'nativescript-schematics',
-        join(__dirname, '../collection.json')
+        join(__dirname, '../collection.json'),
     );
 
     let appTree: UnitTestTree;
@@ -30,17 +27,16 @@ describe('Migrate component schematic', () => {
     });
 
     describe('When the name of existing component is provided', () => {
-        const componentName = 'a';
         const options: MigrateComponentOptions = {
             project,
             name: componentName,
-            style: true
+            style: true,
         };
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;
 
         beforeEach(async () => {
-            appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
+            appTree = await schematicRunner.runSchematicAsync('component', {
                 name: componentName,
                 nativescript: false,
                 web: true,
@@ -68,7 +64,7 @@ describe('Migrate component schematic', () => {
             const imports = findImports(componentClassName, source);
 
             expect(imports.length).toEqual(1);
-            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`)
+            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`);
         });
 
         it('should put the original web template in the {N} markup file', () => {
@@ -85,19 +81,19 @@ describe('Migrate component schematic', () => {
             project,
             name: componentName,
             module: moduleName,
-            style: true
+            style: true,
         };
         const htmlComponentPath = `/src/app/${componentName}/${componentName}.component.html`;
         const xmlComponentPath = `/src/app/${componentName}/${componentName}.component.tns.html`;
 
         beforeEach(async () => {
-            appTree = await schematicRunner.runSchematicAsync('module', <ModuleOptions>{
+            appTree = await schematicRunner.runSchematicAsync('module', {
                 project,
                 name: moduleName,
             }, appTree)
             .toPromise();
 
-            appTree = await schematicRunner.runSchematicAsync('component', <ComponentOptions>{
+            appTree = await schematicRunner.runSchematicAsync('component', {
                 project,
                 nativescript: false,
                 web: true,
@@ -118,7 +114,7 @@ describe('Migrate component schematic', () => {
             const nsModulePath = `/src/app/${moduleName}/${moduleName}.module.tns.ts`;
             const content = getFileContent(appTree, nsModulePath);
 
-            const matcher = isInModuleMetadata("BModule", 'declarations', componentClassName, true);
+            const matcher = isInModuleMetadata('BModule', 'declarations', componentClassName, true);
             expect(content).toMatch(matcher);
         });
 
@@ -128,7 +124,7 @@ describe('Migrate component schematic', () => {
             const imports = findImports(componentClassName, source);
 
             expect(imports.length).toEqual(1);
-            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`)
+            expect(imports[0].getFullText()).toContain(`@src/app/${componentName}/${componentName}.component`);
         });
 
         it('should put the original web template in the {N} markup file', () => {
@@ -145,7 +141,7 @@ const setupProject = (
     schematicRunner: SchematicTestRunner,
     project: string,
 ) => {
-    appTree = schematicRunner.runSchematic('shared', <ApplicationOptions>{
+    appTree = schematicRunner.runSchematic('shared', {
         name: project,
         prefix: '',
         sourceDir: 'src',

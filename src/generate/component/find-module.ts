@@ -1,6 +1,6 @@
 import { dirname } from 'path';
 
-import { Tree, DirEntry } from "@angular-devkit/schematics";
+import { Tree, DirEntry } from '@angular-devkit/schematics';
 import { join, normalize } from '@angular-devkit/core';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
@@ -45,8 +45,8 @@ function findImplicitModule(tree: Tree, path: string, extension: string) {
     const routingModuleRe = new RegExp(`-routing.module${extension}.ts`);
 
     while (dir && dir.path && dir.path !== '/') {
-      const matches = dir.subfiles.filter(p => moduleRe.test(p) && !routingModuleRe.test(p));
-      if (matches.length == 1) {
+      const matches = dir.subfiles.filter((p) => moduleRe.test(p) && !routingModuleRe.test(p));
+      if (matches.length === 1) {
         return join(dir.path, matches[0]);
       } else if (matches.length > 1) {
         throw new Error('More than one module matches. Use skip-import option to skip importing '

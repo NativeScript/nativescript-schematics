@@ -9,7 +9,7 @@ export interface Schema {
   webExtension: string;
   /**
    * The name of the project to be converted to a code sharing structure
-  * The default option is the smart default 'projectName' provided by the Angular CLI.
+   * The default option is the smart default 'projectName' provided by the Angular CLI.
    */
   project: string;
   /**

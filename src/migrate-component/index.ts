@@ -26,15 +26,16 @@ import { Schema as MigrateComponentSchema } from './schema';
 
 let extensions: Extensions;
 
-export default function (options: MigrateComponentSchema): Rule {
+export default function(options: MigrateComponentSchema): Rule {
   let componentInfo: ComponentInfo;
+
   return chain([
     (tree: Tree) => {
       const nsconfigExtensions = getNsConfigExtension(tree);
       extensions = {
         ns: options.nsext || nsconfigExtensions.ns,
-        web: options.webext || nsconfigExtensions.web
-      }
+        web: options.webext || nsconfigExtensions.web,
+      };
     },
     (tree: Tree, context: SchematicContext) => {
       componentInfo = parseComponentInfo(options)(tree, context);
@@ -49,11 +50,16 @@ export default function (options: MigrateComponentSchema): Rule {
     (tree: Tree) =>
       addComponentToNsModuleProviders(componentInfo, options)(tree),
 
-    options.skipConvertRelativeImports ? noop() : schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options)
+    options.skipConvertRelativeImports ?
+      noop() :
+      schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options),
   ]);
 }
 
-const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+const addNsFiles = (
+  componentInfo: ComponentInfo,
+  options: MigrateComponentSchema,
+) => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding {N} files');
 
   let webTemplate = getFileContents(tree, componentInfo.componentHtmlPath);
@@ -67,11 +73,12 @@ const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchem
 
     componentName: options.name,
 
-    webTemplate
+    webTemplate,
   };
   const templateSource = apply(url('./_ns-files'), [
-    template(templateOptions)
+    template(templateOptions),
   ]);
+
   return branchAndMerge(mergeWith(templateSource))(tree, context);
 };
 
@@ -83,7 +90,10 @@ const addNsFiles = (componentInfo: ComponentInfo, options: MigrateComponentSchem
 const parseComments = (htmlFileContents: string) =>
   htmlFileContents.replace(/-->/g, '->');
 
-const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree) => {
+const addComponentToNsModuleProviders = (
+  componentInfo: ComponentInfo,
+  options: MigrateComponentSchema,
+) => (tree: Tree) => {
   if (options.skipModule) {
     return;
   }
@@ -92,9 +102,12 @@ const addComponentToNsModuleProviders = (componentInfo: ComponentInfo, options: 
 
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
-    throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
-Create it if you want the schematic to add ${componentInfo.className} to its module declarations,
-or if you just want to update the component without updating its module, then rerun this command with --skip-module flag`);
+    throw new SchematicsException(
+      `Module file [${nsModulePath}] doesn't exist.` +
+      `Create it if you want the schematic to add ${componentInfo.className} to its module declarations,` +
+      `or if you just want to update the component without updating its module, ` +
+      `then rerun this command with --skip-module flag`,
+    );
   }
 
   // Get the changes required to update the @NgModule
@@ -102,18 +115,21 @@ or if you just want to update the component without updating its module, then re
     getSourceFile(tree, nsModulePath),
     nsModulePath, // <- this doesn't look like it is in use
     componentInfo.className,
-    findRelativeImportPath(nsModulePath, componentInfo.componentPath)
+    findRelativeImportPath(nsModulePath, componentInfo.componentPath),
   );
 
   // Save changes
   const recorder = tree.beginUpdate(nsModulePath);
   changes.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd)
+    recorder.insertRight(change.pos, change.toAdd),
   );
   tree.commitUpdate(recorder);
-}
+};
 
-const addNsStyle = (componentInfo: ComponentInfo, options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
+const addNsStyle = (
+  componentInfo: ComponentInfo,
+  options: MigrateComponentSchema,
+) => (tree: Tree, context: SchematicContext) => {
   if (!componentInfo.componentStylePath || !options.style) {
     return noop;
   }
@@ -128,7 +144,8 @@ const addNsStyle = (componentInfo: ComponentInfo, options: MigrateComponentSchem
   };
 
   const templateSource = apply(url('./_ns-style'), [
-    template(templateOptions)
+    template(templateOptions),
   ]);
+
   return branchAndMerge(mergeWith(templateSource))(tree, context);
-}
+};

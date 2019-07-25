@@ -10,7 +10,6 @@ import {
   schematic,
   noop,
 } from '@angular-devkit/schematics';
-import { TemplateOptions } from '@angular-devkit/core';
 
 import { stringUtils } from '../../utils';
 
@@ -29,7 +28,7 @@ export default function(options: SharedOptions): Rule {
       ]),
     ),
 
-    options.sample ? 
+    options.sample ?
       mergeWith(
         apply(url('./_sample-files'), [
           template(templateOptions),
@@ -38,7 +37,7 @@ export default function(options: SharedOptions): Rule {
       ) : noop(),
 
     runAppResourcesSchematic({
-      path: options.name
+      path: options.name,
     }),
 
     runStylingSchematic({
@@ -46,12 +45,12 @@ export default function(options: SharedOptions): Rule {
       sourceDir: options.sourceDir,
       extension: options.style,
       theme: options.theme,
-    })
-  ])
+    }),
+  ]);
 }
 
-const getTemplateOptions = (options: SharedOptions) =>
-  <TemplateOptions>{
+const getTemplateOptions = (options: SharedOptions) => {
+  return {
     utils: stringUtils,
     name: options.name,
     sourcedir: options.sourceDir,
@@ -61,6 +60,7 @@ const getTemplateOptions = (options: SharedOptions) =>
     style: options.style,
     sample: options.sample,
   };
+};
 
 const runAppResourcesSchematic = (options: AppResourcesOptions): Rule =>
   schematic('app-resources', options);

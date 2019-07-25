@@ -1,6 +1,6 @@
 import { Schema as MigrateComponentSchema } from './schema';
 
-import { dasherize, classify, } from '@angular-devkit/core/src/utils/strings';
+import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 import { SchematicsException, Tree, SchematicContext } from '@angular-devkit/schematics';
 import { join, dirname } from 'path';
 import * as ts from 'typescript';
@@ -39,17 +39,17 @@ export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tr
     modulePath,
     componentPath,
     componentHtmlPath,
-    componentStylePath
-  }
+    componentStylePath,
+  };
 
   context.logger.info(`ComponentInfo
 ${JSON.stringify(componentInfo, null, 2)}`);
 
   return componentInfo;
-}
+};
 
 const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => {
-  // When module Path provided, 
+  // When module Path provided,
   if (options.modulePath) {
     // check if it is correct
     if (tree.exists(options.modulePath)) {
@@ -64,22 +64,18 @@ const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => 
     }
 
     return modulePath;
-  }
-  // If no Module provided or if it is App or AppModule
-  else if (
+  } else if (
     !options.module ||
     options.module.toLowerCase() === projectSettings.entryModuleName.toLowerCase() ||
     options.module.toLowerCase() === projectSettings.entryModuleClassName.toLowerCase()
   ) {
     return projectSettings.entryModulePath;
-  }
-  // When a specified Module has been provided
-  else {
+  } else {
     const modulePath = join(
       projectSettings.sourceRoot,               // src/
       'app',                                    // app/
       dasherize(options.module),                // some-name/
-      dasherize(options.module) + '.module.ts'  // some-name.module.ts
+      dasherize(options.module) + '.module.ts',  // some-name.module.ts
     );
 
     if (tree.exists(modulePath)) {
@@ -88,9 +84,14 @@ const findModulePath = (options: MigrateComponentSchema, tree: Tree): string => 
       throw new SchematicsException(`couldn't find the module at: ${modulePath}`);
     }
   }
-}
+};
 
-const findComponentPath = (componentClassName: string, modulePath: string, options: MigrateComponentSchema, tree: Tree): string => {
+const findComponentPath = (
+  componentClassName: string,
+  modulePath: string,
+  options: MigrateComponentSchema,
+  tree: Tree,
+): string => {
   let componentPath = '';
 
   // When the path is provided, then there is no need to look anywhere else
@@ -106,21 +107,17 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     // Check to see if componentClassName is the class used in componentPath file content
     const source = getSourceFile(tree, componentPath);
     const matchingNodes = findMatchingNodes<ts.ClassDeclaration>(source, [
-      { kind: ts.SyntaxKind.ClassDeclaration, name: componentClassName }
-    ])
+      { kind: ts.SyntaxKind.ClassDeclaration, name: componentClassName },
+    ]);
 
     if (matchingNodes.length === 0) {
-      throw new SchematicsException(`The file at the provided --path: 
+      throw new SchematicsException(`The file at the provided --path:
   [${componentPath}]
   doesn't contain the ${componentClassName} Class`);
     } else {
-      console.log("NODE MATCHES")
+      console.log('NODE MATCHES');
     }
-  }
-
-  // When we have the module that imports the component
-  // else if (!options.skipModule) {
-  else if (modulePath) {
+  } else if (modulePath) {
     const source = getSourceFile(tree, modulePath);
     const componentImportPath = findImportPath(source, componentClassName);
     console.log(`${componentClassName} import found in its module at: ${componentImportPath}`);
@@ -136,10 +133,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     } else {
       throw new SchematicsException(`Cannot locate Component ${componentClassName} at: ${componentPath}`);
     }
-  }
-
-  // When the component is not part of any module
-  else {
+  } else {
     console.log(`Trying to deduct ${componentClassName} location following Angular best practices`);
 
     const fileName = `${dasherize(options.name)}.component.ts`;
@@ -148,9 +142,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
     // search at src/app/file-name
     if (tree.exists(join(app, fileName))) {
       componentPath = join(app, fileName);
-    }
-    // search at src/app/dasherize(component-name)/file-name
-    else if (tree.exists(join(app, dasherize(options.name), fileName))) {
+    } else if (tree.exists(join(app, dasherize(options.name), fileName))) {
       componentPath = join(app, dasherize(options.name), fileName);
     } else {
       throw new SchematicsException(`Couldn't find component's .ts file.
@@ -160,7 +152,7 @@ const findComponentPath = (componentClassName: string, modulePath: string, optio
   }
 
   return componentPath;
-}
+};
 
 const findTemplateUrl = (componentPath: string, componentClassName: string, tree: Tree): string => {
   const source = getSourceFile(tree, componentPath);
@@ -168,19 +160,25 @@ const findTemplateUrl = (componentPath: string, componentClassName: string, tree
   const node = findDecoratorPropertyNode(source, componentClassName, 'Component', 'templateUrl');
   if (node === null) {
     // TODO: need a solution for components that don't use templateUrl
-    throw new SchematicsException(`${componentClassName} cannot be converted, as it should be using templateUrl property in the @NgModule decorator`);
+    throw new SchematicsException(
+      `${componentClassName} cannot be converted, ` +
+      `as it should be using templateUrl property in the @NgModule decorator`,
+    );
   }
 
   if (ts.isStringLiteral(node)) {
     const templatePath = node.text;
+
     return join(
       dirname(componentPath),
-      templatePath
+      templatePath,
     );
   } else {
-    throw new SchematicsException(`${node.getText()} for Component ${componentClassName} is expected have the assigned value as StringLiteral`);
+    throw new SchematicsException(
+      `${node.getText()} for Component ${componentClassName} is expected have the assigned value as StringLiteral`,
+    );
   }
-}
+};
 
 const findStyleUrl = (componentPath: string, componentClassName: string, tree: Tree): string => {
   const source = getSourceFile(tree, componentPath);
@@ -195,10 +193,9 @@ const findStyleUrl = (componentPath: string, componentClassName: string, tree: T
 
     return join(
       dirname(componentPath),
-      stylePath
+      stylePath,
     );
   }
 
   return '';
-}
-
+};

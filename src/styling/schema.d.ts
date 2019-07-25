@@ -2,7 +2,7 @@ export interface Schema {
     /**
      * The path to the app.
      */
-    appPath: string; 
+    appPath: string;
     /**
      * The path of the source directory.
      */

@@ -4,7 +4,7 @@ import {
   Tree,
   chain,
   schematic,
-  SchematicsException
+  SchematicsException,
 } from '@angular-devkit/schematics';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
@@ -48,7 +48,7 @@ export default function(options: MigrateModuleSchema): Rule {
 const addModuleFile =
   (name: string, project: string) =>
     (tree: Tree, context: SchematicContext) =>
-      schematic('module', <ModuleSchema>{
+      schematic('module', {
         name,
         project,
         nsExtension: nsext,
@@ -58,38 +58,42 @@ const addModuleFile =
         common: true,
       })(tree, context);
 
-const migrateComponents = (moduleInfo: ModuleInfo, options: MigrateModuleSchema) => {
-  const components = moduleInfo.declarations.filter(d => d.name.endsWith('Component'));
+const migrateComponents = (modInfo: ModuleInfo, options: MigrateModuleSchema) => {
+  const components = modInfo.declarations.filter((d) => d.name.endsWith('Component'));
 
   return chain(
-    components.map(component => {
+    components.map((component) => {
       const convertComponentOptions: MigrateComponentSchema = {
         name: component.name,
-        modulePath: moduleInfo.modulePath,
+        modulePath: modInfo.modulePath,
         nsext,
         project: options.project,
         style: options.style,
-        skipConvertRelativeImports: true
-      }
+        skipConvertRelativeImports: true,
+      };
+
       return schematic<MigrateComponentSchema>('migrate-component', convertComponentOptions);
     }),
   );
-}
+};
 
 const migrateProviders = () => (tree: Tree) => {
-  moduleInfo.providers.forEach(provider => {
+  moduleInfo.providers.forEach((provider) => {
     addProvider(provider.name, provider.importPath)(tree);
-  })
-}
+  });
+};
 
 const addProvider = (providerClassName: string, providerPath: string) => (tree: Tree) => {
   const nsModulePath = addExtension(moduleInfo.modulePath, nsext);
   
   // check if the {N} version of the @NgModule exists
   if (!tree.exists(nsModulePath)) {
-    throw new SchematicsException(`Module file [${nsModulePath}] doesn't exist.
-Create it if you want the schematic to add ${moduleInfo.className} to its module providers,
-or if you just want to update the component without updating its module, then rerun this command with --skip-module flag`);
+    throw new SchematicsException(
+      `Module file [${nsModulePath}] doesn't exist.` +
+      `Create it if you want the schematic to add ${moduleInfo.className} to its module providers,` +
+      `or if you just want to update the component without updating its module, ` +
+      `then rerun this command with --skip-module flag`,
+    );
   }
 
   // Get the changes required to update the @NgModule
@@ -98,14 +102,14 @@ or if you just want to update the component without updating its module, then re
     // nsModulePath, // <- this doesn't look like it is in use
     '',
     providerClassName,
-    providerPath
+    providerPath,
     // findRelativeImportPath(nsModulePath, providerPath)
   );
     
   // Save changes
   const recorder = tree.beginUpdate(nsModulePath);
   changes.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd)
+    recorder.insertRight(change.pos, change.toAdd),
   );
   tree.commitUpdate(recorder);
-}
+};

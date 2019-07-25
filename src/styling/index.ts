@@ -8,7 +8,6 @@ import {
   Tree,
   noop,
 } from '@angular-devkit/schematics';
-import { TemplateOptions } from '@angular-devkit/core';
 
 import { Schema as StylingOptions } from './schema';
 import { addDependency, NodeDependency } from '../utils';
@@ -18,16 +17,14 @@ const extensionFilesMap = {
   scss: '_scss-files',
 };
 
-export default function (options: StylingOptions) {
+export default function(options: StylingOptions) {
   const files = extensionFilesMap[options.extension];
 
   return chain([
     mergeWith(
       apply(url(files), [
-        template(<TemplateOptions>{
-          ...options as any,
-        }),
-        move(`${options.appPath}/${options.sourceDir}`)
+        template({ ...options }),
+        move(`${options.appPath}/${options.sourceDir}`),
       ]),
     ),
     options.extension === 'scss' ?
@@ -40,6 +37,6 @@ export default function (options: StylingOptions) {
 
         addDependency(tree, sassDependency, options.appPath);
       } :
-      noop()
+      noop(),
   ]);
 }

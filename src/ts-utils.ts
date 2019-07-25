@@ -1,4 +1,9 @@
-import { addImportToModule, addBootstrapToModule, addSymbolToNgModuleMetadata, findNodes } from '@schematics/angular/utility/ast-utils';
+import {
+  addImportToModule,
+  addBootstrapToModule,
+  addSymbolToNgModuleMetadata,
+  findNodes,
+} from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
@@ -10,33 +15,33 @@ class RemoveContent implements Node {
   constructor(private pos: number, private end: number) {
   }
 
-  public getStart() {
+  getStart() {
     return this.pos;
   }
 
-  public getFullStart() {
+  getFullStart() {
     return this.pos;
   }
 
-  public getEnd() {
+  getEnd() {
     return this.end;
   }
 }
 
 export function getSymbolsToAddToObject(path: string, node: any, metadataField: string, symbolName: string) {
   // Get all the children property assignment of object literals.
-  const matchingProperties: ts.ObjectLiteralElement[] =
+  const matchingProperties: Array<ts.ObjectLiteralElement> =
     (node as ts.ObjectLiteralExpression).properties
-    .filter(prop => prop.kind == ts.SyntaxKind.PropertyAssignment)
+    .filter((prop) => prop.kind === ts.SyntaxKind.PropertyAssignment)
     // Filter out every fields that's not 'metadataField'. Also handles string literals
     // (but not expressions).
     .filter((prop: ts.PropertyAssignment) => {
       const name = prop.name;
       switch (name.kind) {
         case ts.SyntaxKind.Identifier:
-          return (name as ts.Identifier).getText() == metadataField;
+          return (name as ts.Identifier).getText() === metadataField;
         case ts.SyntaxKind.StringLiteral:
-          return (name as ts.StringLiteral).text == metadataField;
+          return (name as ts.StringLiteral).text === metadataField;
       }
 
       return false;
@@ -50,25 +55,25 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
   if (matchingProperties.length === 0) {
     // We haven't found the field in the metadata declaration. Insert a new field.
     const expr = node as ts.ObjectLiteralExpression;
-    let position: number;
-    let toInsert: string;
-    if (expr.properties.length == 0) {
-      position = expr.getEnd() - 1;
-      toInsert = `  ${metadataField}: [${symbolName}],\n`;
+    let pos: number;
+    let textToInsert: string;
+    if (expr.properties.length === 0) {
+      pos = expr.getEnd() - 1;
+      textToInsert = `  ${metadataField}: [${symbolName}],\n`;
     } else {
       node = expr.properties[expr.properties.length - 1];
-      position = node.getEnd();
+      pos = node.getEnd();
       // Get the indentation of the last element, if any.
       const text = node.getFullText();
       const matches = text.match(/^\r?\n\s*/);
       if (matches && matches.length > 0) {
-        toInsert = `,${matches[0]}${metadataField}: ${symbolName},`;
+        textToInsert = `,${matches[0]}${metadataField}: ${symbolName},`;
       } else {
-        toInsert = `, ${metadataField}: ${symbolName},`;
+        textToInsert = `, ${metadataField}: ${symbolName},`;
       }
     }
 
-    return [new InsertChange(path, position, toInsert)];
+    return [new InsertChange(path, pos, textToInsert)];
   }
 
   const assignment = matchingProperties[0] as ts.PropertyAssignment;
@@ -79,7 +84,7 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
   }
 
   const arrLiteral = assignment.initializer as ts.ArrayLiteralExpression;
-  if (arrLiteral.elements.length == 0) {
+  if (arrLiteral.elements.length === 0) {
     // Forward the property.
     node = arrLiteral;
   } else {
@@ -93,7 +98,7 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
 
   if (Array.isArray(node)) {
     const nodeArray = node as {} as Array<ts.Node>;
-    const symbolsArray = nodeArray.map(node => node.getText());
+    const symbolsArray = nodeArray.map((n) => n.getText());
     if (symbolsArray.indexOf(symbolName) !== -1) {
       return [];
     }
@@ -107,7 +112,7 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
     // We haven't found the field in the metadata declaration. Insert a new
     // field.
     const expr = node as ts.ObjectLiteralExpression;
-    if (expr.properties.length == 0) {
+    if (expr.properties.length === 0) {
       position = expr.getEnd() - 1;
       toInsert = `  ${metadataField}: [${symbolName}],\n`;
     } else {
@@ -121,7 +126,7 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
         toInsert = `, ${metadataField}: [${symbolName},]`;
       }
     }
-  } else if (node.kind == ts.SyntaxKind.ArrayLiteralExpression) {
+  } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
     // We found the field but it's empty. Insert it just before the `]`.
     position--;
     toInsert = `${symbolName}`;
@@ -139,7 +144,7 @@ export function getSymbolsToAddToObject(path: string, node: any, metadataField: 
 }
 
 export function findFullImports(importName: string, source: ts.SourceFile):
-  (ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent)[] {
+  Array<ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent> {
 
   const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
 
@@ -147,11 +152,11 @@ export function findFullImports(importName: string, source: ts.SourceFile):
     // Filter out import statements that are either `import 'XYZ'` or `import * as X from 'XYZ'`.
     .filter(({ importClause: clause }) =>
       clause && !clause.name && clause.namedBindings &&
-      clause.namedBindings.kind === ts.SyntaxKind.NamedImports
+      clause.namedBindings.kind === ts.SyntaxKind.NamedImports,
     )
     .reduce((
-      imports: (ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent)[],
-      importDecl: ts.ImportDeclaration
+      imports: Array<ts.ImportDeclaration | ts.ImportSpecifier | RemoveContent>,
+      importDecl: ts.ImportDeclaration,
     ) => {
       const importClause = importDecl.importClause as ts.ImportClause;
       const namedImports = importClause.namedBindings as ts.NamedImports;
@@ -176,18 +181,18 @@ export function findFullImports(importName: string, source: ts.SourceFile):
 }
 
 export function findImports(importName: string, source: ts.SourceFile):
-  (ts.ImportDeclaration)[] {
+  Array<ts.ImportDeclaration> {
 
   const allImports = collectDeepNodes<ts.ImportDeclaration>(source, ts.SyntaxKind.ImportDeclaration);
 
   return allImports
     .filter(({ importClause: clause }) =>
       clause && !clause.name && clause.namedBindings &&
-      clause.namedBindings.kind === ts.SyntaxKind.NamedImports
+      clause.namedBindings.kind === ts.SyntaxKind.NamedImports,
     )
     .reduce((
-      imports: (ts.ImportDeclaration)[],
-      importDecl: ts.ImportDeclaration
+      imports: Array<ts.ImportDeclaration>,
+      importDecl: ts.ImportDeclaration,
     ) => {
       const importClause = importDecl.importClause as ts.ImportClause;
       const namedImports = importClause.namedBindings as ts.NamedImports;
@@ -204,20 +209,21 @@ export function findImports(importName: string, source: ts.SourceFile):
 }
 
 export function findMetadataValueInArray(source: ts.Node, property: string, value: string):
-  (ts.Node | RemoveContent)[] {
+  Array<ts.Node | RemoveContent> {
 
-  const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator)
+  const decorators = collectDeepNodes<ts.Decorator>(source, ts.SyntaxKind.Decorator);
+
   return getNodesToRemoveFromNestedArray(decorators, property, value);
 }
 
-export function getNodesToRemoveFromNestedArray(nodes: ts.Node[], property: string, value: string) {
-  const valuesNode = nodes 
+export function getNodesToRemoveFromNestedArray(nodes: Array<ts.Node>, property: string, value: string) {
+  const valuesNode = nodes
     .reduce(
-      (nodes, current) => [
-        ...nodes,
-        ...collectDeepNodes<ts.PropertyAssignment>(current, ts.SyntaxKind.PropertyAssignment)
+      (allNodes, current) => [
+        ...allNodes,
+        ...collectDeepNodes<ts.PropertyAssignment>(current, ts.SyntaxKind.PropertyAssignment),
       ], [])
-    .find(assignment => {
+    .find((assignment) => {
       let isValueForProperty = false;
       ts.forEachChild(assignment, (child: ts.Node) => {
         if (child.kind === ts.SyntaxKind.Identifier && child.getText() === property) {
@@ -228,34 +234,34 @@ export function getNodesToRemoveFromNestedArray(nodes: ts.Node[], property: stri
       return isValueForProperty;
     });
 
-    if (!valuesNode) {
+  if (!valuesNode) {
       return [];
     }
 
-    let arrayLiteral;
-    ts.forEachChild(valuesNode, (child: ts.Node) => {
+  let arrayLiteral;
+  ts.forEachChild(valuesNode, (child: ts.Node) => {
       if (child.kind === ts.SyntaxKind.ArrayLiteralExpression) {
         arrayLiteral = child;
       }
     });
 
-    if (!arrayLiteral) {
+  if (!arrayLiteral) {
       return [];
     }
 
-    const values: (ts.Node | RemoveContent)[] = [];
-    ts.forEachChild(arrayLiteral, (child: ts.Node) => {
+  const values: Array<ts.Node | RemoveContent> = [];
+  ts.forEachChild(arrayLiteral, (child: ts.Node) => {
       if (child.getText() === value) {
         const toRemove = normalizeNodeToRemove(child, arrayLiteral);
         values.push(toRemove);
       }
     });
 
-    return values;
+  return values;
 }
 
 /**
- * 
+ *
  * @param node The node that should be removed
  * @param source The source file that we are removing from
  * This method ensures that if there's a comma before or after the node,
@@ -324,8 +330,8 @@ export function addBootstrapToNgModule(modulePath: string, rootComponentName: st
   };
 }
 
-export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): T[] {
-  const nodes: T[] = [];
+export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.SyntaxKind): Array<T> {
+  const nodes: Array<T> = [];
   const helper = (child: ts.Node) => {
     if (child.kind === kind) {
       nodes.push(child as T);
@@ -339,15 +345,16 @@ export function collectDeepNodes<T extends ts.Node>(node: ts.Node, kind: ts.Synt
 
 export function filterByChildNode(
   root: ts.Node,
-  condition: (node: ts.Node) => boolean
+  condition: (node: ts.Node) => boolean,
 ): boolean {
   let matches = false;
   const helper = (child: ts.Node) => {
     if (condition(child)) {
       matches = true;
+
       return;
     }
-  }
+  };
 
   ts.forEachChild(root, helper);
 
@@ -356,14 +363,14 @@ export function filterByChildNode(
 
 export const getDecoratedClass = (tree: Tree, filePath: string, decoratorName: string, className: string) => {
   return getDecoratedClasses(tree, filePath, decoratorName)
-    .find(c => !!(c.name && c.name.getText() === className));
+    .find((c) => !!(c.name && c.name.getText() === className));
 };
 
 export const getDecoratedClasses = (tree: Tree, filePath: string, decoratorName: string) => {
   const moduleSource = getSourceFile(tree, filePath);
   const classes = collectDeepNodes<ts.ClassDeclaration>(moduleSource, ts.SyntaxKind.ClassDeclaration);
 
-  return classes.filter(c => !!getDecorator(c, decoratorName))
+  return classes.filter((c) => !!getDecorator(c, decoratorName));
 };
 
 export const getDecoratorMetadataFromClass = (classNode: ts.Node, decoratorName: string) => {
@@ -376,9 +383,9 @@ export const getDecoratorMetadataFromClass = (classNode: ts.Node, decoratorName:
 };
 
 const getDecorator = (node: ts.Node, name: string) => {
-  return node.decorators && node.decorators.find((decorator: ts.Decorator) => 
+  return node.decorators && node.decorators.find((decorator: ts.Decorator) =>
     decorator.expression.kind === ts.SyntaxKind.CallExpression &&
-      (<ts.CallExpression>decorator.expression).expression.getText() === name
+      (<ts.CallExpression>decorator.expression).expression.getText() === name,
   );
 };
 
@@ -386,17 +393,17 @@ export const removeMetadataArrayValue = (tree: Tree, filePath: string, property:
   const source = getSourceFile(tree, filePath);
   const nodesToRemove = findMetadataValueInArray(source, property, value);
 
-  nodesToRemove.forEach(declaration =>
-    removeNode(declaration, filePath, tree)
+  nodesToRemove.forEach((declaration) =>
+    removeNode(declaration, filePath, tree),
   );
-}
+};
 
 export const removeImport = (tree: Tree, filePath: string, importName: string) => {
   const source = getSourceFile(tree, filePath);
   const importsToRemove = findFullImports(importName, source);
 
-  importsToRemove.forEach(declaration =>
-    removeNode(declaration, filePath, tree)
+  importsToRemove.forEach((declaration) =>
+    removeNode(declaration, filePath, tree),
   );
 };
 
@@ -413,11 +420,11 @@ export const removeImport = (tree: Tree, filePath: string, importName: string) =
  * @return Change instance
  * @throw Error if toInsert is first occurence but fall back is not set
  */
-export function insertBeforeFirstOccurence(nodes: ts.Node[],
-                                          toInsert: string,
-                                          file: string,
-                                          fallbackPos: number,
-                                          syntaxKind?: ts.SyntaxKind): Change {
+export function insertBeforeFirstOccurence(nodes: Array<ts.Node>,
+                                           toInsert: string,
+                                           file: string,
+                                           fallbackPos: number,
+                                           syntaxKind?: ts.SyntaxKind): Change {
   let firstItem = nodes.sort(nodesByPosition).shift();
   if (!firstItem) {
     throw new Error();
@@ -425,7 +432,7 @@ export function insertBeforeFirstOccurence(nodes: ts.Node[],
   if (syntaxKind) {
     firstItem = findNodes(firstItem, syntaxKind).sort(nodesByPosition).shift();
   }
-  if (!firstItem && fallbackPos == undefined) {
+  if (!firstItem && fallbackPos === undefined) {
     throw new Error(`tried to insert ${toInsert} as first occurence with no fallback position`);
   }
   const firstItemPosition: number = firstItem ? firstItem.getStart() : fallbackPos;
@@ -446,66 +453,77 @@ export interface SearchParam {
   kind: ts.SyntaxKind;
 }
 
-export function findNode<T extends ts.Node>(node: ts.Node, searchParams: SearchParam[], filter: string = ''): T {
+export function findNode<T extends ts.Node>(node: ts.Node, searchParams: Array<SearchParam>, filter: string = ''): T {
   
   const matchingNodes = findMatchingNodes<T>(node, searchParams);
   if (matchingNodes.length === 0) {
-    //TODO: This might require a better error message.
+    // TODO: This might require a better error message.
     const nodesText = searchParams
-    .map(item => item.name || item.kind)
-    .reduce((name, result) => name + ' => ' + result);
+    .map((item) => item.name || item.kind)
+    .reduce((name, currentResult) => name + ' => ' + currentResult);
+
     throw new SchematicsException(`Failed to find ${nodesText} in ${node.getSourceFile().fileName}.`);
   }
-  const result = matchingNodes.filter(node => node.getText().includes(filter));
+
+  const result = matchingNodes
+    .filter((n) => n.getText()
+    .includes(filter));
+
   if (result.length !== 1) {
     const nodesText = searchParams
-    .map(item => item.name)
-    .reduce((name, result) => name + ' => ' + result);
+      .map((item) => item.name)
+      .reduce((name, concatNames) => name + ' => ' + concatNames);
+
     if (result.length === 0) {
       if (filter !== '') {
         throw new SchematicsException(`Failed to find ${filter} for ${nodesText} in ${node.getSourceFile().fileName}.`);
-      }
-      else {
+      } else {
         throw new SchematicsException(`Failed to find ${nodesText} in ${node.getSourceFile().fileName}.`);
       }
-    }
-    else {
-      throw new SchematicsException(`Found too many [${result.length} / expected 1] ${nodesText} in ${node.getSourceFile().fileName}.`);
+    } else {
+      throw new SchematicsException(
+        `Found too many [${result.length} / expected 1] ${nodesText} in ${node.getSourceFile().fileName}.`,
+      );
     }
   }
+
   return result[0];
 }
 
-export function findMatchingNodes<T extends ts.Node>(node: ts.Node, searchParams: SearchParam[], index = 0): T[] {
+export function findMatchingNodes<T extends ts.Node>(
+  node: ts.Node,
+  searchParams: Array<SearchParam>,
+  index = 0,
+): Array<T> {
   const searchParam = searchParams[index];
-  const nodes: T[] = [];
+  const nodes: Array<T> = [];
   const helper = (child: ts.Node) => {
     if (isMatchingNode(child, searchParam)) {
       if (index === searchParams.length - 1) {
         nodes.push(child as T);
-      }
-      else {
+      } else {
         nodes.push(...findMatchingNodes<T>(child, searchParams, index + 1));
       }
-    }
-    else {
+    } else {
       if (child.getChildCount() > 0) {
         ts.forEachChild(child, helper);
       }
     }
   };
   ts.forEachChild(node, helper);
+
   return nodes;
 }
 
 /**
-* Check if the node.kind matches the searchParam.kind
-* Also, if name provided, then check if we got the node with the right param name
-*/
+ * Check if the node.kind matches the searchParam.kind
+ * Also, if name provided, then check if we got the node with the right param name
+ */
 function isMatchingNode(node: ts.Node, searchParam: SearchParam) {
   if (node.kind !== searchParam.kind) {
     return false;
   }
+
   // If name provided the run it through checkNameForKind check
   // otherwise just return true
   return (searchParam.name) ? checkNameForKind(node, searchParam) : true;
@@ -513,7 +531,9 @@ function isMatchingNode(node: ts.Node, searchParam: SearchParam) {
 
 function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
   if (!searchParam.name) {
-    throw new SchematicsException(`checkNameForKind shouldn't be called without a name. Object => ${JSON.stringify(searchParam)} `);
+    throw new SchematicsException(
+      `checkNameForKind shouldn't be called without a name. Object => ${JSON.stringify(searchParam)}`,
+      );
   }
   let child: ts.Node;
   switch (searchParam.kind) {
@@ -527,8 +547,7 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
       // if function is an object's property - i.e. parent.fname()
       if (ts.isPropertyAccessExpression(expression)) {
         child = expression.name;
-      }
-      else {
+      } else {
         child = expression;
       }
       break;
@@ -549,7 +568,8 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
       // import names [a,b] are at: node.importClause.namedBindings.elements
       if (ts.isNamedImports(namedBindings)) {
         const elements = namedBindings.elements;
-        return elements.some(element => element.getText() === searchParam.name);
+
+        return elements.some((element) => element.getText() === searchParam.name);
       }
       // otherwise, it is an import like: import * as abc from 'path'
       // import name [abc] is at: node.importClause.namedBindings.name
@@ -566,11 +586,12 @@ function checkNameForKind(node: ts.Node, searchParam: SearchParam): boolean {
       const decorator = node as ts.Decorator;
       const decoratorCallExpression = decorator.expression as ts.CallExpression;
       
-      child = decoratorCallExpression.expression
+      child = decoratorCallExpression.expression;
       break;
     default:
       throw new SchematicsException(`compareNameForKind: not prepared for this [${node.kind}] ts.SyntaxKind`);
   }
+
   return child.getText() === searchParam.name;
 }
 
@@ -580,6 +601,7 @@ export function findImportPath(source: ts.Node, name) {
   ]);
 
   const moduleSpecifier = node.moduleSpecifier as ts.StringLiteral;
+
   return moduleSpecifier.text;
 }
 
@@ -596,7 +618,7 @@ export const replaceTextInNode = (tree: Tree, node: ts.Node, oldText: string, ne
   recorder.remove(index, oldText.length);
   recorder.insertLeft(index, newText);
   tree.commitUpdate(recorder);
-}
+};
 
 export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
   const config = getJsonFile(tree, tsConfigPath);
@@ -604,7 +626,7 @@ export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCo
     useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
     readDirectory: ts.sys.readDirectory,
     fileExists: (file: string) => tree.exists(file),
-    readFile: (file: string) => getFileContents(tree, file)
+    readFile: (file: string) => getFileContents(tree, file),
   };
   const basePath = dirname(tsConfigPath);
 
@@ -617,11 +639,11 @@ export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
   const buffer = host.read(path);
   if (!buffer) {
     throw new SchematicsException(
-      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`
+      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`,
     );
   }
   const content = buffer.toString();
   const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
 
   return source;
-}
+};

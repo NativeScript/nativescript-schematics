@@ -39,7 +39,7 @@ describe('Styling Schematic', () => {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       expect(tree.exists(stylingFile));
     });
@@ -49,7 +49,7 @@ describe('Styling Schematic', () => {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       const content = getFileContent(tree, `${appPath}/package.json`);
       expect(content).not.toMatch('"nativescript-dev-sass": ');
@@ -61,7 +61,7 @@ describe('Styling Schematic', () => {
         extension,
         theme: false,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       expect(getFileContent(tree, stylingFile))
         .not
@@ -80,7 +80,7 @@ describe('Styling Schematic', () => {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       expect(tree.exists(`${appPath}/${sourceDir}/app.android.scss`));
       expect(tree.exists(`${appPath}/${sourceDir}/app.ios.scss`));
@@ -93,7 +93,7 @@ describe('Styling Schematic', () => {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       const content = getFileContent(tree, `${appPath}/package.json`);
       expect(content).toMatch('"nativescript-dev-sass": ');
@@ -105,7 +105,7 @@ describe('Styling Schematic', () => {
         extension,
         theme: false,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree); 
+      const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       expect(getFileContent(tree, `${appPath}/${sourceDir}/app.android.scss`))
         .not
@@ -126,4 +126,4 @@ describe('Styling Schematic', () => {
         .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/light\';'));
     });
   });
-}); 
+});

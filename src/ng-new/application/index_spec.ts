@@ -113,4 +113,4 @@ describe('Application Schematic', () => {
     expect(files).not.toContain('/foo/app/home/home.component.css');
     expect(files).toContain('/foo/app/home/home.component.scss');
   });
-}); 
+});
