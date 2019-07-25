@@ -4,6 +4,7 @@ import {
   chain,
   schematic,
   SchematicContext,
+  TaskId,
 } from '@angular-devkit/schematics';
 
 import { Schema as ApplicationOptions } from './application/schema';
@@ -28,9 +29,13 @@ export default function(options: NgNewOptions): Rule {
       }
     },
     (_tree: Tree, context: SchematicContext) => {
-      const packageTask = context.addTask(new NodePackageInstallTask(options.name));
+      const dependencies: Array<TaskId> = [];
 
-      const dependencies = [packageTask];
+      if (!options.skipInstall) {
+        const packageInstallTask = context.addTask(new NodePackageInstallTask(options.name));
+        dependencies.push(packageInstallTask);
+      }
+
       context.addTask(new RepositoryInitializerTask(options.name, {}), dependencies);
     },
   ]);
@@ -51,7 +56,6 @@ const parseToSharedOptions = (options: NgNewOptions): SharedOptions => {
 const parseToApplicationOptions = (options: NgNewOptions): ApplicationOptions => {
   return {
     name: options.name,
-
     prefix: options.prefix,
     sourceDir: options.sourceDir || 'app',
     style: options.style,
