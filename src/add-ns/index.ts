@@ -314,13 +314,13 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
     'nativescript-angular': '~8.0.1',
     'nativescript-theme-core': '~1.0.4',
     'reflect-metadata': '~0.1.12',
-    'tns-core-modules': '~5.4.0',
+    'tns-core-modules': '~6.0.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
-    'nativescript-dev-webpack': '~0.24.0',
-    '@nativescript/schematics': '~0.6.0',
+    'nativescript-dev-webpack': '~1.0.0',
+    '@nativescript/schematics': '~0.7.0',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
 
