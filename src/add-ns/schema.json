@@ -20,11 +20,11 @@
       "$default": {
         "$source": "projectName"
       },
-      "sample": {
-        "type": "boolean",
-        "description": "Specifies whether a sample master detail should be generated.",
-        "default": false
-      }
+    },
+    "sample": {
+      "type": "boolean",
+      "description": "Specifies whether a sample master detail should be generated.",
+      "default": false
     },
     "skipInstall": {
       "description": "Skip installing dependency packages.",
