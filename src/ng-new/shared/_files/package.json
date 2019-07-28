@@ -39,7 +39,7 @@
     "@angular/cli": "~8.0.3",
     "@angular/compiler-cli": "~8.0.1",
     "@angular-devkit/build-angular": "~0.800.0",
-    "@nativescript/schematics": "~0.6.0",
+    "@nativescript/schematics": "~0.7.0",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
