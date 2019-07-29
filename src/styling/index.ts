@@ -30,8 +30,8 @@ export default function(options: StylingOptions) {
     options.extension === 'scss' ?
       (tree: Tree) => {
         const sassDependency: NodeDependency = {
-          name: 'nativescript-dev-sass',
-          version: '~1.6.0',
+          name: 'node-sass',
+          version: '^4.7.1',
           type: 'devDependency',
         };
 

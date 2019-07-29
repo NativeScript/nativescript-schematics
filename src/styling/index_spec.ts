@@ -52,7 +52,7 @@ describe('Styling Schematic', () => {
       const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       const content = getFileContent(tree, `${appPath}/package.json`);
-      expect(content).not.toMatch('"nativescript-dev-sass": ');
+      expect(content).not.toMatch('"node-sass": ');
     });
 
     it('should handle the theme flag', () => {
@@ -96,7 +96,7 @@ describe('Styling Schematic', () => {
       const tree = schematicRunner.runSchematic('styling', options, appTree);
 
       const content = getFileContent(tree, `${appPath}/package.json`);
-      expect(content).toMatch('"nativescript-dev-sass": ');
+      expect(content).toMatch('"node-sass": ');
     });
 
     it('should handle the theme flag', () => {
