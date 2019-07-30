@@ -143,8 +143,8 @@ const addSampleFiles = () => (_tree: Tree, context: SchematicContext) => {
     nsext: extensions.ns,
     webext: extensions.web,
     sourceDir: projectSettings.sourceRoot,
-
     indexAppRootTag: projectSettings.indexAppRootTag,
+    prefix: projectSettings.prefix,
   };
   const path = join(projectSettings.sourceRoot, 'app');
 
