@@ -11,10 +11,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "android": "tns run android --bundle",
-    "ios": "tns run ios --bundle",
-    "mobile": "tns run --bundle",
-    "preview": "tns preview --bundle"
+    "android": "tns run android",
+    "ios": "tns run ios",
+    "mobile": "tns run",
+    "preview": "tns preview"
   },
   "private": true,
   "dependencies": {
