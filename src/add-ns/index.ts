@@ -257,7 +257,7 @@ const modifyWebTsconfig = (tree: Tree, context: SchematicContext) => {
 
   const srcDir = projectSettings.sourceRoot;
 
-  // files
+  // add list of entry "files"
   const defaultFiles = [
     `${srcDir}/main.ts`,
     `${srcDir}/polyfills.ts`,
@@ -265,6 +265,10 @@ const modifyWebTsconfig = (tree: Tree, context: SchematicContext) => {
 
   tsConfig.files = tsConfig.files || [];
   tsConfig.files.push(...defaultFiles);
+
+  // remove "include" property
+  // because it overrides "files"
+  delete tsConfig.include;
 
   // paths
   const webPaths = {
