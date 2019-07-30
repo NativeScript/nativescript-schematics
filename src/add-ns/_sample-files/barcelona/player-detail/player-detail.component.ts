@@ -5,7 +5,7 @@ import { Player } from '../player.model';
 import { PlayerService } from '../player.service';
 
 @Component({
-  selector: 'ns-details',
+  selector: '<%= prefix %>-details',
   templateUrl: './player-detail.component.html',
 })
 export class PlayerDetailComponent implements OnInit {
