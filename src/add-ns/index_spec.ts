@@ -93,8 +93,8 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
-            expect(scripts.android).toEqual('tns run android --bundle');
-            expect(scripts.ios).toEqual('tns run ios --bundle');
+            expect(scripts.android).toEqual('tns run android');
+            expect(scripts.ios).toEqual('tns run ios');
         });
 
         it('should add NativeScript key to the package json', () => {

@@ -214,21 +214,16 @@ const mergeGitIgnore = (tree: Tree, context: SchematicContext) => {
   tree.commitUpdate(recorder);
 };
 
-/**
- * Adds {N} npm run scripts to package.json
- * npm run ios => tns run ios --bundle
- * npm run android => tns run android --bundle
- */
 const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding NativeScript run scripts to package.json');
 
   const packageJson = getPackageJson(tree);
 
   const scriptsToAdd = {
-    android: 'tns run android --bundle',
-    ios: 'tns run ios --bundle',
-    mobile: 'tns run --bundle',
-    preview: 'tns preview --bundle',
+    android: 'tns run android',
+    ios: 'tns run ios',
+    mobile: 'tns run',
+    preview: 'tns preview',
   };
   packageJson.scripts = {...scriptsToAdd, ...packageJson.scripts};
 
