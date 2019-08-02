@@ -84,6 +84,7 @@ describe('Add {N} schematic', () => {
 
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
             expect(devDependencies['@nativescript/schematics']).toBeDefined();
+            expect(devDependencies['@nativescript/tslint-rules']).toBeDefined();
         });
 
         it('should add run scripts to the package json', () => {
