@@ -1,6 +1,9 @@
 import * as ts from 'typescript';
-import { parseCompilerOptions, RuleArgs } from '@nativescript/tslint-rules/dist/preferMappedImportsRule';
-import { PreferMappedImportsRule } from '@nativescript/tslint-rules';
+import {
+    PreferMappedImportsRule,
+    RuleArgs,
+    parseCompilerOptions,
+} from '@nativescript/tslint-rules';
 
 const RULE_NAME = 'prefer-mapped-imports';
 

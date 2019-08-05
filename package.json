@@ -19,7 +19,7 @@
   "dependencies": {
     "@angular-devkit/core": "~8.0.0",
     "@angular-devkit/schematics": "~8.0.0",
-    "@nativescript/tslint-rules": "~0.0.1",
+    "@nativescript/tslint-rules": "~0.0.3",
     "@phenomnomnominal/tsquery": "^3.0.0",
     "@schematics/angular": "~8.0.0"
   },
