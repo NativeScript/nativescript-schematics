@@ -84,6 +84,7 @@ describe('Add {N} schematic', () => {
 
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
             expect(devDependencies['@nativescript/schematics']).toBeDefined();
+            expect(devDependencies['@nativescript/tslint-rules']).toBeDefined();
         });
 
         it('should add run scripts to the package json', () => {
@@ -165,6 +166,24 @@ describe('Add {N} schematic', () => {
             expect(maps).toContain('src/*.tns.ts');
             expect(maps).toContain('src/*.web.ts');
             expect(maps).toContain('src/*');
+        });
+
+        it('should modify tslint.json to include rule for using remapped imports', () => {
+            const tsLintConfigPath = '/tslint.json';
+            expect(appTree.files).toContain(tsLintConfigPath);
+
+            const tsLintConfig = JSON.parse(getFileContent(appTree, tsLintConfigPath));
+            const { extends: tsLintExtends, rules: tsLintRules } = tsLintConfig;
+
+            expect(tsLintExtends).toEqual(jasmine.any(Array));
+            expect(tsLintExtends).toContain('@nativescript/tslint-rules');
+
+            expect(tsLintRules).toEqual(jasmine.any(Object));
+            expect(Object.keys(tsLintRules)).toContain('prefer-mapped-imports');
+            const rule = tsLintRules['prefer-mapped-imports'];
+            const ruleOptions = rule[1];
+            const actualBaseUrl = ruleOptions['base-url'];
+            expect(actualBaseUrl).toEqual('./');
         });
 
         it('should generate a sample shared component', () => {

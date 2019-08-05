@@ -1,3 +1,5 @@
+import { dirname } from 'path';
+
 import {
   addImportToModule,
   addBootstrapToModule,
@@ -9,7 +11,6 @@ import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
 import { toComponentClassName, Node, removeNode, getFileContents, getJsonFile } from './utils';
-import { dirname } from 'path';
 
 class RemoveContent implements Node {
   constructor(private pos: number, private end: number) {
@@ -620,7 +621,33 @@ export const replaceTextInNode = (tree: Tree, node: ts.Node, oldText: string, ne
   tree.commitUpdate(recorder);
 };
 
-export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
+export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
+  const buffer = host.read(path);
+  if (!buffer) {
+    throw new SchematicsException(
+      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`,
+    );
+  }
+  const content = buffer.toString();
+  const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
+
+  return source;
+};
+
+export function getCompilerOptions(tree: Tree, tsConfigPath: string)
+  : ts.CompilerOptions | undefined {
+
+  const tsConfigObject = parseTsConfigFile(tree, tsConfigPath);
+  if (!tsConfigObject) {
+    return;
+  }
+
+  const compilerOptions = tsConfigObject.options;
+
+  return compilerOptions;
+}
+
+function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCommandLine {
   const config = getJsonFile(tree, tsConfigPath);
   const host: ts.ParseConfigHost = {
     useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
@@ -634,16 +661,3 @@ export function parseTsConfigFile(tree: Tree, tsConfigPath: string): ts.ParsedCo
 
   return tsConfigObject;
 }
-
-export const getSourceFile = (host: Tree, path: string): ts.SourceFile => {
-  const buffer = host.read(path);
-  if (!buffer) {
-    throw new SchematicsException(
-      `Could not find file at ${path}. See https://github.com/NativeScript/nativescript-schematics/issues/172.`,
-    );
-  }
-  const content = buffer.toString();
-  const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
-
-  return source;
-};

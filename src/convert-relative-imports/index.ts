@@ -3,12 +3,12 @@ import { IRule, Replacement } from 'tslint';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { Tree, SchematicContext, isContentAction } from '@angular-devkit/schematics';
 import { LoggerApi } from '@angular-devkit/core/src/logger';
-import { PreferMappedImportsRule } from '@nativescript/tslint-rules';
-import { parseCompilerOptions } from '@nativescript/tslint-rules/dist/preferMappedImportsRule';
 
-import { parseTsConfigFile } from '../ts-utils';
+import { getCompilerOptions } from '../ts-utils';
 import { getFileContents } from '../utils';
 import { getTsConfigFromProject } from '../angular-project-parser';
+import { getMappedImportsRule } from '../mapped-imports-rule-utils';
+
 import { Schema as ConvertRelativeImportsSchema } from './schema';
 
 // TODO: add link to the docs
@@ -25,7 +25,7 @@ export default function(options: ConvertRelativeImportsSchema) {
       return tree;
     }
 
-    const tsConfigPath = getTsConfigPath(tree, options.project, logger) || 'tsconfig.json';
+    const tsConfigPath = getTsConfigFromProject(tree, options.project) || 'tsconfig.json';
     const compilerOptions = getCompilerOptions(tree, tsConfigPath);
 
     if (!compilerOptions) {
@@ -61,7 +61,7 @@ function fixImports(
   filePaths: Set<string>,
   compilerOptions: ts.CompilerOptions,
 ): Tree {
-  const rule = generateTslintRule(compilerOptions);
+  const rule = getMappedImportsRule(compilerOptions);
   if (!rule) {
     logger.debug('Convert Relative Imports: Failed to extract remap options from the TS compiler options.');
     logger.error(conversionFailureMessage);
@@ -90,50 +90,4 @@ function applyTslintRuleFixes(rule: IRule, filePath: string, fileContent: string
   const fixedContent = Replacement.applyFixes(fileContent, fixes);
 
   return fixedContent;
-}
-
-function generateTslintRule(compilerOptions: ts.CompilerOptions): PreferMappedImportsRule | undefined {
-  const remapOptions = parseCompilerOptions(compilerOptions);
-  if (!remapOptions) {
-    return;
-  }
-
-  const tslintRuleArguments = {
-    prefix: remapOptions.prefix,
-    'prefix-mapped-to': remapOptions.prefixMappedTo,
-    'base-url': remapOptions.baseUrl,
-  };
-
-  const rule = new PreferMappedImportsRule({
-    ruleArguments: [tslintRuleArguments],
-    ruleName: 'prefer-mapped-imports',
-    ruleSeverity: 'error',
-    disabledIntervals: [],
-  });
-
-  return rule;
-}
-
-function getTsConfigPath(tree: Tree, projectName: string, logger: LoggerApi): string | undefined {
-  let tsConfig: string | undefined;
-  try {
-    tsConfig = getTsConfigFromProject(tree, projectName);
-  } catch (e) {
-    logger.error(e);
-  }
-
-  return tsConfig;
-}
-
-function getCompilerOptions(tree: Tree, tsConfigPath: string)
-  : ts.CompilerOptions | undefined {
-
-  const tsConfigObject = parseTsConfigFile(tree, tsConfigPath);
-  if (!tsConfigObject) {
-    return;
-  }
-
-  const compilerOptions = tsConfigObject.options;
-
-  return compilerOptions;
 }
