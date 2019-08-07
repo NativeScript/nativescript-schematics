@@ -5,8 +5,6 @@
     "moduleResolution": "node",
     "paths": {
       "@src/*": [
-        "<%= sourceDir %>/*.android.ts",
-        "<%= sourceDir %>/*.ios.ts",
         "<%= sourceDir %>/*.tns.ts",
         "<%= sourceDir %>/*.ts"
       ]

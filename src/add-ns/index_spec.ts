@@ -144,8 +144,6 @@ describe('Add {N} schematic', () => {
             expect(paths['@src/*']).toBeDefined();
 
             const maps = paths['@src/*'];
-            expect(maps).toContain('src/*.ios.ts');
-            expect(maps).toContain('src/*.android.ts');
             expect(maps).toContain('src/*.tns.ts');
             expect(maps).toContain('src/*.ts');
         });
