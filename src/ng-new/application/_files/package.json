@@ -23,7 +23,7 @@
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "@angular/cli": "^8.0.3",
+    "@angular/cli": "~8.0.3",
     "@angular/compiler-cli": "~8.0.1",
     "@angular-devkit/core": "~8.0.1",
     "@nativescript/schematics": "~0.7.0",<% if(webpack) { %>
