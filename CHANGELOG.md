@@ -1,3 +1,15 @@
+# [0.7.0](https://github.com/nativescript/nativescript-schematics/compare/0.6.0...0.7.0) (2019-08-09)
+
+
+### Features
+
+* update to NativeScript 6.0 ([#220](https://github.com/NativeScript/nativescript-schematics/commit/f4a098a4b812f51a6775d100af25ecd407f43abe))
+* update to Angular 8.0 ([#214](https://github.com/nativescript/nativescript-schematics/issues/214)) ([0837158](https://github.com/nativescript/nativescript-schematics/commit/0837158))
+* refactor shared structure ([#196](https://github.com/nativescript/nativescript-schematics/issues/196)) ([7c3d159](https://github.com/nativescript/nativescript-schematics/commit/7c3d159))
+* **ng-add:** add 'prefer-mapped-imports' rule ([#235](https://github.com/nativescript/nativescript-schematics/issues/235)) ([043bd38](https://github.com/nativescript/nativescript-schematics/commit/043bd38))
+* add `skipInstall` option to ng-new ([#223](https://github.com/nativescript/nativescript-schematics/issues/223)) ([78e33e5](https://github.com/nativescript/nativescript-schematics/commit/78e33e5))
+
+
 # [0.6.0](https://github.com/nativescript/nativescript-schematics/compare/0.4.0...0.6.0) (2019-05-16)
 
 
