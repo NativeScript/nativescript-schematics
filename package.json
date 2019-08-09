@@ -17,20 +17,20 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "~8.0.0",
-    "@angular-devkit/schematics": "~8.0.0",
+    "@angular-devkit/core": "~8.2.0",
+    "@angular-devkit/schematics": "~8.2.0",
     "@nativescript/tslint-rules": "~0.0.3",
-    "@phenomnomnominal/tsquery": "^3.0.0",
-    "@schematics/angular": "~8.0.0"
+    "@phenomnomnominal/tsquery": "^3.0.0"
   },
   "devDependencies": {
+    "@schematics/angular": "~8.2.0",
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "conventional-changelog-cli": "^2.0.1",
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
     "tslint": "^5.18.0",
-    "typescript": "3.4.5"
+    "typescript": "3.5.3"
   },
   "repository": {
     "type": "git",
