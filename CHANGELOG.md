@@ -1,3 +1,23 @@
+# [0.7.0](https://github.com/nativescript/nativescript-schematics/compare/0.6.0...0.7.0) (2019-08-09)
+
+
+### Bug Fixes
+
+* add `skipInstall` option to ng-new ([#223](https://github.com/nativescript/nativescript-schematics/issues/223)) ([78e33e5](https://github.com/nativescript/nativescript-schematics/commit/78e33e5))
+* **add-ns:** correctly define the `sample` option ([#227](https://github.com/nativescript/nativescript-schematics/issues/227)) ([f2fdede](https://github.com/nativescript/nativescript-schematics/commit/f2fdede)), closes [#225](https://github.com/nativescript/nativescript-schematics/issues/225)
+* make `@schematics/angular` a `devDependency` and update to… ([#237](https://github.com/nativescript/nativescript-schematics/issues/237)) ([915349d](https://github.com/nativescript/nativescript-schematics/commit/915349d))
+* move all typescript helpers to a separate file - `ts-utils` ([29a2a07](https://github.com/nativescript/nativescript-schematics/commit/29a2a07)), closes [#216](https://github.com/nativescript/nativescript-schematics/issues/216)
+* no-dimension listview in stacklayout warning ([#228](https://github.com/nativescript/nativescript-schematics/issues/228)) ([1db4de7](https://github.com/nativescript/nativescript-schematics/commit/1db4de7))
+
+
+### Features
+
+* refactor shared structure ([#196](https://github.com/nativescript/nativescript-schematics/issues/196)) ([7c3d159](https://github.com/nativescript/nativescript-schematics/commit/7c3d159))
+* update to Angular 8.0 ([#214](https://github.com/nativescript/nativescript-schematics/issues/214)) ([0837158](https://github.com/nativescript/nativescript-schematics/commit/0837158))
+* **ng-add:** add 'prefer-mapped-imports' rule ([#235](https://github.com/nativescript/nativescript-schematics/issues/235)) ([043bd38](https://github.com/nativescript/nativescript-schematics/commit/043bd38))
+
+
+
 # [0.6.0](https://github.com/nativescript/nativescript-schematics/compare/0.4.0...0.6.0) (2019-05-16)
 
 
