@@ -11,8 +11,8 @@ import { getMappedImportsRule } from '../mapped-imports-rule-utils';
 
 import { Schema as ConvertRelativeImportsSchema } from './schema';
 
-// TODO: add link to the docs
-const conversionFailureMessage = `Failed to generate remapped imports! Please see: ...`;
+const conversionFailureMessage = `Failed to generate remapped imports! Please see: ` +
+  `https://docs.nativescript.org/angular/code-sharing/intro#remapped-imports`;
 
 export default function(options: ConvertRelativeImportsSchema) {
   return (tree: Tree, context: SchematicContext) => {
