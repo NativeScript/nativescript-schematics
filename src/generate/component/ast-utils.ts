@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 
 import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { classify } from '@angular-devkit/core/src/utils/strings';

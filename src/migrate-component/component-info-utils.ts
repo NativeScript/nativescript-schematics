@@ -3,7 +3,7 @@ import { Schema as MigrateComponentSchema } from './schema';
 import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 import { SchematicsException, Tree, SchematicContext } from '@angular-devkit/schematics';
 import { join, dirname } from 'path';
-import * as ts from 'typescript';
+import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 
 import { AngularProjectSettings, getAngularProjectSettings } from '../angular-project-parser';
 import { findImportPath, findMatchingNodes, getSourceFile } from '../ts-utils';

@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { Change, NoopChange } from '@schematics/angular/utility/change';
 import { findNodes } from '@schematics/angular/utility/ast-utils';
 import { insertBeforeFirstOccurence } from './ts-utils';
