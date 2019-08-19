@@ -21,7 +21,7 @@ import {
   getSourceFile,
 } from '../ts-utils';
 
-import * as ts from 'typescript';
+import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { SchematicsException } from '@angular-devkit/schematics/src/exception/exception';
 import { InsertChange } from '@schematics/angular/utility/change';
 
