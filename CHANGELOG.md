@@ -1,3 +1,11 @@
+## [0.7.1](https://github.com/nativescript/nativescript-schematics/compare/0.7.0...0.7.1) (2019-08-21)
+
+
+### Bug Fixes
+
+* use typescript from @schematics/angular ([#239](https://github.com/nativescript/nativescript-schematics/issues/239)) ([4c6c2ec](https://github.com/nativescript/nativescript-schematics/commit/4c6c2ec))
+
+
 # [0.7.0](https://github.com/nativescript/nativescript-schematics/compare/0.6.0...0.7.0) (2019-08-09)
 
 
