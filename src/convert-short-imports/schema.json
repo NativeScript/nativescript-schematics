@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsConvertShortImports",
+  "title": "Convert-short-imports Options Schema",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the project.",
+      "$default": {
+        "$source": "projectName"
+      }
+    },
+    "srcPath": {
+      "type":"string",
+      "description": "The path to the source directory",
+      "default": "src"
+    },
+    "filesToIgnore": {
+      "type": "array",
+      "description": "Array with paths to the files that shouldn't be modified by the schematic.",
+      "default": []
+    }
+  },
+  "required": []
+}
