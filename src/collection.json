@@ -126,6 +126,12 @@
       "description": "Takes the generated and modified files in the tree and converts all imports with relative paths to imports with 'remapped' paths. The 'remapped' path is calculated based on the 'paths' property in the project tsconfig.",
       "factory": "./convert-relative-imports",
       "schema": "./convert-relative-imports/schema.json"
+    },
+
+    "convert-short-imports": {
+      "description": "Converts the short imports from 'tns-core-modules' to full imports.",
+      "factory": "./convert-short-imports",
+      "schema": "./convert-short-imports/schema.json"
     }
   }
 }

@@ -20,10 +20,14 @@
     "@angular-devkit/core": "~8.2.0",
     "@angular-devkit/schematics": "~8.2.0",
     "@nativescript/tslint-rules": "~0.0.3",
-    "@phenomnomnominal/tsquery": "^3.0.0"
+    "@phenomnomnominal/tsquery": "^3.0.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "eslint": "^6.4.0",
+    "eslint-plugin-nativescript": "0.0.0"
   },
   "devDependencies": {
     "@schematics/angular": "~8.2.0",
+    "@types/eslint": "^6.1.1",
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "conventional-changelog-cli": "^2.0.1",
