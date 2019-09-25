@@ -148,6 +148,18 @@ describe('Add {N} schematic', () => {
             expect(maps).toContain('src/*.ts');
         });
 
+        it('should create the tsconfig.spec.json (web) with files', () => {
+            const specTsConfigPath = '/tsconfig.spec.json';
+            expect(appTree.files).toContain(specTsConfigPath);
+
+            const specTsConfig = JSON.parse(getFileContent(appTree, specTsConfigPath));
+            const files = specTsConfig.files;
+
+            expect(files).toBeDefined();
+            expect(files.includes('src/test.ts')).toBeTruthy();
+            expect(files.includes('src/polyfills.ts')).toBeTruthy();
+        });
+
         it('should modify the base tsconfig.json to include path mappings', () => {
             const baseTsConfigPath = '/tsconfig.json';
             expect(appTree.files).toContain(baseTsConfigPath);

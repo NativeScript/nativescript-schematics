@@ -27,6 +27,7 @@ describe('Shared Application Schematic', () => {
     expect(files).toContain('/foo/.gitignore');
     expect(files).toContain('/foo/package.json');
     expect(files).toContain('/foo/tsconfig.tns.json');
+    expect(files).toContain('/foo/tsconfig.spec.json');
 
     expect(files).toContain('/foo/src/package.json');
     expect(files).toContain('/foo/src/main.tns.ts');
