@@ -4,17 +4,15 @@ import {
   chain,
   externalSchematic,
   SchematicsException,
-  mergeWith,
-  apply,
-  url,
-  template,
-  move,
   branchAndMerge,
-  filter,
+  schematic,
 } from '@angular-devkit/schematics';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { addSymbolToNgModuleMetadata } from '@schematics/angular/utility/ast-utils';
+import { parseName } from '@schematics/angular/utility/parse-name';
+import { dasherize } from '@angular-devkit/core/src/utils/strings';
 
+import { Schema as CommonModuleSchema } from '../common-module/schema';
 import { Schema as ModuleOptions } from './schema';
 import { copy } from '../../utils';
 import {
@@ -22,7 +20,6 @@ import {
   removeMetadataArrayValue,
   getSourceFile,
 } from '../../ts-utils';
-import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import {
   removeNsSchemaOptions,
   getExtensions,
@@ -32,7 +29,6 @@ import {
   addExtension,
   validateGenerateOptions,
 } from '../utils';
-import { parseName } from '@schematics/angular/utility/parse-name';
 
 class ModuleInfo {
   name: string;
@@ -64,18 +60,6 @@ export default function(options: ModuleOptions): Rule {
   let moduleInfo: ModuleInfo;
 
   return branchAndMerge(chain([
-    // Filter existing modules with the same names so that they don't
-    // cause merge conflicts before the files are renamed.
-    // TODO: Fix. Huge performance hit! Filter goes trough node_modules + platforms.
-    filter((fileName) => {
-      const {
-        moduleName,
-        routingName,
-      } = getParsedName(options);
-
-      return ![moduleName, routingName].some((modName) => fileName.endsWith(modName));
-    }),
-
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);
 
@@ -124,7 +108,8 @@ export default function(options: ModuleOptions): Rule {
     },
 
     (tree: Tree) => shouldCreateCommonFile(platformUse, options.common) ?
-      addCommonFile(moduleInfo) : tree,
+      schematic<CommonModuleSchema>('common-module', { name: moduleInfo.name, path: moduleInfo.path }) :
+      tree,
   ]));
 }
 
@@ -132,17 +117,6 @@ const shouldCreateCommonFile = (platformUse: PlatformUse, useCommon?: boolean) =
   !!useCommon || // the common flag is raised or
   !platformUse.nsOnly && // it's a shared project
   platformUse.useWeb && platformUse.useNs; // and we generate a shared module
-
-const addCommonFile = (moduleInfo: ModuleInfo) => {
-  return mergeWith(
-    apply(url('./_files'), [
-      template({
-        name: moduleInfo.name,
-      }),
-      move(moduleInfo.path),
-    ]),
-  );
-};
 
 const getParsedName = (options: ModuleOptions): { name: string, moduleName: string, routingName: string } => {
   const parsedPath = parseName(options.path || '', options.name);
