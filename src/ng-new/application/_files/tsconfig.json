@@ -4,6 +4,7 @@
     "target": "es5",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
     "noEmitHelpers": true,
     "noEmitOnError": true,
     "lib": [
