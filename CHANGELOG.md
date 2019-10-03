@@ -1,3 +1,12 @@
+## [0.7.2](https://github.com/nativescript/nativescript-schematics/compare/0.7.1...0.7.2) (2019-10-03)
+
+
+### Bug Fixes
+
+* don't check the `.d.ts` files from `node_modules` ([a69b785](https://github.com/nativescript/nativescript-schematics/commit/a69b785)), closes [/github.com/DefinitelyTyped/DefinitelyTyped/pull/38412/files#diff-704f3d6b17350ee2426b25280154df4](https://github.com//github.com/DefinitelyTyped/DefinitelyTyped/pull/38412/files/issues/diff-704f3d6b17350ee2426b25280154df4)
+* fix extends inside tsconfig.spec.json to include its base tsconfig.json from the correct location ([32e4462](https://github.com/nativescript/nativescript-schematics/commit/32e4462))
+
+
 ## [0.7.1](https://github.com/nativescript/nativescript-schematics/compare/0.7.0...0.7.1) (2019-08-21)
 
 
