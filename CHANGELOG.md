@@ -3,7 +3,6 @@
 
 ### Bug Fixes
 
-* add skipLibCheck in `tsconfig.tns.json` ([8bdf6a6](https://github.com/nativescript/nativescript-schematics/commit/8bdf6a6))
 * don't check the `.d.ts` files from `node_modules` ([a69b785](https://github.com/nativescript/nativescript-schematics/commit/a69b785)), closes [/github.com/DefinitelyTyped/DefinitelyTyped/pull/38412/files#diff-704f3d6b17350ee2426b25280154df4](https://github.com//github.com/DefinitelyTyped/DefinitelyTyped/pull/38412/files/issues/diff-704f3d6b17350ee2426b25280154df4)
 * fix extends inside tsconfig.spec.json to include its base tsconfig.json from the correct location ([32e4462](https://github.com/nativescript/nativescript-schematics/commit/32e4462))
 
