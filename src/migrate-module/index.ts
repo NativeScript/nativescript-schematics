@@ -5,17 +5,24 @@ import {
   chain,
   schematic,
   SchematicsException,
+  template,
+  mergeWith,
+  apply,
+  url,
+  move,
 } from '@angular-devkit/schematics';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
+import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
+import { dirname, Path } from '@angular-devkit/core';
 
 import { addExtension } from '../utils';
 import { getSourceFile } from '../ts-utils';
 import { getNsConfigExtension } from '../generate/utils';
 import { parseModuleInfo, ModuleInfo } from './module-info-utils';
 
-import { Schema as ModuleSchema } from '../generate/module/schema';
 import { Schema as MigrateComponentSchema } from '../migrate-component/schema';
+import { Schema as CommonModuleSchema } from '../generate/common-module/schema';
 import { Schema as ConvertRelativeImportsSchema } from '../convert-relative-imports/schema';
 import { Schema as MigrateModuleSchema } from './schema';
 
@@ -36,30 +43,52 @@ export default function(options: MigrateModuleSchema): Rule {
       moduleInfo = parseModuleInfo(options)(tree, context);
     },
 
-    addModuleFile(options.name, options.project),
+    (tree) => {
+      const moduleDir = dirname(moduleInfo.modulePath as Path);
+
+      return addModuleFile(options.name, nsext, moduleDir)(tree);
+    },
 
     (tree, context) => migrateComponents(moduleInfo, options)(tree, context),
     migrateProviders(),
+
+    () => addCommonModuleFile(options, moduleInfo),
 
     schematic<ConvertRelativeImportsSchema>('convert-relative-imports', options),
   ]);
 }
 
+const addCommonModuleFile = (options, modInfo) => {
+  const { name } = options;
+  const { modulePath } = modInfo;
+  const moduleDirectory = dirname(modulePath);
+  const commonModuleOptions = {
+    name,
+    path: moduleDirectory,
+  };
+
+  return schematic<CommonModuleSchema>('common-module', commonModuleOptions);
+};
+
 const addModuleFile =
-  (name: string, project: string) =>
-    (tree: Tree, context: SchematicContext) =>
-      schematic('module', {
-        name,
-        project,
-        nsExtension: nsext,
-        flat: false,
-        web: false,
-        spec: false,
-        common: true,
-      })(tree, context);
+  (name: string, nsExtension: string, path: string) =>
+    (_tree: Tree) => {
+      const templateSource = apply(url('./_ns-files'), [
+        template({
+          name,
+          nsext: nsExtension,
+          dasherize,
+          classify,
+        }),
+        move(path),
+      ]);
+
+      return mergeWith(templateSource);
+    };
 
 const migrateComponents = (modInfo: ModuleInfo, options: MigrateModuleSchema) => {
-  const components = modInfo.declarations.filter((d) => d.name.endsWith('Component'));
+  const isComponent = (className: string) => className.endsWith('Component');
+  const components = modInfo.declarations.filter(({ name }) => isComponent(name));
 
   return chain(
     components.map((component) => {

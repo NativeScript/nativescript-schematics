@@ -226,7 +226,7 @@ describe('Module Schematic', () => {
         expect(tree.exists(webModulePath)).toBeTruthy();
       });
 
-      it('should not create a common file', async () => {
+      it('should create a common file', async () => {
         const options = { ...nsWebOptions };
         const tree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 

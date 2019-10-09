@@ -37,6 +37,13 @@
         "schema": "./generate/module/schema.json"
     },
 
+
+    "common-module": {
+        "factory": "./generate/common-module",
+        "description": "Generate a common NgModule",
+        "schema": "./generate/common-module/schema.json"
+    },
+
     "app-resources": {
         "factory": "./app-resources",
         "description": "Create App Resources",
@@ -108,6 +115,7 @@
       "factory": "./migrate-component",
       "schema": "./migrate-component/schema.json"
     },
+
     "migrate-module": {
       "aliases": [ "mg" ],
       "description": "Converts a module into a code sharing module",
