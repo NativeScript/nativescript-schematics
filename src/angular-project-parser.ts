@@ -166,7 +166,7 @@ function parseAngularConfig(tree, projectName: string) {
   return { targets, project };
 }
 
-function getProjectObject(tree: Tree, projectName: string) {
+export function getProjectObject(tree: Tree, projectName: string) {
   const workspace = getWorkspace(tree);
   const project = getProject(workspace, projectName);
   if (!project) {

@@ -17,6 +17,7 @@ import {
 
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { parseName } from '@schematics/angular/utility/parse-name';
+import { getProjectObject } from '../../angular-project-parser';
 
 import {
   Extensions,
@@ -51,6 +52,13 @@ export default function(options: ComponentOptions): Rule {
 
       if (platformUse.nsOnly && options.spec !== true) {
         options.spec = false;
+      }
+
+      const projectObject = getProjectObject(tree, options.project);
+      const styleext = (projectObject && projectObject.schematics && projectObject.schematics['@schematics/angular:component']
+        && projectObject.schematics['@schematics/angular:component'].style);
+      if (styleext) {
+        options.styleext = styleext;
       }
 
       validateGenerateOptions(platformUse, options);
