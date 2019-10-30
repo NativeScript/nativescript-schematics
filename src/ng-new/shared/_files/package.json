@@ -18,29 +18,29 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~8.0.1",
-    "@angular/common": "~8.0.1",
-    "@angular/compiler": "~8.0.1",
-    "@angular/core": "~8.0.1",
-    "@angular/forms": "~8.0.1",
+    "@angular/animations": "~8.2.0",
+    "@angular/common": "~8.2.0",
+    "@angular/compiler": "~8.2.0",
+    "@angular/core": "~8.2.0",
+    "@angular/forms": "~8.2.0",
     "@angular/http": "~8.0.0-beta.10",
-    "@angular/platform-browser": "~8.0.1",
-    "@angular/platform-browser-dynamic": "~8.0.1",
-    "@angular/router": "~8.0.1",
-    "core-js": "^2.5.4",
-    "nativescript-angular": "~8.0.1",<% if(theme) { %>
+    "@angular/platform-browser": "~8.2.0",
+    "@angular/platform-browser-dynamic": "~8.2.0",
+    "@angular/router": "~8.2.0",
+    "core-js": "^2.6.9",
+    "nativescript-angular": "~8.2.0",<% if(theme) { %>
     "nativescript-theme-core": "~1.0.4",
     <% } %>"reflect-metadata": "~0.1.12",
-    "rxjs": "~6.5.0",
-    "tns-core-modules": "~6.0.0",
+    "rxjs": "~6.4.0",
+    "tns-core-modules": "~6.1.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "@angular/cli": "~8.0.3",
-    "@angular/compiler-cli": "~8.0.1",
-    "@angular-devkit/build-angular": "~0.800.0",
+    "@angular/cli": "~8.3.0",
+    "@angular/compiler-cli": "~8.2.0",
+    "@angular-devkit/build-angular": "~0.803.0",
     "@nativescript/schematics": "~0.7.0",
-    "@nativescript/tslint-rules": "~0.0.2",
+    "@nativescript/tslint-rules": "~0.0.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
@@ -52,10 +52,10 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
-    "nativescript-dev-webpack": "~1.0.0",
+    "nativescript-dev-webpack": "~1.2.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.4.3"
+    "typescript": "~3.5.3"
   }
 }
