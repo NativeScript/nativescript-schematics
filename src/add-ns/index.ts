@@ -366,6 +366,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
     'nativescript-theme-core': '~1.0.4',
     'reflect-metadata': '~0.1.12',
     'tns-core-modules': '~6.1.0',
+    'tslib': '1.10.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
