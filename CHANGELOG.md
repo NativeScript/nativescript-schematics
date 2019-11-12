@@ -1,3 +1,15 @@
+## [0.7.3](https://github.com/nativescript/nativescript-schematics/compare/0.7.2...0.7.3) (2019-11-11)
+
+
+### Bug Fixes
+
+* add tslib@1.10.0 as dependency ([36f70cd](https://github.com/nativescript/nativescript-schematics/commit/36f70cdc7ef33f0a9af152fe6d0c96349338b692))
+* stop using filter in module generation schematic ([13a9004](https://github.com/nativescript/nativescript-schematics/commit/13a9004e4965e8ca591ed57ce01d151bb111be2a)), closes [#185](https://github.com/nativescript/nativescript-schematics/issues/185)
+* support converting web application to code-shared when using scss or less styles ([457fffc](https://github.com/nativescript/nativescript-schematics/commit/457fffc0145abfd92846018866ff3c97947ab3b0))
+* update to NativeScript v6.2.x ([e09f8ca](https://github.com/nativescript/nativescript-schematics/commit/e09f8ca5843bba5012c58594d1c1329c6c4cb616))
+
+
+
 ## [0.7.2](https://github.com/nativescript/nativescript-schematics/compare/0.7.1...0.7.2) (2019-10-03)
 
 
