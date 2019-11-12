@@ -78,7 +78,7 @@ describe('Add {N} schematic', () => {
             const { dependencies, devDependencies } = packageJson;
             expect(dependencies).toBeDefined();
             expect(dependencies['nativescript-angular']).toBeDefined();
-            expect(dependencies['nativescript-theme-core']).toBeDefined();
+            expect(dependencies['@nativescript/theme']).toBeDefined();
             expect(dependencies['tns-core-modules']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
 

@@ -65,7 +65,7 @@ describe('Styling Schematic', () => {
 
       expect(getFileContent(tree, stylingFile))
         .not
-        .toMatch(new RegExp('@import "~nativescript-theme-core/css/core.light.css";'));
+        .toMatch(new RegExp('@import "~@nativescript/theme/css/core.css";'));
     });
   });
 
@@ -85,7 +85,7 @@ describe('Styling Schematic', () => {
       expect(tree.exists(`${appPath}/${sourceDir}/app.android.scss`));
       expect(tree.exists(`${appPath}/${sourceDir}/app.ios.scss`));
       expect(tree.exists(`${appPath}/${sourceDir}/_app-common.scss`));
-      expect(tree.exists(`${appPath}/${sourceDir}/_app-variables.scss`));
+      expect(tree.exists(`${appPath}/${sourceDir}/_app-variables.scss`)).toBe(false);
     });
 
     it('should add scss dependencies to package.json', () => {
@@ -109,21 +109,11 @@ describe('Styling Schematic', () => {
 
       expect(getFileContent(tree, `${appPath}/${sourceDir}/app.android.scss`))
         .not
-        .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/index\';'));
-      expect(getFileContent(tree, `${appPath}/${sourceDir}/app.android.scss`))
-        .not
-        .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/platforms/index.android\';'));
+        .toMatch(new RegExp('@import "~@nativescript/theme/css/core.css;'));
 
       expect(getFileContent(tree, `${appPath}/${sourceDir}/app.ios.scss`))
         .not
-        .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/index\';'));
-      expect(getFileContent(tree, `${appPath}/${sourceDir}/app.ios.scss`))
-        .not
-        .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/platforms/index.ios\';'));
-
-      expect(getFileContent(tree, `${appPath}/${sourceDir}/_app-variables.scss`))
-        .not
-        .toMatch(new RegExp('@import \'~nativescript-theme-core/scss/light\';'));
+        .toMatch(new RegExp('@import "~@nativescript/theme/css/core.css";'));
     });
   });
 });
