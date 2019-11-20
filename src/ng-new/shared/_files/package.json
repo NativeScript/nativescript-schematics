@@ -40,7 +40,7 @@
     "@angular/cli": "~8.3.0",
     "@angular/compiler-cli": "~8.2.0",
     "@angular-devkit/build-angular": "~0.803.0",
-    "@nativescript/schematics": "~0.8.0",
+    "@nativescript/schematics": "~1.0.0",
     "@nativescript/tslint-rules": "~0.0.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
