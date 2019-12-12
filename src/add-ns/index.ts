@@ -372,7 +372,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
 
   const devDepsToAdd = {
     'nativescript-dev-webpack': '~1.4.0',
-    '@nativescript/schematics': '~1.1.0',
+    '@nativescript/schematics': '~1.0.0',
     '@nativescript/tslint-rules': '~0.0.5',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
