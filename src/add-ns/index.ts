@@ -363,17 +363,17 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
   // @UPGRADE: Update all versions whenever {N} version updates
   const depsToAdd = {
     'nativescript-angular': '~8.20.0',
-    '@nativescript/theme': '~2.2.0',
+    '@nativescript/theme': '~2.2.1',
     'reflect-metadata': '~0.1.12',
-    'tns-core-modules': '~6.2.0',
+    'tns-core-modules': '~6.3.0',
     'tslib': '1.10.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
-    'nativescript-dev-webpack': '~1.3.0',
+    'nativescript-dev-webpack': '~1.4.0',
     '@nativescript/schematics': '~1.0.0',
-    '@nativescript/tslint-rules': '~0.0.2',
+    '@nativescript/tslint-rules': '~0.0.5',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
 

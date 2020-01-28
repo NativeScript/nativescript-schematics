@@ -1,3 +1,13 @@
+## [1.0.0](https://github.com/nativescript/nativescript-schematics/compare/0.7.3...1.0.0) (2019-12-12)
+
+
+### Features
+* update to NativeScript v6.3.x ([588e2c3](https://github.com/NativeScript/nativescript-schematics/commit/588e2c36174647144588cc1756fe63a9ad5f4c3c))
+* support for @nativescript/theme v2 ([10afbe1](https://github.com/NativeScript/nativescript-schematics/commit/10afbe1443d66f7ed535c8c6ee3abe0fb7d4171b))
+* (android) support for dark theme ([d9a7c6f](https://github.com/NativeScript/nativescript-schematics/commit/d9a7c6fb21f9a2f8f944d72162144de4e057357f))
+
+
+
 ## [0.7.3](https://github.com/nativescript/nativescript-schematics/compare/0.7.2...0.7.3) (2019-11-11)
 
 
