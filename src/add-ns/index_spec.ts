@@ -44,6 +44,7 @@ describe('Add {N} schematic', () => {
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
+            expect(files).toContain('/ngcc.config.js');
             expect(files).toContain('/nsconfig.json');
             expect(files).toContain('/tsconfig.tns.json');
             expect(files).toContain('/src/app.css');
