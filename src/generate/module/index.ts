@@ -228,7 +228,7 @@ const ensureNsRouting = (tree: Tree, path: string) => {
 
   const importFrom = `, NativeScriptRouterModule } from '@angular/router';`;
   const importTo = ` } from '@angular/router';
-import { NativeScriptRouterModule } from 'nativescript-angular/router';`;
+import { NativeScriptRouterModule } from '@nativescript/angular';`;
 
   const newText = fileText.replace(/RouterModule/g, 'NativeScriptRouterModule')
     .replace(importFrom, importTo);
@@ -270,7 +270,7 @@ const addNSRouterModule = (tree: Tree, routingModulePath: string) => {
   const addedImport = addSymbolToNgModuleMetadata(
     moduleSource, routingModulePath,
     'imports', `${moduleName}.forChild(routes)`,
-    'nativescript-angular/router'
+    '@nativescript/angular'
   );
   const importRecorder = tree.beginUpdate(routingModulePath);
 
@@ -335,7 +335,7 @@ const addNSCommonModule = (tree: Tree, modulePath: string) => {
   const metadataChange = addSymbolToNgModuleMetadata(
     moduleSource, modulePath,
     'imports', 'NativeScriptCommonModule',
-    'nativescript-angular/common');
+    '@nativescript/angular');
 
   metadataChange.forEach((change: InsertChange) =>
     recorder.insertRight(change.pos, change.toAdd),

@@ -299,7 +299,7 @@ export function addBootstrapToNgModule(modulePath: string, rootComponentName: st
     const importChanges = addImportToModule(source,
       modulePath,
       'NativeScriptModule',
-      'nativescript-angular/nativescript.module');
+      '@nativescript/angular');
 
     const bootstrapChanges = addBootstrapToModule(source,
       modulePath,

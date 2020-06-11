@@ -77,9 +77,9 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { dependencies, devDependencies } = packageJson;
             expect(dependencies).toBeDefined();
-            expect(dependencies['nativescript-angular']).toBeDefined();
+            expect(dependencies['@nativescript/angular']).toBeDefined();
             expect(dependencies['@nativescript/theme']).toBeDefined();
-            expect(dependencies['tns-core-modules']).toBeDefined();
+            expect(dependencies['@nativescript/core']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
 
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
@@ -94,8 +94,10 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
-            expect(scripts.android).toEqual('tns run android');
-            expect(scripts.ios).toEqual('tns run ios');
+            expect(scripts.android).toEqual('tns run android --env.aot');
+            expect(scripts.ios).toEqual('tns run ios --env.aot');
+            expect(scripts.ngcc).toEqual('ngcc --properties es2015 module main --first-only');
+            expect(scripts.postinstall).toEqual('npm run ngcc');
         });
 
         it('should add NativeScript key to the package json', () => {

@@ -70,7 +70,7 @@ describe('Module Schematic', () => {
 
       it('should have NativeScriptCommonModule imported', () => {
         const content = getFileContent(tree, noExtensionModulePath);
-        expect(content).toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+        expect(content).toMatch(`import { NativeScriptCommonModule } from '@nativescript/angular'`);
       });
 
       it('should have NO_ERRORS_SCHEMA imported', () => {
@@ -102,7 +102,7 @@ describe('Module Schematic', () => {
       const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
       const content = getFileContent(testTree, noExtensionModulePath);
-      expect(content).not.toMatch(`import { NativeScriptCommonModule } from 'nativescript-angular/common'`);
+      expect(content).not.toMatch(`import { NativeScriptCommonModule } from '@nativescript/angular'`);
     });
 
     it('should not have RouterModule imported in the routing module', async () => {
@@ -124,7 +124,7 @@ describe('Module Schematic', () => {
       const testTree = await schematicRunner.runSchematicAsync('module', options, appTree).toPromise();
 
       const content = getFileContent(testTree, noExtensionRoutingModulePath);
-      expect(content).toMatch(`import { NativeScriptRouterModule } from 'nativescript-angular/router'`);
+      expect(content).toMatch(`import { NativeScriptRouterModule } from '@nativescript/angular'`);
     });
 
   });

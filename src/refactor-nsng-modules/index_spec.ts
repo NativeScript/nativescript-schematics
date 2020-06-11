@@ -54,8 +54,8 @@ describe('Refactor NsNg Modules Schematic', () => {
     beforeEach(() => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
-        import { NativeScriptModule } from "nativescript-angular/nativescript.module";
-        import { NativeScriptFormsModule } from "nativescript-angular/forms";
+        import { NativeScriptModule } from "@nativescript/angular";
+        import { NativeScriptFormsModule } from "@nativescript/angular";
         import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 
         import { loginRouting } from "./login.routing";
@@ -84,7 +84,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";',
+        .not.toMatch('import { NativeScriptModule } from "@nativescript/angular";',
       );
     });
 
@@ -110,7 +110,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     beforeEach(() => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
-        import { NativeScriptAnimationsModule } from "nativescript-angular/animations";
+        import { NativeScriptAnimationsModule } from "@nativescript/angular";
         import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 
         @NgModule({
@@ -129,7 +129,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptAnimationsModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptAnimationsModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
+        .not.toMatch('import { NativeScriptAnimationsModule } from "@nativescript/angular";',
       );
     });
 
@@ -137,7 +137,7 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
+        .toMatch('import { NativeScriptAnimationsModule } from "@nativescript/angular";',
       );
     });
   });
@@ -152,9 +152,9 @@ describe('Refactor NsNg Modules Schematic', () => {
     beforeEach(() => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
-        import { NativeScriptModule } from "nativescript-angular/nativescript.module";
+        import { NativeScriptModule } from "@nativescript/angular";
         import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
-        import { NativeScriptAnimationsModule } from "nativescript-angular/animations";
+        import { NativeScriptAnimationsModule } from "@nativescript/angular";
 
         @NgModule({
           imports: [
@@ -173,7 +173,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     it('should remove the NativeScriptAnimationsModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptAnimationsModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
+        .not.toMatch('import { NativeScriptAnimationsModule } from "@nativescript/angular";',
       );
     });
 
@@ -181,7 +181,7 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
+        .toMatch('import { NativeScriptAnimationsModule } from "@nativescript/angular";',
       );
     });
 
@@ -189,19 +189,19 @@ describe('Refactor NsNg Modules Schematic', () => {
       const newRootModuleContent = getFileContent(tree, rootModulePath);
       expect(newRootModuleContent).toMatch(`NativeScriptAnimationsModule`);
       expect(newRootModuleContent)
-        .toMatch('import { NativeScriptAnimationsModule } from "nativescript-angular/animations";',
+        .toMatch('import { NativeScriptAnimationsModule } from "@nativescript/angular";',
       );
     });
 
     it('should remove the NativeScriptModule import', () => {
       expect(featureModuleContent).not.toMatch(`NativeScriptModule`);
       expect(featureModuleContent)
-        .not.toMatch('import { NativeScriptModule } from "nativescript-angular/nativescript.module";',
+        .not.toMatch('import { NativeScriptModule } from "@nativescript/angular";',
       );
     });
 
     it('should import the NativeScriptCommonModule to the feature module', () => {
-      expect(featureModuleContent).toMatch('import { NativeScriptCommonModule } from "nativescript-angular/common"');
+      expect(featureModuleContent).toMatch('import { NativeScriptCommonModule } from "@nativescript/angular"');
     });
 
     it('should add the NativeScriptCommonModule to the module metadata', () => {

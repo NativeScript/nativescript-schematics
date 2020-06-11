@@ -50,7 +50,7 @@ describe('Application Schematic', () => {
     expect(content).toMatch(isInModuleMetadata('AppModule', 'declarations', 'AppComponent', true));
     expect(content).toMatch(isInModuleMetadata('AppModule', 'imports', 'NativeScriptModule', true));
 
-    expect(content).toMatch('import { NativeScriptModule } from \'nativescript-angular/nativescript.module\'');
+    expect(content).toMatch('import { NativeScriptModule } from \'@nativescript/angular\'');
     expect(content).toMatch('import { AppComponent } from \'./app.component\'');
   });
 
@@ -94,7 +94,7 @@ describe('Application Schematic', () => {
     const packageJson = '/foo/package.json';
     expect(getFileContent(tree, packageJson))
       .not
-      .toMatch(new RegExp('nativescript-dev-webpack'));
+      .toMatch(new RegExp('@ngtools/webpack'));
 
     const files = tree!.files;
     expect(files).not.toContain('/foo/webpack.config.js');

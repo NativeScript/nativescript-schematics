@@ -6,7 +6,7 @@ This repository contains schematics for generating components in NativeScript An
 
 ### Install Angular CLI
 
-You should be using `@angular/cli@6.1.0` or newer.
+You should be using `@angular/cli@9.1.0` or newer.
 
 ```bash
 npm i -g @angular/cli
@@ -141,8 +141,8 @@ This includes the following steps:
 In a code sharing project to build:
 
  * a `web` app call: `ng serve`,
- * an `iOS` app call: `tns run ios --bundle`,
- * an `Android` app call: `tns run android --bundle`
+ * an `iOS` app call: `tns run ios --bundle --env.aot`,
+ * an `Android` app call: `tns run android --bundle --env.aot`
 
 ## Templates
 

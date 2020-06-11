@@ -223,10 +223,12 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   const packageJson = getPackageJson(tree);
 
   const scriptsToAdd = {
-    android: 'tns run android',
-    ios: 'tns run ios',
+    android: 'tns run android --env.aot',
+    ios: 'tns run ios --env.aot',
     mobile: 'tns run',
     preview: 'tns preview',
+    ngcc: 'ngcc --properties es2015 module main --first-only',
+    postinstall: 'npm run ngcc'
   };
   packageJson.scripts = {...scriptsToAdd, ...packageJson.scripts};
 
@@ -362,17 +364,17 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
 
   // @UPGRADE: Update all versions whenever {N} version updates
   const depsToAdd = {
-    'nativescript-angular': '~8.20.0',
+    '@nativescript/angular': '~9.0.0',
+    '@nativescript/core': '~6.5.5',
     '@nativescript/theme': '~2.2.1',
     'reflect-metadata': '~0.1.12',
-    'tns-core-modules': '~6.3.0',
     'tslib': '1.10.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
-    'nativescript-dev-webpack': '~1.4.0',
-    '@nativescript/schematics': '~1.0.0',
+    'nativescript-dev-webpack': '~1.5.0',
+    '@nativescript/schematics': '~2.0.0',
     '@nativescript/tslint-rules': '~0.0.5',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
