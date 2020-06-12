@@ -13,7 +13,6 @@ export const routes: Routes = [
 @NgModule({
   imports: [
     NativeScriptCommonModule,
-    NativeScriptRouterModule,
     NativeScriptRouterModule.forRoot(routes)
   ],
   exports: [

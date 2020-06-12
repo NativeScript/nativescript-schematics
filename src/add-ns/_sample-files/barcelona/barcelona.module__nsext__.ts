@@ -10,7 +10,6 @@ import {
 @NgModule({
   imports: [
     NativeScriptCommonModule,
-    NativeScriptRouterModule,
     NativeScriptRouterModule.forRoot(routes)
   ],
   exports: [
