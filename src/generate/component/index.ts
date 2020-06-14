@@ -55,10 +55,10 @@ export default function(options: ComponentOptions): Rule {
       }
 
       const projectObject = getProjectObject(tree, options.project);
-      const styleext = (projectObject && projectObject.schematics && projectObject.schematics['@schematics/angular:component']
+      const style = (projectObject && projectObject.schematics && projectObject.schematics['@schematics/angular:component']
         && projectObject.schematics['@schematics/angular:component'].style);
-      if (styleext) {
-        options.styleext = styleext;
+      if (style) {
+        options.style = style;
       }
 
       validateGenerateOptions(platformUse, options);
@@ -162,7 +162,7 @@ const parseComponentInfo = (tree: Tree, options: ComponentOptions): ComponentInf
   const templateName = `/${component.name}.component.html`;
   component.templatePath = getGeneratedFilePath(templateName);
 
-  const stylesheetName = `/${component.name}.component.${options.styleext}`;
+  const stylesheetName = `/${component.name}.component.${options.style}`;
   component.stylesheetPath = getGeneratedFilePath(stylesheetName);
 
   return component;

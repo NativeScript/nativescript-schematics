@@ -57,7 +57,7 @@ export default function(options: Schema) {
             removeImportedNgModule(tree, path, metadataObject, 'NativeScriptModule');
           if (nativeScriptModuleRemoved) {
             metadataObject = refetchMetadata(tree, path, classNode);
-            importNgModule(tree, path, metadataObject, 'NativeScriptCommonModule', '@nativescript/angular');
+            importNgModule(tree, path, metadataObject, 'NativeScriptCommonModule', 'nativescript-angular/common');
           }
 
           metadataObject = refetchMetadata(tree, path, classNode);
@@ -78,7 +78,7 @@ export default function(options: Schema) {
           rootModulePath,
           rootModuleMetadata,
           'NativeScriptAnimationsModule',
-          '@nativescript/angular',
+          'nativescript-angular/animations',
         );
       }
     },

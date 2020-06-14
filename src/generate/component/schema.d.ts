@@ -60,7 +60,7 @@ export interface Schema {
   /**
    * The file extension to be used for style files.
    */
-  styleext?: string;
+  style?: string;
   /**
    * Specifies if a spec file is generated.
    */
