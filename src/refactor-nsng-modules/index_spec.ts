@@ -54,8 +54,7 @@ describe('Refactor NsNg Modules Schematic', () => {
     beforeEach(() => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
-        import { NativeScriptModule } from "@nativescript/angular";
-        import { NativeScriptFormsModule } from "@nativescript/angular";
+        import { NativeScriptModule, NativeScriptFormsModule } from "@nativescript/angular";
         import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 
         import { loginRouting } from "./login.routing";
@@ -152,9 +151,8 @@ describe('Refactor NsNg Modules Schematic', () => {
     beforeEach(() => {
       const appTree = initAppTree();
       appTree.create(featureModulePath, `
-        import { NativeScriptModule } from "@nativescript/angular";
+        import { NativeScriptModule, NativeScriptAnimationsModule } from "@nativescript/angular";
         import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
-        import { NativeScriptAnimationsModule } from "@nativescript/angular";
 
         @NgModule({
           imports: [
