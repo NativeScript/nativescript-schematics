@@ -277,13 +277,6 @@ function normalizeNodeToRemove<T extends ts.Node>(node: T, source: ts.Node)
   const start = nodeStart - source.getFullStart();
   const symbolBefore = content.substring(start - 1, start);
 
-  console.log('content', content);
-  console.log('nodeStart', nodeStart);
-  console.log('nodeEnd', nodeEnd);
-  console.log('start', start);
-  console.log('symbolBefore', symbolBefore);
-
-
   if (symbolBefore === ',') {
     return new RemoveContent(nodeStart - 1, nodeEnd);
   } else {
