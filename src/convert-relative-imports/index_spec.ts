@@ -27,7 +27,7 @@ const fixedImportContent = `
 
 describe('Convert relative imports to mapped imports', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../collection.json'),
   );
 

@@ -22,7 +22,7 @@ describe('Migrate module Schematic', () => {
   const nsModulePath = '/src/app/admin/admin.module.tns.ts';
   const webModulePath = '/src/app/admin/admin.module.ts';
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../collection.json'),
   );
 

@@ -7,7 +7,7 @@ import { isInModuleMetadata } from '../../test-utils';
 
 describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     path.join(__dirname, '../../collection.json'),
   );
   const defaultOptions: ApplicationOptions = {

@@ -21,7 +21,7 @@ describe('Component Schematic', () => {
 
   const defaultOptions: ComponentOptions = { name, project };
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../../collection.json'),
   );
 

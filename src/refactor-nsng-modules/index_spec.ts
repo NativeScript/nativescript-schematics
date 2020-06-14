@@ -7,7 +7,7 @@ import { Schema } from './schema';
 
 describe('Refactor NsNg Modules Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     path.join(__dirname, '../collection.json'),
   );
 

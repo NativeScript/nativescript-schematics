@@ -5,7 +5,7 @@ import { Schema as angularJsonOptions } from './schema';
 
 describe('Angular JSON Config Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     path.join(__dirname, '../collection.json'),
   );
 

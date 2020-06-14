@@ -8,7 +8,7 @@ import { getFileContent } from '@schematics/angular/utility/test';
 
 describe('Add {N} schematic', () => {
     const schematicRunner = new SchematicTestRunner(
-        'nativescript-schematics',
+        '@nativescript/schematics',
         resolve(__dirname, '../collection.json'),
     );
     const project = 'foo';

@@ -21,7 +21,7 @@ describe('Module Schematic', () => {
     name,
   };
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../../collection.json'),
   );
   const getModulePath = (extension: string) => `/src/app/${name}/${name}.module${extension}.ts`;
