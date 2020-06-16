@@ -1,3 +1,12 @@
+# [9.0.0](https://github.com/nativescript/nativescript-schematics/compare/1.0.0...9.0.0) (2020-06-16)
+
+
+### Features
+
+* **angular:** v9 support ([#276](https://github.com/nativescript/nativescript-schematics/issues/276)) ([0bacc61](https://github.com/nativescript/nativescript-schematics/commit/0bacc61bb727d9105c4f39e9d98de6aa0417d1fc))
+
+
+
 ## [1.0.0](https://github.com/nativescript/nativescript-schematics/compare/0.7.3...1.0.0) (2019-12-12)
 
 
