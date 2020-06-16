@@ -228,7 +228,7 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
     mobile: 'tns run',
     preview: 'tns preview',
     ngcc: 'ngcc --properties es2015 module main --first-only',
-    postinstall: 'npm run ngcc'
+    postinstall: 'npm run ngcc',
   };
   packageJson.scripts = {...scriptsToAdd, ...packageJson.scripts};
 
@@ -368,7 +368,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
     '@nativescript/core': '~6.5.5',
     '@nativescript/theme': '~2.2.1',
     'reflect-metadata': '~0.1.12',
-    'tslib': '1.10.0',
+    tslib: '1.10.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
