@@ -16,7 +16,7 @@ describe('Migrate component schematic', () => {
     const componentClassName = 'AComponent';
 
     const schematicRunner = new SchematicTestRunner(
-        'nativescript-schematics',
+        '@nativescript/schematics',
         join(__dirname, '../collection.json'),
     );
 

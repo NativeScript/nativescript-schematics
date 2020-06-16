@@ -13,7 +13,7 @@
       "prefix": "<%= prefix %>",
       "schematics": {<% if(style === 'scss') { %>
         "@nativescript/schematics:component": {
-          "styleext": "scss"
+          "style": "scss"
         }
       <% } %>},
       "architect": {

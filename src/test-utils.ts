@@ -155,10 +155,10 @@ function getPackageJson(setup: TestProjectSetup): VirtualFile {
     content: JSON.stringify({
       nativescript: { id: setup.projectName },
       dependencies: {
-        '@angular/core': '^6.1.0',
+        '@angular/core': '^9.1.0',
       },
       devDependencies: {
-        '@angular/cli': '^6.2.0',
+        '@angular/cli': '^9.1.0',
       },
     }),
   };
@@ -291,7 +291,7 @@ function getNsEntryPoint(setup: TestProjectSetup): VirtualFile {
   return {
     path: `${setup.sourceDirectory}/main.ts`,
     content: `
-      import { platformNativeScriptDynamic } from 'nativescript-angular/platform';
+      import { platformNativeScriptDynamic } from '@nativescript/angular/platform';
       import { AppModule } from './app/app.module';
 
       platformNativeScriptDynamic().bootstrapModule(AppModule);

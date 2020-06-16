@@ -14,7 +14,7 @@ describe('Validation should trigger', () => {
     const defaultModuleOptions: ModuleOptions = { name: 'fooModule', project };
 
     const schematicRunner = new SchematicTestRunner(
-        'nativescript-schematics',
+        '@nativescript/schematics',
         join(__dirname, '../collection.json'),
     );
 

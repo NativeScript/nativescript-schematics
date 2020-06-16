@@ -8,7 +8,7 @@ import { getFileContent } from '@schematics/angular/utility/test';
 
 describe('Add {N} schematic', () => {
     const schematicRunner = new SchematicTestRunner(
-        'nativescript-schematics',
+        '@nativescript/schematics',
         resolve(__dirname, '../collection.json'),
     );
     const project = 'foo';
@@ -44,6 +44,7 @@ describe('Add {N} schematic', () => {
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
+            expect(files).toContain('/ngcc.config.js');
             expect(files).toContain('/nsconfig.json');
             expect(files).toContain('/tsconfig.tns.json');
             expect(files).toContain('/src/app.css');
@@ -77,9 +78,9 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { dependencies, devDependencies } = packageJson;
             expect(dependencies).toBeDefined();
-            expect(dependencies['nativescript-angular']).toBeDefined();
+            expect(dependencies['@nativescript/angular']).toBeDefined();
             expect(dependencies['@nativescript/theme']).toBeDefined();
-            expect(dependencies['tns-core-modules']).toBeDefined();
+            expect(dependencies['@nativescript/core']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
 
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
@@ -94,8 +95,10 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
-            expect(scripts.android).toEqual('tns run android');
-            expect(scripts.ios).toEqual('tns run ios');
+            expect(scripts.android).toEqual('tns run android --env.aot');
+            expect(scripts.ios).toEqual('tns run ios --env.aot');
+            expect(scripts.ngcc).toEqual('ngcc --properties es2015 module main --first-only');
+            expect(scripts.postinstall).toEqual('npm run ngcc');
         });
 
         it('should add NativeScript key to the package json', () => {

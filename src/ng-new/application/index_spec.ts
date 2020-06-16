@@ -7,7 +7,7 @@ import { isInModuleMetadata } from '../../test-utils';
 
 describe('Application Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     path.join(__dirname, '../../collection.json'),
   );
   const defaultOptions: ApplicationOptions = {
@@ -25,6 +25,7 @@ describe('Application Schematic', () => {
     const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
+    expect(files).toContain('/foo/ngcc.config.js');
     expect(files).toContain('/foo/nsconfig.json');
     expect(files).toContain('/foo/.gitignore');
     expect(files).toContain('/foo/package.json');
@@ -50,7 +51,7 @@ describe('Application Schematic', () => {
     expect(content).toMatch(isInModuleMetadata('AppModule', 'declarations', 'AppComponent', true));
     expect(content).toMatch(isInModuleMetadata('AppModule', 'imports', 'NativeScriptModule', true));
 
-    expect(content).toMatch('import { NativeScriptModule } from \'nativescript-angular/nativescript.module\'');
+    expect(content).toMatch('import { NativeScriptModule } from \'@nativescript/angular\'');
     expect(content).toMatch('import { AppComponent } from \'./app.component\'');
   });
 
@@ -94,7 +95,7 @@ describe('Application Schematic', () => {
     const packageJson = '/foo/package.json';
     expect(getFileContent(tree, packageJson))
       .not
-      .toMatch(new RegExp('nativescript-dev-webpack'));
+      .toMatch(new RegExp('@ngtools/webpack'));
 
     const files = tree!.files;
     expect(files).not.toContain('/foo/webpack.config.js');

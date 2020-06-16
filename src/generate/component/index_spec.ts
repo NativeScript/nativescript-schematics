@@ -21,7 +21,7 @@ describe('Component Schematic', () => {
 
   const defaultOptions: ComponentOptions = { name, project };
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../../collection.json'),
   );
 
@@ -34,8 +34,8 @@ describe('Component Schematic', () => {
   const nsTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.ns);
   const webTemplatePath = getTemplatePath(DEFAULT_SHARED_EXTENSIONS.web);
 
-  const getStylesheetPath = (extension: string, styleExtension: string = 'css') =>
-    `src/app/${name}/${name}.component${extension}.${styleExtension}`;
+  const getStylesheetPath = (extension: string, style: string = 'css') =>
+    `src/app/${name}/${name}.component${extension}.${style}`;
   const noExtensionStylesheetPath = getStylesheetPath('');
   const nsStylesheetPath = getStylesheetPath(DEFAULT_SHARED_EXTENSIONS.ns);
   const webStylesheetPath = getStylesheetPath(DEFAULT_SHARED_EXTENSIONS.web);
@@ -217,11 +217,11 @@ describe('Component Schematic', () => {
       });
 
       it('should respect specified style extension', async () => {
-        const styleext = 'scss';
-        const options = { ...defaultOptions, nsExtension: customExtension, styleext, nativescript: true };
+        const style = 'scss';
+        const options = { ...defaultOptions, nsExtension: customExtension, style, nativescript: true };
         appTree = await schematicRunner.runSchematicAsync('component', options, appTree).toPromise();
 
-        const componentStylesheetPath = getStylesheetPath(customExtension, styleext);
+        const componentStylesheetPath = getStylesheetPath(customExtension, style);
         expect(appTree.exists(componentStylesheetPath)).toBeTruthy();
       });
     });

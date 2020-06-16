@@ -8,7 +8,7 @@ import { Schema as StylingOptions } from './schema';
 
 describe('Styling Schematic', () => {
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     path.join(__dirname, '../collection.json'),
   );
 

@@ -24,7 +24,7 @@ describe('Master-detail schematic', () => {
   };
 
   const schematicRunner = new SchematicTestRunner(
-    'nativescript-schematics',
+    '@nativescript/schematics',
     join(__dirname, '../../collection.json'),
   );
 

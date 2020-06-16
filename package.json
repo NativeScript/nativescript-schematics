@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "1.0.0",
+  "version": "9.0.0",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -17,20 +17,21 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "~8.2.0",
-    "@angular-devkit/schematics": "~8.2.0",
-    "@nativescript/tslint-rules": "~0.0.3",
-    "@phenomnomnominal/tsquery": "^3.0.0"
+    "@angular-devkit/core": "~9.1.0",
+    "@angular-devkit/schematics": "~9.1.0",
+    "@nativescript/tslint-rules": "~0.0.5",
+    "@phenomnomnominal/tsquery": "^4.1.0"
   },
   "devDependencies": {
-    "@schematics/angular": "~8.2.0",
-    "@types/jasmine": "^2.6.0",
-    "@types/node": "^8.0.31",
+    "@schematics/angular": "~9.1.0",
+    "@types/jasmine": "~3.5.0",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
     "conventional-changelog-cli": "^2.0.1",
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
-    "tslint": "^5.18.0",
-    "typescript": "3.5.3"
+    "tslint": "~6.1.0",
+    "typescript": "~3.8.3"
   },
   "repository": {
     "type": "git",
