@@ -15,6 +15,12 @@
     "lint": "tslint --project ./tsconfig.json -c ./tslint.json 'src/**/*.ts'",
     "lint:fix": "tslint --project ./tsconfig.json -c ./tslint.json 'src/**/*.ts' --fix"
   },
+  "ng-add": {
+    "save": "devDependencies"
+  },
+  "ng-new": {
+    "save": "devDependencies"
+  },
   "schematics": "./src/collection.json",
   "dependencies": {
     "@angular-devkit/core": "~9.1.0",

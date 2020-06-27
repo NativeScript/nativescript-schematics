@@ -84,7 +84,6 @@ describe('Add {N} schematic', () => {
             expect(dependencies['reflect-metadata']).toBeDefined();
 
             expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
-            expect(devDependencies['@nativescript/schematics']).toBeDefined();
             expect(devDependencies['@nativescript/tslint-rules']).toBeDefined();
         });
 

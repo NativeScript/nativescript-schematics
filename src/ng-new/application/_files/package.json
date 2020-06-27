@@ -11,7 +11,6 @@
     "@angular/compiler": "~9.1.0",
     "@angular/core": "~9.1.0",
     "@angular/forms": "~9.1.0",
-    "@angular/http": "~9.1.0",
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
@@ -26,8 +25,7 @@
   "devDependencies": {
     "@angular/cli": "~9.1.0",
     "@angular/compiler-cli": "~9.1.0",
-    "@angular-devkit/core": "~9.1.0",
-    "@nativescript/schematics": "~2.0.0",<% if(webpack) { %>
+    "@angular-devkit/core": "~9.1.0",<% if(webpack) { %>
     "nativescript-dev-webpack": "~1.5.0",
     "@ngtools/webpack": "~9.1.0",
     <% } %>"typescript": "~3.8.3"
