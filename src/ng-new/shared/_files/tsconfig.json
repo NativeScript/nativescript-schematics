@@ -2,21 +2,20 @@
   "compileOnSave": false,
   "compilerOptions": {
       "outDir": "./dist/out-tsc",
+      "module": "ESNext",
+      "target": "es2015",
+      "moduleResolution": "node",
       "sourceMap": true,
       "declaration": false,
-      "moduleResolution": "node",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
+      "noEmitHelpers": true,
+      "noEmitOnError": true,
       "skipLibCheck": true,
-      "target": "es5",
-      "typeRoots": [
-          "node_modules/@types"
-      ],
       "lib": [
           "es2017",
           "dom",
-          "es6",
-          "es2015.iterable"
+          "es6"
       ],
       "baseUrl": ".",
       "paths": {
