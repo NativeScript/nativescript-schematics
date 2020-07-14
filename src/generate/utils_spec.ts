@@ -23,7 +23,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultComponentOptions, nativescript: false, web: false };
 
-            expect(() => schematicRunner.runSchematic('component', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('component', options, tree))
                 .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
         });
 
@@ -31,7 +31,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptySharedProject(project);
             const options = { ...defaultComponentOptions, nativescript: false, web: false };
 
-            expect(() => schematicRunner.runSchematic('component', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('component', options, tree))
                 .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
         });
 
@@ -39,7 +39,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptySharedProject(project);
             const options: ComponentOptions = { ...defaultComponentOptions, inlineTemplate: true };
 
-            expect(() => schematicRunner.runSchematic('component', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('component', options, tree))
                 .toThrowError(/--inlineTemplate/);
         });
 
@@ -47,7 +47,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultComponentOptions, web: true, nativescript: false };
 
-            expect(() => schematicRunner.runSchematic('component', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('component', options, tree))
                 .toThrowError('Project is not configured for Angular Web, while --nativescript is set to false');
         });
     });
@@ -57,7 +57,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultModuleOptions, nativescript: false, web: false };
 
-            expect(() => schematicRunner.runSchematic('module', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('module', options, tree))
                 .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
         });
 
@@ -65,7 +65,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptySharedProject(project);
             const options = { ...defaultModuleOptions, nativescript: false, web: false };
 
-            expect(() => schematicRunner.runSchematic('module', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('module', options, tree))
                 .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
         });
 
@@ -73,7 +73,7 @@ describe('Validation should trigger', () => {
             const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultModuleOptions, web: true, nativescript: false };
 
-            expect(() => schematicRunner.runSchematic('module', options, tree))
+            expect(() => schematicRunner.runSchematicAsync('module', options, tree))
                 .toThrowError('Project is not configured for Angular Web, while --nativescript is set to false');
         });
     });

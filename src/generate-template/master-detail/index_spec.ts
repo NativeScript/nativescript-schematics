@@ -30,10 +30,10 @@ describe('Master-detail schematic', () => {
 
   let appTree: UnitTestTree;
   describe('When in {N}-only project', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       appTree = new UnitTestTree(new HostTree());
       appTree = createEmptyNsOnlyProject(project);
-      appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
+      appTree = await schematicRunner.runSchematicAsync('master-detail', { ...defaultOptions }, appTree).toPromise();
     });
 
     it('should create all necessary files', () => {
@@ -50,10 +50,10 @@ describe('Master-detail schematic', () => {
   });
 
   describe('When in web+{N} project', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       appTree = new UnitTestTree(new HostTree());
       appTree = createEmptySharedProject(project);
-      appTree = schematicRunner.runSchematic('master-detail', { ...defaultOptions }, appTree);
+      appTree = await schematicRunner.runSchematicAsync('master-detail', { ...defaultOptions }, appTree).toPromise();
     });
 
     it('should create all necessary files', () => {

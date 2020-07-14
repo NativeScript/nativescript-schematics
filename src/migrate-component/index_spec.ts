@@ -21,9 +21,9 @@ describe('Migrate component schematic', () => {
     );
 
     let appTree: UnitTestTree;
-    beforeEach(() => {
+    beforeEach(async () => {
         appTree = new UnitTestTree(new HostTree());
-        appTree = setupProject(appTree, schematicRunner, project);
+        appTree = await setupProject(appTree, schematicRunner, project);
     });
 
     describe('When the name of existing component is provided', () => {
@@ -43,7 +43,7 @@ describe('Migrate component schematic', () => {
                 project,
             }, appTree)
             .toPromise();
-            appTree = schematicRunner.runSchematic('migrate-component', options, appTree);
+            appTree = await schematicRunner.runSchematicAsync('migrate-component', options, appTree).toPromise();
         });
 
         it('should create an {N} markup file for the component', () => {
@@ -102,7 +102,7 @@ describe('Migrate component schematic', () => {
             }, appTree)
             .toPromise();
 
-            appTree = schematicRunner.runSchematic('migrate-component', { ...options }, appTree);
+            appTree = await schematicRunner.runSchematicAsync('migrate-component', { ...options }, appTree).toPromise();
 
         });
 
@@ -136,19 +136,19 @@ describe('Migrate component schematic', () => {
     });
 });
 
-const setupProject = (
+const setupProject = async (
     appTree: UnitTestTree,
     schematicRunner: SchematicTestRunner,
     project: string,
 ) => {
-    appTree = schematicRunner.runSchematic('shared', {
+    appTree = await schematicRunner.runSchematicAsync('shared', {
         name: project,
         prefix: '',
         sourceDir: 'src',
         style: 'css',
         theme: true,
         sample: false,
-    }, appTree);
+    }, appTree).toPromise();
 
     appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
 

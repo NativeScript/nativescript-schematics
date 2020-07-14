@@ -30,6 +30,7 @@
     "@phenomnomnominal/tsquery": "^4.1.0"
   },
   "devDependencies": {
+    "@angular/cli": "~10.0.0",
     "@schematics/angular": "~10.0.0",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
