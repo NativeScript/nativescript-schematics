@@ -11,14 +11,7 @@
       "es2017",
       "dom",
       "es6"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "./node_modules/@nativescript/core/*",
-        "./node_modules/*"
-      ]
-    }
+    ]
   },
   "exclude": [
     "node_modules",

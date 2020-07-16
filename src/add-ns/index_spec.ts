@@ -27,7 +27,7 @@ describe('Add {N} schematic', () => {
         appTree = await setupProject(appTree, schematicRunner, project);
     });
 
-    describe('when using the default options', () => {
+    fdescribe('when using the default options', () => {
         beforeEach(async () => {
             appTree = await schematicRunner.runSchematicAsync('add-ns', defaultOptions, appTree)
                 .toPromise();
@@ -38,13 +38,12 @@ describe('Add {N} schematic', () => {
             expect(appTree.files).toContain(configFile);
             const configFileContent = JSON.parse(getFileContent(appTree, configFile));
 
-            expect(configFileContent.cli.defaultCollection).toEqual('@nativescript/schematics');
+            expect(configFileContent.cli.defaultCollection).toBe('@nativescript/schematics');
         });
 
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
-            expect(files).toContain('/ngcc.config.js');
             expect(files).toContain('/nsconfig.json');
             expect(files).toContain('/tsconfig.tns.json');
             expect(files).toContain('/src/app.css');
@@ -83,7 +82,7 @@ describe('Add {N} schematic', () => {
             expect(dependencies['@nativescript/core']).toBeDefined();
             expect(dependencies['reflect-metadata']).toBeDefined();
 
-            expect(devDependencies['nativescript-dev-webpack']).toBeDefined();
+            expect(devDependencies['@nativescript/webpack']).toBeDefined();
             expect(devDependencies['@nativescript/tslint-rules']).toBeDefined();
         });
 

@@ -25,7 +25,6 @@ describe('Application Schematic', () => {
     const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
-    expect(files).toContain('/foo/ngcc.config.js');
     expect(files).toContain('/foo/nsconfig.json');
     expect(files).toContain('/foo/.gitignore');
     expect(files).toContain('/foo/package.json');

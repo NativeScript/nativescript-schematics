@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "10.0.0",
+  "version": "10.0.0-rc.0",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "clean": "npx rimraf node_modules package-lock.json && npm i",
@@ -62,7 +62,8 @@
   "contributors": [
     "Stanimira Vlaeva <Stanimira.Vlaeva@progress.com>",
     "Sebastian Witalec <Sebastian.Witalec@progress.com>",
-    "Danny Koppenhagen <d-koppenhagen>"
+    "Danny Koppenhagen <d-koppenhagen>",
+    "NativeScript Team <oss@nativescript.org>"
   ],
   "license": "Apache-2.0"
 }

@@ -172,8 +172,7 @@ function getNsConfig(setup: TestProjectSetup): VirtualFile {
       appPath: setup.sourceDirectory,
       nsext: setup.nsExtension,
       webext: setup.webExtension,
-      shared: true,
-      useLegacyWorkflow: false,
+      shared: true
     }),
   };
 }

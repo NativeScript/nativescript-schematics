@@ -3,6 +3,5 @@
   "appPath": "<%= sourceDir %>",
   "nsext": "<%= nsext %>",
   "webext": "<%= webext %>",
-  "shared": true,
-  "useLegacyWorkflow": false
+  "shared": true
 }
