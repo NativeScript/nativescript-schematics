@@ -45,7 +45,6 @@ let extensions: Extensions;
 export default function(options: ComponentOptions): Rule {
   let platformUse: PlatformUse;
   let componentInfo: ComponentInfo;
-
   return chain([
     (tree: Tree) => {
       platformUse = getPlatformUse(tree, options);

@@ -9,6 +9,7 @@ import {
 import { strings as angularStringUtils } from '@angular-devkit/core';
 import { NsConfig } from './models/nsconfig';
 import { UnitTestTree, SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import * as stripJsonComments from 'strip-json-comments';
 
 const PACKAGE_JSON = 'package.json';
 
@@ -106,7 +107,7 @@ export const getJsonFile = <T>(tree: Tree, path: string): T => {
   }
 
   try {
-    const content = JSON.parse(file.content.toString());
+    const content = JSON.parse(stripJsonComments(file.content.toString()));
 
     return content as T;
   } catch (e) {

@@ -5,6 +5,7 @@ import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/te
 
 import { Schema as AddNsOptions } from './schema';
 import { getFileContent } from '@schematics/angular/utility/test';
+import * as stripJsonComments from 'strip-json-comments';
 
 describe('Add {N} schematic', () => {
     const schematicRunner = new SchematicTestRunner(
@@ -27,7 +28,7 @@ describe('Add {N} schematic', () => {
         appTree = await setupProject(appTree, schematicRunner, project);
     });
 
-    fdescribe('when using the default options', () => {
+    describe('when using the default options', () => {
         beforeEach(async () => {
             appTree = await schematicRunner.runSchematicAsync('add-ns', defaultOptions, appTree)
                 .toPromise();
@@ -36,7 +37,7 @@ describe('Add {N} schematic', () => {
         it('should add dependency to NativeScript schematics', () => {
             const configFile = '/angular.json';
             expect(appTree.files).toContain(configFile);
-            const configFileContent = JSON.parse(getFileContent(appTree, configFile));
+            const configFileContent = JSON.parse(stripJsonComments(getFileContent(appTree, configFile)));
 
             expect(configFileContent.cli.defaultCollection).toBe('@nativescript/schematics');
         });
@@ -74,7 +75,7 @@ describe('Add {N} schematic', () => {
             const packageJsonPath = '/package.json';
             expect(appTree.files).toContain(packageJsonPath);
 
-            const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
+            const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
             const { dependencies, devDependencies } = packageJson;
             expect(dependencies).toBeDefined();
             expect(dependencies['@nativescript/angular']).toBeDefined();
@@ -90,7 +91,7 @@ describe('Add {N} schematic', () => {
             const packageJsonPath = '/package.json';
             expect(appTree.files).toContain(packageJsonPath);
 
-            const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
+            const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
             expect(scripts.android).toEqual('tns run android');
@@ -103,7 +104,7 @@ describe('Add {N} schematic', () => {
             const packageJsonPath = '/package.json';
             expect(appTree.files).toContain(packageJsonPath);
 
-            const packageJson = JSON.parse(getFileContent(appTree, packageJsonPath));
+            const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
             const { nativescript } = packageJson;
 
             expect(nativescript).toBeDefined();
@@ -114,7 +115,7 @@ describe('Add {N} schematic', () => {
             const webTsConfigPath = '/tsconfig.app.json';
             expect(appTree.files).toContain(webTsConfigPath);
 
-            const webTsconfig = JSON.parse(getFileContent(appTree, webTsConfigPath));
+            const webTsconfig = JSON.parse(stripJsonComments(getFileContent(appTree, webTsConfigPath)));
             const files = webTsconfig.files;
 
             expect(files).toBeDefined();
@@ -134,7 +135,7 @@ describe('Add {N} schematic', () => {
             const nsTsConfigPath = '/tsconfig.tns.json';
             expect(appTree.files).toContain(nsTsConfigPath);
 
-            const nsTsConfig = JSON.parse(getFileContent(appTree, nsTsConfigPath));
+            const nsTsConfig = JSON.parse(stripJsonComments(getFileContent(appTree, nsTsConfigPath)));
             const files = nsTsConfig.files;
 
             expect(files).toBeDefined();
@@ -153,7 +154,7 @@ describe('Add {N} schematic', () => {
             const specTsConfigPath = '/tsconfig.spec.json';
             expect(appTree.files).toContain(specTsConfigPath);
 
-            const specTsConfig = JSON.parse(getFileContent(appTree, specTsConfigPath));
+            const specTsConfig = JSON.parse(stripJsonComments(getFileContent(appTree, specTsConfigPath)));
             const files = specTsConfig.files;
 
             expect(files).toBeDefined();
@@ -162,10 +163,10 @@ describe('Add {N} schematic', () => {
         });
 
         it('should modify the base tsconfig.json to include path mappings', () => {
-            const baseTsConfigPath = '/tsconfig.json';
+            const baseTsConfigPath = '/tsconfig.base.json';
             expect(appTree.files).toContain(baseTsConfigPath);
 
-            const baseTsConfig = JSON.parse(getFileContent(appTree, baseTsConfigPath));
+            const baseTsConfig = JSON.parse(stripJsonComments(getFileContent(appTree, baseTsConfigPath)));
 
             const paths = baseTsConfig.compilerOptions.paths;
             expect(paths).toBeDefined();
@@ -183,7 +184,7 @@ describe('Add {N} schematic', () => {
             const tsLintConfigPath = '/tslint.json';
             expect(appTree.files).toContain(tsLintConfigPath);
 
-            const tsLintConfig = JSON.parse(getFileContent(appTree, tsLintConfigPath));
+            const tsLintConfig = JSON.parse(stripJsonComments(getFileContent(appTree, tsLintConfigPath)));
             const { extends: tsLintExtends, rules: tsLintRules } = tsLintConfig;
 
             expect(tsLintExtends).toEqual(jasmine.any(Array));
@@ -293,7 +294,7 @@ async function setupProject(
         'workspace',
         {
             name: 'workspace',
-            version: '8.0.0',
+            version: '10.0.0',
             newProjectRoot: '',
         },
     ).toPromise();

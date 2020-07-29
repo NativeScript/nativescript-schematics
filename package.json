@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "10.0.0-rc.2",
+  "version": "10.0.0-rc.5",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "clean": "npx rimraf node_modules package-lock.json && npm i",
@@ -27,7 +27,8 @@
     "@angular-devkit/core": "~10.0.0",
     "@angular-devkit/schematics": "~10.0.0",
     "@nativescript/tslint-rules": "~0.0.5",
-    "@phenomnomnominal/tsquery": "^4.1.0"
+    "@phenomnomnominal/tsquery": "^4.1.0",
+    "strip-json-comments": "~3.1.1"
   },
   "devDependencies": {
     "@angular/cli": "~10.0.0",

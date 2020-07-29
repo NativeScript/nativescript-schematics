@@ -373,7 +373,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
-    '@nativescript/webpack': 'rc',
+    '@nativescript/webpack': '~2.0.0',
     '@nativescript/tslint-rules': '~0.0.5',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};
