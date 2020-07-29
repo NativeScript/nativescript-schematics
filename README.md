@@ -141,8 +141,8 @@ This includes the following steps:
 In a code sharing project to build:
 
  * a `web` app call: `ng serve`,
- * an `iOS` app call: `tns run ios --env.aot`,
- * an `Android` app call: `tns run android --env.aot`
+ * an `iOS` app call: `tns run ios`,
+ * an `Android` app call: `tns run android`
 
 ## Templates
 

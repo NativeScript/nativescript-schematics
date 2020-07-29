@@ -223,8 +223,8 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   const packageJson = getPackageJson(tree);
 
   const scriptsToAdd = {
-    android: 'tns run android --env.aot',
-    ios: 'tns run ios --env.aot',
+    android: 'tns run android',
+    ios: 'tns run ios',
     mobile: 'tns run',
     preview: 'tns preview',
     ngcc: 'ngcc --properties es2015 module main --first-only',

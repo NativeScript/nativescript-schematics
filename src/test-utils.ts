@@ -290,7 +290,7 @@ function getNsEntryPoint(setup: TestProjectSetup): VirtualFile {
   return {
     path: `${setup.sourceDirectory}/main.ts`,
     content: `
-      import { platformNativeScriptDynamic } from '@nativescript/angular/platform';
+      import { platformNativeScriptDynamic } from '@nativescript/angular';
       import { AppModule } from './app/app.module';
 
       platformNativeScriptDynamic().bootstrapModule(AppModule);

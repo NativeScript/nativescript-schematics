@@ -14,8 +14,8 @@
     "@angular/platform-browser": "~10.0.0",
     "@angular/platform-browser-dynamic": "~10.0.0",
     "@angular/router": "~10.0.0",
-    "@nativescript/angular": "~10.0.0-alpha.0",
-    "@nativescript/core": "~6.5.5",<% if(theme) { %>
+    "@nativescript/angular": "rc",
+    "@nativescript/core": "rc",<% if(theme) { %>
     "@nativescript/theme": "~2.2.1",
     <% } %>"reflect-metadata": "~0.1.12",
     "rxjs": "~6.5.5",
@@ -26,7 +26,7 @@
     "@angular/cli": "~10.0.0",
     "@angular/compiler-cli": "~10.0.0",
     "@angular-devkit/core": "~10.0.0",<% if(webpack) { %>
-      "@nativescript/webpack": "2.0.0-alpha.3",
+      "@nativescript/webpack": "rc",
     "@ngtools/webpack": "~10.0.0",
     <% } %>"typescript": "~3.9.0"
   }

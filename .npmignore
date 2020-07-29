@@ -7,6 +7,7 @@
 *.spec.js
 *.js.map
 tsconfig.json
+*.tgz
 
 /jasmine-config
 
