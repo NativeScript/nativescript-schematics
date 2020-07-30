@@ -1,3 +1,14 @@
+## [10.0.1](https://github.com/nativescript/nativescript-schematics/compare/9.0.0...10.0.1) (2020-07-30)
+
+### Features
+
+* **angular:** v10 support ([#286](https://github.com/nativescript/nativescript-schematics/issues/286)) ([55fa354](https://github.com/nativescript/nativescript-schematics/commit/55fa3549c1439c1f0a2af601128ea97cacedca07))
+
+### Bug Fixes
+
+* **angular:** remove `@angular/http` dependency from blueprints for Angular 9 … ([#280](https://github.com/nativescript/nativescript-schematics/issues/280)) ([b5678dd](https://github.com/nativescript/nativescript-schematics/commit/b5678dd0e44e30e0255b60b4368d93a9ded46ab0))
+
+
 # [9.0.0](https://github.com/nativescript/nativescript-schematics/compare/1.0.0...9.0.0) (2020-06-16)
 
 
