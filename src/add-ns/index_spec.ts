@@ -94,8 +94,8 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
-            expect(scripts.android).toEqual('tns run android');
-            expect(scripts.ios).toEqual('tns run ios');
+            expect(scripts.android).toEqual('tns run android --no-hmr');
+            expect(scripts.ios).toEqual('tns run ios --no-hmr');
             expect(scripts.ngcc).toEqual('ngcc --properties es2015 module main --first-only');
             expect(scripts.postinstall).toEqual('npm run ngcc');
         });
@@ -241,7 +241,7 @@ describe('Add {N} schematic', () => {
                 'export const routes: Routes = []',
             );
             expect(appComponentTemplate).toContain(
-                '<Label text="Entry Component works" textWrap="true"></Label>',
+                `This is just a fun sample for you to play with`,
             );
         });
     });

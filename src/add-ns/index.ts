@@ -223,8 +223,8 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   const packageJson = getPackageJson(tree);
 
   const scriptsToAdd = {
-    android: 'tns run android',
-    ios: 'tns run ios',
+    android: 'tns run android --no-hmr',
+    ios: 'tns run ios --no-hmr',
     mobile: 'tns run',
     preview: 'tns preview',
     ngcc: 'ngcc --properties es2015 module main --first-only',
@@ -364,7 +364,7 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
 
   // @UPGRADE: Update all versions whenever {N} version updates
   const depsToAdd = {
-    '@nativescript/angular': 'rc',
+    '@nativescript/angular': '~10.0.0',
     '@nativescript/core': 'rc',
     '@nativescript/theme': '~2.2.1',
     'reflect-metadata': '~0.1.12',
