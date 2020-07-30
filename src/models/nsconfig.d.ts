@@ -4,5 +4,4 @@ export interface NsConfig {
   nsext: string;
   webext: string;
   shared: boolean;
-  useLegacyWorkflow: boolean;
 }

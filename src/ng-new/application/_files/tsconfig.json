@@ -1,24 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
+    "module": "ESNext",
+    "target": "es2015",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "noEmitHelpers": true,
     "noEmitOnError": true,
     "lib": [
-      "es6",
+      "es2017",
       "dom",
-      "es2015.iterable"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "./node_modules/@nativescript/core/*",
-        "./node_modules/*"
-      ]
-    }
+      "es6"
+    ]
   },
   "exclude": [
     "node_modules",

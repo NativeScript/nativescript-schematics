@@ -2,8 +2,6 @@ import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeSc
 import { basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { getWorkspace } from '@schematics/angular/utility/config';
-import { getProject } from '@schematics/angular/utility/project';
-import { getProjectTargets } from '@schematics/angular/utility/project-targets';
 import {
   findBootstrapModuleCall,
   findBootstrapModulePath,
@@ -161,14 +159,14 @@ export function getTsConfigFromProject(tree: Tree, projectName: string): string 
 
 function parseAngularConfig(tree, projectName: string) {
   const project = getProjectObject(tree, projectName);
-  const targets = getProjectTargets(project);
+  const targets = project.architect;
 
   return { targets, project };
 }
 
 export function getProjectObject(tree: Tree, projectName: string) {
   const workspace = getWorkspace(tree);
-  const project = getProject(workspace, projectName);
+  const project = workspace.projects[projectName];
   if (!project) {
     throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);
   }

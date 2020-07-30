@@ -34,34 +34,34 @@ describe('Styling Schematic', () => {
       stylingFile = `/${appPath}/${sourceDir}/app.css`;
     });
 
-    it('should create app.css file', () => {
+    it('should create app.css file', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       expect(tree.exists(stylingFile));
     });
 
-    it('should not add scss dependencies to package.json', () => {
+    it('should not add scss dependencies to package.json', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       const content = getFileContent(tree, `${appPath}/package.json`);
       expect(content).not.toMatch('"node-sass": ');
     });
 
-    it('should handle the theme flag', () => {
+    it('should handle the theme flag', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
         theme: false,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       expect(getFileContent(tree, stylingFile))
         .not
@@ -75,12 +75,12 @@ describe('Styling Schematic', () => {
       extension = 'scss';
     });
 
-    it('should create scss file', () => {
+    it('should create scss file', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       expect(tree.exists(`${appPath}/${sourceDir}/app.android.scss`));
       expect(tree.exists(`${appPath}/${sourceDir}/app.ios.scss`));
@@ -88,24 +88,24 @@ describe('Styling Schematic', () => {
       expect(tree.exists(`${appPath}/${sourceDir}/_app-variables.scss`)).toBe(false);
     });
 
-    it('should add scss dependencies to package.json', () => {
+    it('should add scss dependencies to package.json', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       const content = getFileContent(tree, `${appPath}/package.json`);
       expect(content).toMatch('"node-sass": ');
     });
 
-    it('should handle the theme flag', () => {
+    it('should handle the theme flag', async () => {
       const options: StylingOptions = {
         ...defaultOptions,
         extension,
         theme: false,
       };
-      const tree = schematicRunner.runSchematic('styling', options, appTree);
+      const tree = await schematicRunner.runSchematicAsync('styling', options, appTree).toPromise();
 
       expect(getFileContent(tree, `${appPath}/${sourceDir}/app.android.scss`))
         .not

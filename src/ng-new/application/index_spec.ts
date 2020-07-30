@@ -25,7 +25,6 @@ describe('Application Schematic', () => {
     const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
-    expect(files).toContain('/foo/ngcc.config.js');
     expect(files).toContain('/foo/nsconfig.json');
     expect(files).toContain('/foo/.gitignore');
     expect(files).toContain('/foo/package.json');
@@ -59,8 +58,8 @@ describe('Application Schematic', () => {
     const options = { ...defaultOptions, sourceDir: 'some/custom/path' };
 
     let tree: UnitTestTree | null = null;
-    expect(() => tree = schematicRunner
-      .runSchematic('application', options))
+    expect(async () => tree = await schematicRunner
+      .runSchematicAsync('application', options).toPromise())
       .not.toThrow();
 
     if (tree) {
@@ -70,9 +69,9 @@ describe('Application Schematic', () => {
     }
   });
 
-  it('should handle the theme flag', () => {
+  it('should handle the theme flag', async () => {
     const options = { ...defaultOptions, theme: false };
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
 
     const appComponent = '/foo/app/app.component.ts';
     expect(getFileContent(tree, appComponent))
@@ -88,9 +87,9 @@ describe('Application Schematic', () => {
       .toMatch(new RegExp('class="h2 text-center"'));
   });
 
-  it('should handle the webpack flag', () => {
+  it('should handle the webpack flag', async () => {
     const options = { ...defaultOptions, webpack: false };
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
 
     const packageJson = '/foo/package.json';
     expect(getFileContent(tree, packageJson))
@@ -101,9 +100,9 @@ describe('Application Schematic', () => {
     expect(files).not.toContain('/foo/webpack.config.js');
   });
 
-  it('should generate correct files when different style extension is specified', () => {
+  it('should generate correct files when different style extension is specified', async () => {
     const options = { ...defaultOptions, style: 'scss' };
-    const tree = schematicRunner.runSchematic('application', options);
+    const tree = await schematicRunner.runSchematicAsync('application', options).toPromise();
 
     const files = tree!.files;
 

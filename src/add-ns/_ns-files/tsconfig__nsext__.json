@@ -3,7 +3,9 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "node",
+    "experimentalDecorators": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
       "@src/*": [
         "<%= sourceDir %>/*.tns.ts",
