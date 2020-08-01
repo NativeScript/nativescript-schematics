@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/schematics",
-  "version": "10.0.1",
+  "version": "10.0.2",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
     "clean": "npx rimraf node_modules package-lock.json && npm i",
