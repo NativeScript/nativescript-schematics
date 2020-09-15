@@ -1,4 +1,4 @@
-import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import * as ts from 'typescript';
 import { Change, NoopChange } from '@schematics/angular/utility/change';
 import { findNodes } from '@schematics/angular/utility/ast-utils';
 import { insertBeforeFirstOccurence } from './ts-utils';
@@ -22,14 +22,14 @@ export function insertImport(
     isDefault = false,
 ): Change {
   const rootNode = source;
-  const allImports = findNodes(rootNode, ts.SyntaxKind.ImportDeclaration);
+  const allImports = findNodes(<any>rootNode, ts.SyntaxKind.ImportDeclaration);
 
   // get nodes that map to import statements from the file fileName
   const relevantImports = allImports.filter((node) => {
     // StringLiteral of the ImportDeclaration is the import file (fileName in this case).
     const importFiles = node.getChildren()
       .filter((child) => child.kind === ts.SyntaxKind.StringLiteral)
-      .map((n) => (n as ts.StringLiteral).text);
+      .map((n) => (n as any).text);
 
     return importFiles.filter((file) => file === fileName).length === 1;
   });
@@ -65,8 +65,8 @@ export function insertImport(
   }
 
   // no such import declaration exists
-  const useStrict = findNodes(rootNode, ts.SyntaxKind.StringLiteral)
-                    .filter((n: ts.StringLiteral) => n.text === 'use strict');
+  const useStrict = findNodes(<any>rootNode, ts.SyntaxKind.StringLiteral)
+                    .filter((n: any) => n.text === 'use strict');
   let fallbackPos = 0;
   if (useStrict.length > 0) {
     fallbackPos = useStrict[0].end;
@@ -77,7 +77,7 @@ export function insertImport(
     ` from ${quote}${fileName}${quote};\n`;
 
   return insertBeforeFirstOccurence(
-    allImports,
+    <any>allImports,
     toInsert,
     fileToEdit,
     fallbackPos,

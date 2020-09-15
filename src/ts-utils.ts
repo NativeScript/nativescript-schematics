@@ -8,7 +8,7 @@ import {
 } from '@schematics/angular/utility/ast-utils';
 import { InsertChange, Change } from '@schematics/angular/utility/change';
 import { SchematicsException, Rule, Tree } from '@angular-devkit/schematics';
-import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import * as ts from 'typescript';
 
 import { toComponentClassName, Node, removeNode, getFileContents, getJsonFile } from './utils';
 
@@ -296,18 +296,18 @@ export function addBootstrapToNgModule(modulePath: string, rootComponentName: st
     const componentModule = `./${rootComponentName}.component`;
     const rootComponentClassName = toComponentClassName(rootComponentName);
 
-    const importChanges = addImportToModule(source,
+    const importChanges = addImportToModule(<any>source,
       modulePath,
       'NativeScriptModule',
       '@nativescript/angular');
 
-    const bootstrapChanges = addBootstrapToModule(source,
+    const bootstrapChanges = addBootstrapToModule(<any>source,
       modulePath,
       rootComponentClassName,
       componentModule);
 
     const declarationChanges = addSymbolToNgModuleMetadata(
-      source,
+      <any>source,
       modulePath,
       'declarations',
       rootComponentClassName,
@@ -426,12 +426,12 @@ export function insertBeforeFirstOccurence(nodes: Array<ts.Node>,
                                            file: string,
                                            fallbackPos: number,
                                            syntaxKind?: ts.SyntaxKind): Change {
-  let firstItem = nodes.sort(nodesByPosition).shift();
+  let firstItem: any = nodes.sort(nodesByPosition).shift();
   if (!firstItem) {
     throw new Error();
   }
   if (syntaxKind) {
-    firstItem = findNodes(firstItem, syntaxKind).sort(nodesByPosition).shift();
+    firstItem = findNodes(<any>firstItem, syntaxKind).sort(<any>nodesByPosition).shift();
   }
   if (!firstItem && fallbackPos === undefined) {
     throw new Error(`tried to insert ${toInsert} as first occurence with no fallback position`);

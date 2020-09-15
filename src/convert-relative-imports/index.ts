@@ -1,4 +1,4 @@
-import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import * as ts from 'typescript';
 import { IRule, Replacement } from 'tslint';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { Tree, SchematicContext, isContentAction } from '@angular-devkit/schematics';

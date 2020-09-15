@@ -164,7 +164,7 @@ const insertProviderInMetadata = (tree, path, providerName): UnitTestTree => {
 
   // Insert a provider in the NgModule metadata
   const metadataChange = addSymbolToNgModuleMetadata(
-    source, path, 'providers', providerName, 'somepath',
+    <any>source, path, 'providers', providerName, 'somepath',
   );
 
   metadataChange.forEach((change: InsertChange) =>

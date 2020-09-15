@@ -1,8 +1,6 @@
 {
   "name": "<%= name %>",
-  "nativescript": {
-    "id": "org.nativescript.<%= utils.sanitize(name) %>"
-  },
+  "main": "main.tns.js",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -20,27 +18,27 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~10.0.0",
-    "@angular/common": "~10.0.0",
-    "@angular/compiler": "~10.0.0",
-    "@angular/core": "~10.0.0",
-    "@angular/forms": "~10.0.0",
-    "@angular/platform-browser": "~10.0.0",
-    "@angular/platform-browser-dynamic": "~10.0.0",
-    "@angular/router": "~10.0.0",
-    "core-js": "^2.6.9",
-    "@nativescript/angular": "~10.0.0",
-    "@nativescript/core": "rc",<% if(theme) { %>
-    "@nativescript/theme": "~2.2.1",
+    "@angular/animations": "~10.1.0",
+    "@angular/common": "~10.1.0",
+    "@angular/compiler": "~10.1.0",
+    "@angular/core": "~10.1.0",
+    "@angular/forms": "~10.1.0",
+    "@angular/platform-browser": "~10.1.0",
+    "@angular/platform-browser-dynamic": "~10.1.0",
+    "@angular/router": "~10.1.0",
+    "core-js": "^3.6.0",
+    "@nativescript/angular": "~10.1.0",
+    "@nativescript/core": "~7.0.0",<% if(theme) { %>
+    "@nativescript/theme": "~2.5.0",
     <% } %>"reflect-metadata": "~0.1.12",
-    "rxjs": "~6.5.5",
+    "rxjs": "~6.6.0",
     "tslib": "1.10.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.11.1"
   },
   "devDependencies": {
-    "@angular/cli": "~10.0.0",
-    "@angular/compiler-cli": "~10.0.0",
-    "@angular-devkit/build-angular": "~0.1000.2",
+    "@angular/cli": "~10.1.0",
+    "@angular/compiler-cli": "~10.1.0",
+    "@angular-devkit/build-angular": "~0.1001.0",
     "@nativescript/tslint-rules": "~0.0.5",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
@@ -53,7 +51,7 @@
     "karma-coverage-istanbul-reporter": "~2.1.0",
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
-    "@nativescript/webpack": "~2.0.0",
+    "@nativescript/webpack": "~3.0.0",
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",

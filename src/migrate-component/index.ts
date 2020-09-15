@@ -112,7 +112,7 @@ const addComponentToNsModuleProviders = (
 
   // Get the changes required to update the @NgModule
   const changes = addDeclarationToModule(
-    getSourceFile(tree, nsModulePath),
+    <any>getSourceFile(tree, nsModulePath),
     nsModulePath, // <- this doesn't look like it is in use
     componentInfo.className,
     findRelativeImportPath(nsModulePath, componentInfo.componentPath),

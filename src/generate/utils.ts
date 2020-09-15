@@ -1,4 +1,4 @@
-import { getNsConfig, getPackageJson } from '../utils';
+import { getPackageJson } from '../utils'; //getNsConfig
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
 import { extname } from 'path';
 import { Schema as ComponentOptions } from './component/schema';
@@ -18,20 +18,28 @@ export const DEFAULT_SHARED_EXTENSIONS: Extensions = {
 
 const isNs = (tree: Tree) => {
   const packageJson = getPackageJson(tree);
+  const coreNs = '@nativescript/core';
+  const legacyNs = 'tns-core-modules';
 
-  return !!packageJson.nativescript;
+  if (packageJson.dependencies && (packageJson.dependencies[coreNs] || packageJson.dependencies[legacyNs])) {
+    return true;
+  } else if (packageJson.devDependencies && (packageJson.devDependencies[coreNs] || packageJson.devDependencies[legacyNs])) {
+    return true;
+  } else {
+    return tree.exists('nativescript.config.ts');
+  }
 };
 
 const isWeb = (tree: Tree) => {
-  if (!tree.exists('nsconfig.json')) {
-    console.log(`nsconfig.json not found. Assuming this is a {N} only project`);
+  if (!tree.exists('nativescript.config.ts')) {
+    console.log(`nativescript.config.ts not found. Assuming this is a {N} only project`);
 
     return false;
   }
 
-  const config = getNsConfig(tree);
+  // const config = getNsConfig(tree);
 
-  return config.webext != null;
+  return true;//config.webext != null;
 };
 
 export interface PlatformUse {
@@ -69,24 +77,24 @@ export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
 };
 
 export const getExtensions = (tree: Tree, options: Options): Extensions => {
-  let ns = options.nsExtension;
-  let web = options.webExtension;
+  // let ns = options.nsExtension;
+  // let web = options.webExtension;
 
-  if (isWeb(tree)) {
-    const nsconfig = getNsConfig(tree);
+  // if (isWeb(tree)) {
+  //   const nsconfig = getNsConfig(tree);
 
-    ns = ns || nsconfig.nsext;
-    web = web || nsconfig.webext;
+  //   ns = ns || nsconfig.nsext;
+  //   web = web || nsconfig.webext;
 
-    if (ns === web) {
-      ns = DEFAULT_SHARED_EXTENSIONS.ns;
-      web = DEFAULT_SHARED_EXTENSIONS.web;
-    }
-  }
+  //   if (ns === web) {
+  //     ns = DEFAULT_SHARED_EXTENSIONS.ns;
+  //     web = DEFAULT_SHARED_EXTENSIONS.web;
+  //   }
+  // }
 
   return {
-    ns: parseExtension(ns || ''),
-    web: parseExtension(web || ''),
+    ns: DEFAULT_SHARED_EXTENSIONS.ns,// parseExtension(ns || ''),
+    web: DEFAULT_SHARED_EXTENSIONS.web //parseExtension(web || ''),
   };
 };
 
@@ -100,21 +108,21 @@ const parseExtension = (ext: string): string => {
 };
 
 export const getNsConfigExtension = (tree: Tree): Extensions => {
-  if (!tree.exists('nsconfig.json')) {
-    console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
+  // if (!tree.exists('nsconfig.json')) {
+  //   console.warn('nsconfig not found, using .tns as a default extension for NativeScript files');
 
     return {
       ns: '.tns',
       web: '',
     };
-  }
+  // }
 
-  const nsconfig = getNsConfig(tree);
+  // const nsconfig = getNsConfig(tree);
 
-  return {
-    ns: nsconfig.nsext || '.tns',
-    web: nsconfig.webext || '',
-  };
+  // return {
+  //   ns: nsconfig.nsext || '.tns',
+  //   web: nsconfig.webext || '',
+  // };
 };
 
 export const removeNsSchemaOptions = (options: Options) => {

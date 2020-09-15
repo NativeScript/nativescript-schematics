@@ -1,4 +1,4 @@
-import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import * as ts from 'typescript';
 import { Tree } from '@angular-devkit/schematics';
 
 import { findNode, findMatchingNodes, findImportPath, getSourceFile } from './ts-utils';

@@ -123,7 +123,7 @@ export function createEmptySharedProject(
 ): UnitTestTree {
   const setup = { ...defaultProjectSettings, projectName, webExtension, nsExtension };
   const additionalFiles = [
-    getNsConfig(setup),
+    // getNsConfig(setup),
     getAppModule(setup.webExtension),
   ];
 
@@ -166,14 +166,26 @@ function getPackageJson(setup: TestProjectSetup): VirtualFile {
 
 function getNsConfig(setup: TestProjectSetup): VirtualFile {
   return {
-    path: '/nsconfig.json',
-    content: JSON.stringify({
+    path: '/nativescript.config.ts',
+    content: `import { NativeScriptConfig } from '@nativescript/core';
+
+    export default {
+      id: 'org.nativescript.plugindemo',
       appResourcesPath: 'App_Resources',
-      appPath: setup.sourceDirectory,
-      nsext: setup.nsExtension,
-      webext: setup.webExtension,
-      shared: true
-    }),
+      android: {
+        v8Flags: '--expose_gc',
+        markingMode: 'none',
+      },
+      appPath: '${setup.sourceDirectory}',
+    } as NativeScriptConfig;
+    `
+    // JSON.stringify({
+    //   appResourcesPath: 'App_Resources',
+    //   appPath: setup.sourceDirectory,
+    //   nsext: setup.nsExtension,
+    //   webext: setup.webExtension,
+    //   shared: true
+    // }),
   };
 }
 
