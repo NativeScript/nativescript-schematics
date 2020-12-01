@@ -1,3 +1,17 @@
+# [11.0.0](https://github.com/nativescript/nativescript-schematics/compare/10.0.0...11.0.0) (2020-12-01)
+
+
+### Bug Fixes
+
+* **angular:** update typescript to version 4 for ng new ([#303](https://github.com/nativescript/nativescript-schematics/issues/303)) ([605b24a](https://github.com/nativescript/nativescript-schematics/commit/605b24a1307648dcb7a19e22b08dada51e8c5472))
+
+
+### Features
+
+* Angular 11 and TypeScript 4 ([ccf90a0](https://github.com/nativescript/nativescript-schematics/commit/ccf90a08e44a16e6fbf3ca2c3f58d8925feda34e))
+
+
+
 ## [10.0.1](https://github.com/nativescript/nativescript-schematics/compare/9.0.0...10.0.1) (2020-07-30)
 
 ### Features
