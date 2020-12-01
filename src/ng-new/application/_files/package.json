@@ -4,28 +4,28 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "version": "0.0.0",
   "dependencies": {
-    "@angular/animations": "~10.1.0",
-    "@angular/common": "~10.1.0",
-    "@angular/compiler": "~10.1.0",
-    "@angular/core": "~10.1.0",
-    "@angular/forms": "~10.1.0",
-    "@angular/platform-browser": "~10.1.0",
-    "@angular/platform-browser-dynamic": "~10.1.0",
-    "@angular/router": "~10.1.0",
-    "@nativescript/angular": "~10.1.0",
+    "@angular/animations": "~11.0.0",
+    "@angular/common": "~11.0.0",
+    "@angular/compiler": "~11.0.0",
+    "@angular/core": "~11.0.0",
+    "@angular/forms": "~11.0.0",
+    "@angular/platform-browser": "~11.0.0",
+    "@angular/platform-browser-dynamic": "~11.0.0",
+    "@angular/router": "~11.0.0",
+    "@nativescript/angular": "~11.0.0",
     "@nativescript/core": "~7.0.0",<% if(theme) { %>
-    "@nativescript/theme": "~2.5.0",
+    "@nativescript/theme": "~3.0.0",
     <% } %>"reflect-metadata": "~0.1.12",
     "rxjs": "~6.6.0",
-    "tslib": "1.10.0",
+    "tslib": "~2.0.0",
     "zone.js": "~0.11.1"
   },
   "devDependencies": {
-    "@angular/cli": "~10.1.0",
-    "@angular/compiler-cli": "~10.1.0",
-    "@angular-devkit/core": "~10.1.0",<% if(webpack) { %>
+    "@angular/cli": "~11.0.0",
+    "@angular/compiler-cli": "~11.0.0",
+    "@angular-devkit/core": "~11.0.0",<% if(webpack) { %>
       "@nativescript/webpack": "~3.0.0",
-    "@ngtools/webpack": "~10.1.0",
-    <% } %>"typescript": "~3.9.0"
+    "@ngtools/webpack": "~11.0.0",
+    <% } %>"typescript": "~4.0.0"
   }
 }

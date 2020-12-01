@@ -53,7 +53,7 @@ export default function(options: ComponentOptions): Rule {
         options.spec = false;
       }
 
-      const projectObject = getProjectObject(tree, options.project);
+      const projectObject: any = getProjectObject(tree, options.project);
       const style = (projectObject && projectObject.schematics && projectObject.schematics['@schematics/angular:component']
         && projectObject.schematics['@schematics/angular:component'].style);
       if (style) {
