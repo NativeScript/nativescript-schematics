@@ -45,7 +45,7 @@ describe('Add {N} schematic', () => {
         it('should add {N} specific files', () => {
             const files = appTree.files;
 
-            expect(files).toContain('/nsconfig.json');
+            expect(files).toContain('/nativescript.config.ts');
             expect(files).toContain('/tsconfig.tns.json');
             expect(files).toContain('/src/app.css');
             expect(files).toContain('/src/main.tns.ts');
@@ -94,22 +94,22 @@ describe('Add {N} schematic', () => {
             const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
             const { scripts } = packageJson;
             expect(scripts).toBeDefined();
-            expect(scripts.android).toEqual('tns run android --no-hmr');
-            expect(scripts.ios).toEqual('tns run ios --no-hmr');
-            expect(scripts.ngcc).toEqual('ngcc --properties es2015 module main --first-only');
-            expect(scripts.postinstall).toEqual('npm run ngcc');
+            expect(scripts.android).toEqual('ns run android --no-hmr');
+            expect(scripts.ios).toEqual('ns run ios --no-hmr');
+            // expect(scripts.ngcc).toEqual('ngcc --properties es2015 module main --first-only');
+            // expect(scripts.postinstall).toEqual('npm run ngcc');
         });
 
-        it('should add NativeScript key to the package json', () => {
-            const packageJsonPath = '/package.json';
-            expect(appTree.files).toContain(packageJsonPath);
+        // it('should add NativeScript key to the package json', () => {
+        //     const packageJsonPath = '/package.json';
+        //     expect(appTree.files).toContain(packageJsonPath);
 
-            const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
-            const { nativescript } = packageJson;
+        //     const packageJson = JSON.parse(stripJsonComments(getFileContent(appTree, packageJsonPath)));
+        //     const { nativescript } = packageJson;
 
-            expect(nativescript).toBeDefined();
-            expect(nativescript.id).toEqual('org.nativescript.ngsample');
-        });
+        //     expect(nativescript).toBeDefined();
+        //     expect(nativescript.id).toEqual('org.nativescript.ngsample');
+        // });
 
         it('should modify the tsconfig.app.json (web) to include files and path mappings', () => {
             const webTsConfigPath = '/tsconfig.app.json';
@@ -294,7 +294,7 @@ async function setupProject(
         'workspace',
         {
             name: 'workspace',
-            version: '10.0.0',
+            version: '10.1.0',
             newProjectRoot: '',
         },
     ).toPromise();

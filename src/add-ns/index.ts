@@ -49,7 +49,7 @@ export default function(options: MigrationOptions): Rule {
     addAppResources(),
     mergeGitIgnore,
     addRunScriptsToPackageJson,
-    addNativeScriptProjectId,
+    // addNativeScriptProjectId,
 
     modifyWebTsconfig,
     modifyTsLintConfig,
@@ -223,12 +223,12 @@ const addRunScriptsToPackageJson = (tree: Tree, context: SchematicContext) => {
   const packageJson = getPackageJson(tree);
 
   const scriptsToAdd = {
-    android: 'tns run android --no-hmr',
-    ios: 'tns run ios --no-hmr',
-    mobile: 'tns run',
-    preview: 'tns preview',
-    ngcc: 'ngcc --properties es2015 module main --first-only',
-    postinstall: 'npm run ngcc',
+    android: 'ns run android --no-hmr',
+    ios: 'ns run ios --no-hmr',
+    mobile: 'ns run',
+    // preview: 'ns preview',
+    // ngcc: 'ngcc --properties es2015 module main --first-only',
+    // postinstall: 'npm run ngcc',
   };
   packageJson.scripts = {...scriptsToAdd, ...packageJson.scripts};
 
@@ -362,18 +362,21 @@ const addDependencies = () => (tree: Tree, context: SchematicContext) => {
   context.logger.info('Adding npm dependencies');
   const packageJson = getPackageJson(tree);
 
+  // add {N} 7 main key
+  (<any>packageJson).main = 'main.tns.js';
+
   // @UPGRADE: Update all versions whenever {N} version updates
   const depsToAdd = {
-    '@nativescript/angular': '~10.0.0',
-    '@nativescript/core': 'rc',
-    '@nativescript/theme': '~2.2.1',
+    '@nativescript/angular': '~10.1.0',
+    '@nativescript/core': '~7.0.0',
+    '@nativescript/theme': '~2.5.0',
     'reflect-metadata': '~0.1.12',
     tslib: '1.10.0',
   };
   packageJson.dependencies = {...depsToAdd, ...packageJson.dependencies};
 
   const devDepsToAdd = {
-    '@nativescript/webpack': '~2.0.0',
+    '@nativescript/webpack': '~3.0.0',
     '@nativescript/tslint-rules': '~0.0.5',
   };
   packageJson.devDependencies = {...devDepsToAdd, ...packageJson.devDependencies};

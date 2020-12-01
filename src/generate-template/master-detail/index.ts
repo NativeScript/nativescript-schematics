@@ -13,9 +13,10 @@ import {
 import { dasherize, classify } from '@angular-devkit/core/src/utils/strings';
 
 import { Schema as MasterDetailSchema } from './schema';
-import { getNsConfig } from '../../utils';
+// import { getNsConfig } from '../../utils';
 import { join } from 'path';
 import { Schema as ConvertRelativeImportsSchema } from '../../convert-relative-imports/schema';
+import { DEFAULT_SHARED_EXTENSIONS } from '../../generate/utils';
 
 let projectParams: ProjectInfo;
 
@@ -69,13 +70,13 @@ interface ProjectInfo {
   nsext: string;
 }
 const getProjectInfo = (tree: Tree): ProjectInfo => {
-  if (tree.exists('nsconfig.json')) {
-    const nsconfig = getNsConfig(tree);
+  if (tree.exists('nativescript.config.ts')) {
+    // const nsconfig = getNsConfig(tree);
 
     return {
-      shared: nsconfig.shared,
-      appPath: join(nsconfig.appPath, 'app'),
-      nsext: nsconfig.nsext,
+      shared: true,//nsconfig.shared,
+      appPath: join(tree.exists('app') ? 'app' : 'src', 'app'), //join(nsconfig.appPath, 'app'),
+      nsext: DEFAULT_SHARED_EXTENSIONS.ns,// nsconfig.nsext,
     };
   }
 

@@ -127,7 +127,7 @@ const addProvider = (providerClassName: string, providerPath: string) => (tree: 
 
   // Get the changes required to update the @NgModule
   const changes = addProviderToModule(
-    getSourceFile(tree, nsModulePath),
+    <any>getSourceFile(tree, nsModulePath),
     // nsModulePath, // <- this doesn't look like it is in use
     '',
     providerClassName,

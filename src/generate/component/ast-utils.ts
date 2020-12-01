@@ -1,4 +1,4 @@
-import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import * as ts from 'typescript';
 
 import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { classify } from '@angular-devkit/core/src/utils/strings';
@@ -20,7 +20,7 @@ export function addDeclarationToNgModule(
   const source = readIntoSourceFile(tree, modulePath);
   const relativePath = buildRelativePath(modulePath, componentPath);
   const classifiedName = classify(`${options.name}Component`);
-  const declarationChanges = addDeclarationToModule(source, modulePath, classifiedName, relativePath);
+  const declarationChanges = addDeclarationToModule(<any>source, modulePath, classifiedName, relativePath);
   const declarationRecorder = tree.beginUpdate(modulePath);
   for (const change of declarationChanges) {
     if (change instanceof InsertChange) {
@@ -32,7 +32,7 @@ export function addDeclarationToNgModule(
     // Need to refresh the AST because we overwrote the file in the host.
     const src = readIntoSourceFile(tree, modulePath);
     const exportRecorder = tree.beginUpdate(modulePath);
-    const exportChanges = addExportToModule(src, modulePath, classify(`${options.name}Component`), relativePath);
+    const exportChanges = addExportToModule(<any>src, modulePath, classify(`${options.name}Component`), relativePath);
     for (const change of exportChanges) {
       if (change instanceof InsertChange) {
         exportRecorder.insertLeft(change.pos, change.toAdd);
@@ -45,7 +45,7 @@ export function addDeclarationToNgModule(
     const src = readIntoSourceFile(tree, modulePath);
     const entryComponentRecorder = tree.beginUpdate(modulePath);
     const entryComponentChanges = addEntryComponentToModule(
-      src,
+      <any>src,
       modulePath,
       classify(`${options.name}Component`),
       relativePath,

@@ -308,7 +308,7 @@ const addSchema = (modulePath: string) =>
     const recorder = tree.beginUpdate(modulePath);
 
     const metadataChange = addSymbolToNgModuleMetadata(
-      moduleSource, modulePath,
+      <any>moduleSource, modulePath,
       'schemas', 'NO_ERRORS_SCHEMA',
       '@angular/core');
 
@@ -333,7 +333,7 @@ const addNSCommonModule = (tree: Tree, modulePath: string) => {
   const recorder = tree.beginUpdate(modulePath);
 
   const metadataChange = addSymbolToNgModuleMetadata(
-    moduleSource, modulePath,
+    <any>moduleSource, modulePath,
     'imports', 'NativeScriptCommonModule',
     '@nativescript/angular');
 
