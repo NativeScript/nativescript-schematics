@@ -1,5 +1,6 @@
-import { getPackageJson } from '../utils'; //getNsConfig
+import { getPackageJson } from '../utils';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
+import { normalize } from '@angular-devkit/core';
 import { extname } from 'path';
 import { Schema as ComponentOptions } from './component/schema';
 import { Schema as ModuleOptions } from './module/schema';
@@ -31,15 +32,7 @@ const isNs = (tree: Tree) => {
 };
 
 const isWeb = (tree: Tree) => {
-  if (!tree.exists('nativescript.config.ts')) {
-    console.log(`nativescript.config.ts not found. Assuming this is a {N} only project`);
-
-    return false;
-  }
-
-  // const config = getNsConfig(tree);
-
-  return true;//config.webext != null;
+  return tree.exists(normalize('/src/main.tns.ts'));
 };
 
 export interface PlatformUse {
@@ -77,24 +70,16 @@ export const getPlatformUse = (tree: Tree, options: Options): PlatformUse => {
 };
 
 export const getExtensions = (tree: Tree, options: Options): Extensions => {
-  // let ns = options.nsExtension;
-  // let web = options.webExtension;
-
-  // if (isWeb(tree)) {
-  //   const nsconfig = getNsConfig(tree);
-
-  //   ns = ns || nsconfig.nsext;
-  //   web = web || nsconfig.webext;
-
-  //   if (ns === web) {
-  //     ns = DEFAULT_SHARED_EXTENSIONS.ns;
-  //     web = DEFAULT_SHARED_EXTENSIONS.web;
-  //   }
-  // }
+  if (isWeb(tree)) {
+    return {
+      ns: DEFAULT_SHARED_EXTENSIONS.ns,
+      web: DEFAULT_SHARED_EXTENSIONS.web,
+    };
+  }
 
   return {
-    ns: DEFAULT_SHARED_EXTENSIONS.ns,// parseExtension(ns || ''),
-    web: DEFAULT_SHARED_EXTENSIONS.web //parseExtension(web || ''),
+    ns: '',
+    web: '',
   };
 };
 

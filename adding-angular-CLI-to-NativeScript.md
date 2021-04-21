@@ -15,7 +15,12 @@
       "root": "",
       "sourceRoot": ".",
        "projectType": "application",
-       "prefix": "app"
+       "prefix": "app",
+       "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+       }
     }
   },
   "defaultProject": "my-project-name"
