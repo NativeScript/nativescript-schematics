@@ -68,7 +68,12 @@ You need to add an `angular.json` configuration file to your NativeScript projec
       "root": "",
       "sourceRoot": ".",
       "projectType": "application",
-      "prefix": "app"
+      "prefix": "app",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      }
     }
   },
   "defaultProject": "project-name"

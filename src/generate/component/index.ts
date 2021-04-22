@@ -45,25 +45,29 @@ let extensions: Extensions;
 export default function(options: ComponentOptions): Rule {
   let platformUse: PlatformUse;
   let componentInfo: ComponentInfo;
+
   return chain([
-    (tree: Tree) => {
-      platformUse = getPlatformUse(tree, options);
+    async (tree: Tree) => {
+      const projectObject = await getProjectObject(tree, options.project);
 
-      if (platformUse.nsOnly && options.spec !== true) {
-        options.spec = false;
+      return () => {
+        platformUse = getPlatformUse(tree, options);
+
+        if (platformUse.nsOnly && options.spec !== true) {
+          options.spec = false;
+        }
+
+        const style = (projectObject && projectObject.extensions.schematics && projectObject.extensions.schematics['@schematics/angular:component']
+          && projectObject.extensions.schematics['@schematics/angular:component'].style);
+        if (style) {
+          options.style = style;
+        }
+
+        validateGenerateOptions(platformUse, options);
+        validateGenerateComponentOptions(platformUse, options);
+
+        return tree;
       }
-
-      const projectObject: any = getProjectObject(tree, options.project);
-      const style = (projectObject && projectObject.schematics && projectObject.schematics['@schematics/angular:component']
-        && projectObject.schematics['@schematics/angular:component'].style);
-      if (style) {
-        options.style = style;
-      }
-
-      validateGenerateOptions(platformUse, options);
-      validateGenerateComponentOptions(platformUse, options);
-
-      return tree;
     },
 
     () => externalSchematic(

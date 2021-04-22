@@ -1,14 +1,11 @@
 import * as ts from 'typescript';
 import { basename } from 'path';
-import { Tree, SchematicsException } from '@angular-devkit/schematics';
-import {
-  findBootstrapModuleCall,
-  findBootstrapModulePath,
-} from '@schematics/angular/utility/ng-ast-utils';
+import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import { findBootstrapModuleCall, findBootstrapModulePath } from '@schematics/angular/utility/ng-ast-utils';
 import { getWorkspace } from '@schematics/angular/utility/workspace';
 
 import { safeGet } from './utils';
-import { findNode, findImportPath, getSourceFile } from './ts-utils';
+import { findImportPath, findNode, getSourceFile } from './ts-utils';
 
 export interface AngularProjectSettings {
   /** default: '' */
@@ -128,7 +125,7 @@ async function getCoreProjectSettings(tree: Tree, projectName: string): Promise<
     );
   }
 
-  const buildTarget = targets.build;
+  const buildTarget = targets.get('build');
   if (!buildTarget) {
     throw new SchematicsException(
       `Failed to find build target for project ${projectName}!`,
@@ -139,7 +136,7 @@ async function getCoreProjectSettings(tree: Tree, projectName: string): Promise<
   const sourceRoot = project.sourceRoot || 'src';
   const mainPath = safeGet(buildTarget, 'options', 'main');
   const mainName = mainPath && basename(mainPath).replace(/\.ts$/, '');
-  const prefix = project.prefix;
+  const prefix = project.prefix as string;
   const tsConfig = safeGet(buildTarget, 'options', 'tsConfig');
 
   return {
@@ -154,21 +151,20 @@ async function getCoreProjectSettings(tree: Tree, projectName: string): Promise<
 
 export async function getTsConfigFromProject(tree: Tree, projectName: string) {
   const { targets } = await parseAngularConfig(tree, projectName);
-  const tsConfig = safeGet(targets, 'build', 'options', 'tsConfig');
 
-  return tsConfig;
+  return safeGet(targets, 'build', 'options', 'tsConfig');
 }
 
 async function parseAngularConfig(tree, projectName: string) {
   const project = await getProjectObject(tree, projectName);
-  const targets = project.architect;
+  const targets = project.targets;
 
   return { targets, project };
 }
 
 export async function getProjectObject(tree: Tree, projectName: string) {
   const workspace = await getWorkspace(tree);
-  const project = workspace.projects[projectName];
+  const project = workspace.projects.get(projectName);
   if (!project) {
     throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);
   }
