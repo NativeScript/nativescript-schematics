@@ -1,9 +1,9 @@
 {
   "name": "@nativescript/schematics",
-  "version": "11.0.0",
+  "version": "11.2.0-rc.0",
   "description": "Schematics for NativeScript Angular apps.",
   "scripts": {
-    "clean": "npx rimraf node_modules package-lock.json && npm i",
+    "clean": "npx rimraf node_modules package-lock.json && npm i --legacy-peer-deps",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json",
     "test": "npm run build && npm run jasmine",
@@ -25,15 +25,15 @@
   },
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "~11.0.0",
-    "@angular-devkit/schematics": "~11.0.0",
+    "@angular-devkit/core": "~11.2.0",
+    "@angular-devkit/schematics": "~11.2.0",
     "@nativescript/tslint-rules": "~0.0.5",
     "@phenomnomnominal/tsquery": "^4.1.0",
-    "@schematics/angular": "~11.0.0",
+    "@schematics/angular": "~11.2.0",
     "strip-json-comments": "~3.1.1"
   },
   "devDependencies": {
-    "@angular/cli": "~11.0.0",
+    "@angular/cli": "~11.2.0",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",

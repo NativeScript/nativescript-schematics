@@ -39,8 +39,8 @@ export default function(options: MigrateModuleSchema): Rule {
         nsext = '.' + nsext;
       }
     },
-    (tree: Tree, context: SchematicContext) => {
-      moduleInfo = parseModuleInfo(options)(tree, context);
+    async (tree: Tree, context: SchematicContext) => {
+      moduleInfo = await parseModuleInfo(options)(tree, context);
     },
 
     (tree) => {

@@ -81,9 +81,9 @@ const validateOptions = (options: MigrationOptions) => () => {
   }
 };
 
-const getProjectSettings = (projectName: string) => (tree: Tree, context: SchematicContext) => {
+const getProjectSettings = (projectName: string) => async (tree: Tree, context: SchematicContext) => {
   context.logger.info('Reading Project Settings');
-  projectSettings = getAngularProjectSettings(tree, projectName);
+  projectSettings = await getAngularProjectSettings(tree, projectName);
 
   context.logger.info(`Project settings:
 ${JSON.stringify(projectSettings, null, 2)}`);

@@ -19,8 +19,8 @@ export interface ComponentInfo {
 
 let projectSettings: AngularProjectSettings;
 
-export const parseComponentInfo = (options: MigrateComponentSchema) => (tree: Tree, context: SchematicContext) => {
-  projectSettings = getAngularProjectSettings(tree, options.project);
+export const parseComponentInfo = (options: MigrateComponentSchema) => async (tree: Tree, context: SchematicContext) => {
+  projectSettings = await getAngularProjectSettings(tree, options.project);
 
   const className = (options.name.endsWith('Component'))
     ? options.name

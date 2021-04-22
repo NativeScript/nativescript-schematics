@@ -16,11 +16,11 @@ export interface ModuleInfo {
 
 let projectSettings: AngularProjectSettings;
 
-export const parseModuleInfo = (options: MigrateModuleSchema) => (
+export const parseModuleInfo = (options: MigrateModuleSchema) => async (
   tree: Tree,
   context: SchematicContext,
-): ModuleInfo => {
-  projectSettings = getAngularProjectSettings(tree, options.project);
+): Promise<ModuleInfo> => {
+  projectSettings = await getAngularProjectSettings(tree, options.project);
 
   const className = classify(`${options.name}Module`);
   const modulePath = findModulePath(options, tree);

@@ -37,8 +37,8 @@ export default function(options: MigrateComponentSchema): Rule {
         web: options.webext || nsconfigExtensions.web,
       };
     },
-    (tree: Tree, context: SchematicContext) => {
-      componentInfo = parseComponentInfo(options)(tree, context);
+    async (tree: Tree, context: SchematicContext) => {
+      componentInfo = await parseComponentInfo(options)(tree, context);
     },
 
     (tree: Tree, context: SchematicContext) =>

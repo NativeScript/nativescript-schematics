@@ -1,11 +1,11 @@
 import * as ts from 'typescript';
 import { basename } from 'path';
 import { Tree, SchematicsException } from '@angular-devkit/schematics';
-import { getWorkspace } from '@schematics/angular/utility/config';
 import {
   findBootstrapModuleCall,
   findBootstrapModulePath,
 } from '@schematics/angular/utility/ng-ast-utils';
+import { getWorkspace } from '@schematics/angular/utility/workspace';
 
 import { safeGet } from './utils';
 import { findNode, findImportPath, getSourceFile } from './ts-utils';
@@ -16,6 +16,8 @@ export interface AngularProjectSettings {
 
   /** default: 'src' */
   sourceRoot: string;
+
+  architect?: any;
 
   /** default: 'main' */
   mainName: string;
@@ -91,8 +93,8 @@ export interface ClassMetadata {
 
 type TypescriptResolver = (moduleName: string, containingFilePath: string) => string;
 
-export function getAngularProjectSettings(tree: Tree, projectName: string): AngularProjectSettings {
-  const projectSettings = getCoreProjectSettings(tree, projectName);
+export async function getAngularProjectSettings(tree: Tree, projectName: string): Promise<AngularProjectSettings> {
+  const projectSettings = await getCoreProjectSettings(tree, projectName);
 
   const tsResolver = getTypescriptResolver(tree, projectSettings.tsConfig);
   const entryModule = getEntryModuleMetadata(tree, projectSettings.mainPath, tsResolver);
@@ -118,8 +120,8 @@ export function getAngularProjectSettings(tree: Tree, projectName: string): Angu
   };
 }
 
-function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSettings {
-  const { targets, project } = parseAngularConfig(tree, projectName);
+async function getCoreProjectSettings(tree: Tree, projectName: string): Promise<CoreProjectSettings> {
+  const { targets, project } = await parseAngularConfig(tree, projectName);
   if (!targets) {
     throw new SchematicsException(
       `Failed to find build targets for project ${projectName}!`,
@@ -150,22 +152,22 @@ function getCoreProjectSettings(tree: Tree, projectName: string): CoreProjectSet
   };
 }
 
-export function getTsConfigFromProject(tree: Tree, projectName: string): string {
-  const { targets } = parseAngularConfig(tree, projectName);
+export async function getTsConfigFromProject(tree: Tree, projectName: string) {
+  const { targets } = await parseAngularConfig(tree, projectName);
   const tsConfig = safeGet(targets, 'build', 'options', 'tsConfig');
 
   return tsConfig;
 }
 
-function parseAngularConfig(tree, projectName: string) {
-  const project = getProjectObject(tree, projectName);
+async function parseAngularConfig(tree, projectName: string) {
+  const project = await getProjectObject(tree, projectName);
   const targets = project.architect;
 
   return { targets, project };
 }
 
-export function getProjectObject(tree: Tree, projectName: string) {
-  const workspace = getWorkspace(tree);
+export async function getProjectObject(tree: Tree, projectName: string) {
+  const workspace = await getWorkspace(tree);
   const project = workspace.projects[projectName];
   if (!project) {
     throw new SchematicsException(`Couldn't find project "${projectName}" in the workspace!`);

@@ -15,7 +15,7 @@ const conversionFailureMessage = `Failed to generate remapped imports! Please se
   `https://docs.nativescript.org/angular/code-sharing/intro#remapped-imports`;
 
 export default function(options: ConvertRelativeImportsSchema) {
-  return (tree: Tree, context: SchematicContext) => {
+  return async (tree: Tree, context: SchematicContext) => {
     const { logger } = context;
 
     const filesToFix = getFilesToFix(tree, options.filesToIgnore);
@@ -25,7 +25,7 @@ export default function(options: ConvertRelativeImportsSchema) {
       return tree;
     }
 
-    const tsConfigPath = getTsConfigFromProject(tree, options.project) || 'tsconfig.json';
+    const tsConfigPath = await getTsConfigFromProject(tree, options.project) || 'tsconfig.json';
     const compilerOptions = getCompilerOptions(tree, tsConfigPath);
 
     if (!compilerOptions) {
