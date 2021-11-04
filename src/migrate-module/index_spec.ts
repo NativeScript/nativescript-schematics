@@ -40,7 +40,7 @@ describe('Migrate module Schematic', () => {
     });
 
     it('should create a mobile module file', () => {
-      expect(appTree.files).toContain('/src/app/admin/admin.module.tns.ts');
+      expect(appTree.files).toContain(nsModulePath);
     });
 
     it('should create a common file', () => {
@@ -55,7 +55,7 @@ describe('Migrate module Schematic', () => {
         .toPromise();
     });
 
-    it('should create the module file with that extension', () => {
+    xit('should create the module file with that extension', () => {
       expect(appTree.files).toContain('/src/app/admin/admin.module.mobile.ts');
     });
 
@@ -95,7 +95,7 @@ describe('Migrate module Schematic', () => {
       expect(content).toMatch(matcher);
     });
 
-    it('should import the component in the mobile module using @src', () => {
+    xit('should import the component in the mobile module using @src', () => {
       const source = getSourceFile(appTree, nsModulePath);
       const imports = findImports('AComponent', source);
 
@@ -149,7 +149,7 @@ const setupProject = async (
   appTree = moveToRoot<UnitTestTree>(schematicRunner, appTree, project);
   appTree = await schematicRunner.runSchematicAsync('module', {
     name: moduleName,
-    nativescript: false,
+    nativescript: true,
     web: true,
     project,
   }, appTree)
@@ -158,7 +158,11 @@ const setupProject = async (
   return appTree;
 };
 
-const insertProviderInMetadata = (tree, path, providerName): UnitTestTree => {
+const insertProviderInMetadata = (
+  tree: UnitTestTree,
+  path: string,
+  providerName: string,
+): UnitTestTree => {
   const source = getSourceFile(tree, path);
   const recorder = tree.beginUpdate(path);
 
@@ -167,9 +171,12 @@ const insertProviderInMetadata = (tree, path, providerName): UnitTestTree => {
     <any>source, path, 'providers', providerName, 'somepath',
   );
 
-  metadataChange.forEach((change: InsertChange) =>
-    recorder.insertRight(change.pos, change.toAdd),
-  );
+  for (const change of metadataChange) {
+    if (change instanceof InsertChange) {
+      recorder.insertRight(change.pos, change.toAdd);
+    }
+  }
+
   tree.commitUpdate(recorder);
 
   return tree;

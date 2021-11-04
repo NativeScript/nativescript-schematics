@@ -9,7 +9,7 @@ import { getPlatformUse } from './utils';
 
 const project = 'leproj';
 
-xdescribe('Validation should trigger', () => {
+describe('Validation should trigger', () => {
     const defaultComponentOptions: ComponentOptions = { name: 'fooComponent', project };
     const defaultModuleOptions: ModuleOptions = { name: 'fooModule', project };
 
@@ -19,62 +19,80 @@ xdescribe('Validation should trigger', () => {
     );
 
     describe('for component schematic, when', () => {
-        it('both ns and web are disabled in ns-only project', () => {
-            let tree = createEmptyNsOnlyProject(project);
+        it('both ns and web are disabled in ns-only project', async () => {
+            const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultComponentOptions, nativescript: false, web: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('component', options, tree).toPromise())
-                .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
+            const promise = schematicRunner.runSchematicAsync('component', options, tree)
+                .toPromise();
+            const error = 'You shouldn\'t disable both --web and --nativescript flags';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
 
-        it('both ns and web are disabled in ns+web project', () => {
-            let tree = createEmptySharedProject(project);
+        it('both ns and web are disabled in ns+web project', async () => {
+            const tree = createEmptySharedProject(project);
             const options = { ...defaultComponentOptions, nativescript: false, web: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('component', options, tree).toPromise())
-                .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
+            const promise = schematicRunner.runSchematicAsync('component', options, tree)
+                .toPromise();
+            const error = 'You shouldn\'t disable both --web and --nativescript flags';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
 
-        it('using inline templates in ns+web project', () => {
-            let tree = createEmptySharedProject(project);
+        it('using inline templates in ns+web project', async () => {
+            const tree = createEmptySharedProject(project);
             const options: ComponentOptions = { ...defaultComponentOptions, inlineTemplate: true };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('component', options, tree).toPromise())
-                .toThrowError(/--inlineTemplate/);
+            const promise = schematicRunner.runSchematicAsync('component', options, tree)
+                .toPromise();
+            const error = /--inlineTemplate/;
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
 
-        it('using web-only schematic in ns-only project', () => {
-            let tree = createEmptyNsOnlyProject(project);
+        it('using web-only schematic in ns-only project', async () => {
+            const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultComponentOptions, web: true, nativescript: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('component', options, tree).toPromise())
-                .toThrowError('Project is not configured for Angular Web, while --nativescript is set to false');
+            const promise = schematicRunner.runSchematicAsync('component', options, tree)
+                .toPromise();
+            const error = 'Project is not configured for Angular Web, while --nativescript is set to false';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
     });
 
     describe('for module schematic, when', () => {
-        it('both ns and web are disabled in ns-only project', () => {
-            let tree = createEmptyNsOnlyProject(project);
+        it('both ns and web are disabled in ns-only project', async () => {
+            const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultModuleOptions, nativescript: false, web: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('module', options, tree).toPromise())
-                .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
+            const promise = schematicRunner.runSchematicAsync('module', options, tree).toPromise();
+            const error = 'You shouldn\'t disable both --web and --nativescript flags';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
 
-        it('both ns and web are disabled in ns+web project', () => {
-            let tree = createEmptySharedProject(project);
+        it('both ns and web are disabled in ns+web project', async () => {
+            const tree = createEmptySharedProject(project);
             const options = { ...defaultModuleOptions, nativescript: false, web: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('module', options, tree).toPromise())
-                .toThrowError('You shouldn\'t disable both --web and --nativescript flags');
+            const promise = schematicRunner.runSchematicAsync('module', options, tree).toPromise();
+            const error = 'You shouldn\'t disable both --web and --nativescript flags';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
 
-        it('using web-only schematic in ns-only project', () => {
-            let tree = createEmptyNsOnlyProject(project);
+        it('using web-only schematic in ns-only project', async () => {
+            const tree = createEmptyNsOnlyProject(project);
             const options = { ...defaultModuleOptions, web: true, nativescript: false };
 
-            expect(async () => tree = await schematicRunner.runSchematicAsync('module', options, tree).toPromise())
-                .toThrowError('Project is not configured for Angular Web, while --nativescript is set to false');
+            const promise = schematicRunner.runSchematicAsync('module', options, tree).toPromise();
+            const error = 'Project is not configured for Angular Web, while --nativescript is set to false';
+
+            await expectAsync(promise).toBeRejectedWithError(error);
         });
     });
 });

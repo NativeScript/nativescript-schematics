@@ -106,9 +106,13 @@ function setupTestTree(files: Array<VirtualFile>): UnitTestTree {
   return tree;
 }
 
-export function createEmptyNsOnlyProject(projectName: string, nsExtension: string = ''): UnitTestTree {
+export function createEmptyNsOnlyProject(
+  projectName: string,
+  nsExtension: string = '',
+): UnitTestTree {
   const setup = { ...defaultProjectSettings, projectName, nsExtension };
   const additionalFiles = [
+    getNsConfig(setup),
     getNsPackageJson(setup),
     getNsEntryPoint(setup),
   ];
@@ -123,7 +127,8 @@ export function createEmptySharedProject(
 ): UnitTestTree {
   const setup = { ...defaultProjectSettings, projectName, webExtension, nsExtension };
   const additionalFiles = [
-    // getNsConfig(setup),
+    getNsConfig(setup),
+    getNsEntryPoint(setup, nsExtension),
     getAppModule(setup.webExtension),
   ];
 
@@ -178,7 +183,7 @@ function getNsConfig(setup: TestProjectSetup): VirtualFile {
       },
       appPath: '${setup.sourceDirectory}',
     } as NativeScriptConfig;
-    `
+    `,
     // JSON.stringify({
     //   appResourcesPath: 'App_Resources',
     //   appPath: setup.sourceDirectory,
@@ -298,9 +303,9 @@ function getAppModule(extension?: string): VirtualFile {
   };
 }
 
-function getNsEntryPoint(setup: TestProjectSetup): VirtualFile {
+function getNsEntryPoint(setup: TestProjectSetup, extension = ''): VirtualFile {
   return {
-    path: `${setup.sourceDirectory}/main.ts`,
+    path: `${setup.sourceDirectory}/main${extension}.ts`,
     content: `
       import { platformNativeScriptDynamic } from '@nativescript/angular';
       import { AppModule } from './app/app.module';

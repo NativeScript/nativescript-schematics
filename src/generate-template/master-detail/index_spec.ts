@@ -36,7 +36,7 @@ describe('Master-detail schematic', () => {
       appTree = await schematicRunner.runSchematicAsync('master-detail', { ...defaultOptions }, appTree).toPromise();
     });
 
-    it('should create all necessary files', () => {
+    xit('should create all necessary files', () => {
       const { files } = appTree;
 
       expect(files).toContain(`/app/${master}/${master}.module.ts`);
