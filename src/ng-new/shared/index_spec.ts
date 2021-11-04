@@ -23,13 +23,12 @@ describe('Shared Application Schematic', () => {
     const tree = await schematicRunner.runSchematicAsync('shared', options).toPromise();
     const files = tree.files;
     expect(files).toContain('/foo/angular.json');
-    expect(files).toContain('/foo/nsconfig.json');
+    expect(files).toContain('/foo/nativescript.config.ts');
     expect(files).toContain('/foo/.gitignore');
     expect(files).toContain('/foo/package.json');
     expect(files).toContain('/foo/tsconfig.tns.json');
     expect(files).toContain('/foo/tsconfig.spec.json');
 
-    expect(files).toContain('/foo/src/package.json');
     expect(files).toContain('/foo/src/main.tns.ts');
     expect(files).toContain('/foo/src/app/app.module.ts');
 
